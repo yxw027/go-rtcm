@@ -70,20 +70,37 @@ func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
         return &message, errors.New("CRC Failed")
     }
 
+    reader.Discard(len(data) - 1)
+
     switch message.Number() {
         case uint16(1077):
-            msg := NewRtcm31077(message)
-            return &msg, nil
+            message := NewRtcm3Msm7Message(message)
+            return &message, nil
+
+        case uint16(1087):
+            message := NewRtcm3Msm7Message(message)
+            return &message, nil
+
+        case uint16(1097):
+            message := NewRtcm3Msm7Message(message)
+            return &message, nil
+
+        case uint16(1117):
+            message := NewRtcm3Msm7Message(message)
+            return &message, nil
+
+        case uint16(1127):
+            message := NewRtcm3Msm7Message(message)
+            return &message, nil
     }
 
-    reader.Discard(len(data) - 1)
     return &message, nil
 }
 
 type Callback func(Rtcm3Message)
 
 func Scan(r io.Reader, callback Callback) (err error) {
-    // Not sure if a function of this signature makes sense, or if we should just be writing back to an io object
+    // Not sure if a function of this signature makes sense, or if we should just be writing back to an io object, or even if Deserialize should just be looping like this
     reader := bufio.NewReader(r)
     for {
         message, err := Deserialize(reader)
@@ -92,6 +109,6 @@ func Scan(r io.Reader, callback Callback) (err error) {
             return err
         }
 
-        callback(message)
+        go callback(message)
     }
 }
