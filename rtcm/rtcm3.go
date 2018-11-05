@@ -73,32 +73,32 @@ func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
 
     reader.Discard(len(data) - 1)
 
-    switch number := message.Number(); { //TODO: Figure out a better way to manage this switch statement - maybe a map from message number to constructor function
-        case number == uint16(1071) || number == uint16(1081) || number == uint16(1091) || number == uint16(1111) || number == uint16(1121):
+    switch message.Number() { //TODO: Figure out a better way to manage this switch statement - maybe a map from message number to constructor function
+        case uint16(1071), uint16(1081), uint16(1091), uint16(1111), uint16(1121):
             message := NewRtcm3Msm1Message(message)
             return &message, nil
 
-        case number == uint16(1072) || number == uint16(1082) || number == uint16(1092) || number == uint16(1112) || number == uint16(1122):
+        case uint16(1072), uint16(1082), uint16(1092), uint16(1112), uint16(1122):
             message := NewRtcm3Msm2Message(message)
             return &message, nil
 
-        case number == uint16(1073) || number == uint16(1083) || number == uint16(1093) || number == uint16(1113) || number == uint16(1123):
+        case uint16(1073), uint16(1083), uint16(1093), uint16(1113), uint16(1123):
             message := NewRtcm3Msm3Message(message)
             return &message, nil
 
-        case number == uint16(1074) || number == uint16(1084) || number == uint16(1094) || number == uint16(1114) || number == uint16(1124):
+        case uint16(1074), uint16(1084), uint16(1094), uint16(1114), uint16(1124):
             message := NewRtcm3Msm4Message(message)
             return &message, nil
 
-        case number == uint16(1075) || number == uint16(1085) || number == uint16(1095) || number == uint16(1115) || number == uint16(1125):
+        case uint16(1075), uint16(1085), uint16(1095), uint16(1115), uint16(1125):
             message := NewRtcm3Msm5Message(message)
             return &message, nil
 
-        case number == uint16(1076) || number == uint16(1086) || number == uint16(1096) || number == uint16(1116) || number == uint16(1126):
+        case uint16(1076), uint16(1086), uint16(1096), uint16(1116), uint16(1126):
             message := NewRtcm3Msm6Message(message)
             return &message, nil
 
-        case number == uint16(1077) || number == uint16(1087) || number == uint16(1097) || number == uint16(1117) || number == uint16(1127):
+        case uint16(1077), uint16(1087), uint16(1097), uint16(1117), uint16(1127):
             message := NewRtcm3Msm7Message(message)
             return &message, nil
     }
