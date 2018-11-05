@@ -1,7 +1,7 @@
 package main
 
 import (
-    "./rtcm"
+    "github.com/geoscienceaustralia/go-rtcm"
     "github.com/umeat/go-ntrip/ntrip"
     "net/url"
     "fmt"
