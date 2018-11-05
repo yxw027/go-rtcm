@@ -25,19 +25,20 @@ type Rtcm3Frame struct {
     Crc uint32
 }
 
-func (f *Rtcm3Frame) Number() uint16 {
+func (f Rtcm3Frame) Number() uint16 {
     return binary.BigEndian.Uint16(f.Payload[0:2]) >> 4
 }
 
-func (f *Rtcm3Frame) Serialize() (data []byte) { // Pretty sure this isn't working
+func (f Rtcm3Frame) Serialize() []byte {
+    data := make([]byte, f.Length + 6)
     w := iobit.NewWriter(data)
     w.PutUint8(8, f.Preamble)
     w.PutUint8(6, f.Reserved)
     w.PutUint16(10, f.Length)
-    data = append(data, f.Payload...)
-    crc := make([]byte, 4)
-    binary.BigEndian.PutUint32(crc, f.Crc)
-    return append(data, crc[1:]...)
+    w.Write(f.Payload)
+    w.PutUint32(24, f.Crc)
+    w.Flush()
+    return data
 }
 
 func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
