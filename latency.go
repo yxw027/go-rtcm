@@ -16,16 +16,21 @@ func main() {
     e := rtcm.Scan(r, func(msg rtcm.Rtcm3Message) {
         now := time.Now().UTC()
         sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
-        if msg.Number() == uint16(1077) || msg.Number() == uint16(1097) || msg.Number() == uint16(1117) || msg.Number() == uint16(1127) {
-            tow := time.Duration(msg.(*rtcm.Rtcm3Msm7Message).Header.Epoch) * time.Millisecond
-            latency := now.Sub(sow.Add(-(18 * time.Second)).Add(tow))
-            if msg.Number() == uint16(1127) { latency = latency - (14 * time.Second) }
-            fmt.Println(msg.Number(), latency)
-        } else if msg.Number() == uint16(1087) {
-            e := msg.(*rtcm.Rtcm3Msm7Message).Header.Epoch
-            dow := int((e >> 27) & 0x7)
-            tod := time.Duration(e & 0x7FFFFFF) * time.Millisecond
-            fmt.Println(msg.Number(), now.Sub(sow.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))))
+        switch int(msg.Number()) {
+            case 1077, 1097, 1117, 1127:
+                tow := time.Duration(msg.(*rtcm.Rtcm3MessageMsm7).Header.Epoch) * time.Millisecond
+                latency := now.Sub(sow.Add(-(18 * time.Second)).Add(tow))
+                if msg.Number() == uint16(1127) { latency = latency - (14 * time.Second) }
+                fmt.Println(msg.Number(), latency)
+            case 1087:
+                e := msg.(*rtcm.Rtcm3MessageMsm7).Header.Epoch
+                dow := int((e >> 27) & 0x7)
+                tod := time.Duration(e & 0x7FFFFFF) * time.Millisecond
+                fmt.Println(msg.Number(), now.Sub(sow.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))))
+            case 1001:
+                tow := time.Duration(msg.(*rtcm.Rtcm3Message1001).Header.Epoch) * time.Millisecond
+                latency := now.Sub(sow.Add(-(18 * time.Second)).Add(tow))
+                fmt.Println(msg.Number(), latency)
         }
     })
     fmt.Println(e)

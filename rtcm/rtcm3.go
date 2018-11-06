@@ -73,33 +73,37 @@ func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
 
     reader.Discard(len(data) - 1)
 
-    switch message.Number() { //TODO: Figure out a better way to manage this switch statement - maybe a map from message number to constructor function
+    switch message.Number() {
+        case uint16(1001):
+            message := NewRtcm3Message1001(message)
+            return &message, nil
+
         case uint16(1071), uint16(1081), uint16(1091), uint16(1111), uint16(1121):
-            message := NewRtcm3Msm1Message(message)
+            message := NewRtcm3MessageMsm1(message)
             return &message, nil
 
         case uint16(1072), uint16(1082), uint16(1092), uint16(1112), uint16(1122):
-            message := NewRtcm3Msm2Message(message)
+            message := NewRtcm3MessageMsm2(message)
             return &message, nil
 
         case uint16(1073), uint16(1083), uint16(1093), uint16(1113), uint16(1123):
-            message := NewRtcm3Msm3Message(message)
+            message := NewRtcm3MessageMsm3(message)
             return &message, nil
 
         case uint16(1074), uint16(1084), uint16(1094), uint16(1114), uint16(1124):
-            message := NewRtcm3Msm4Message(message)
+            message := NewRtcm3MessageMsm4(message)
             return &message, nil
 
         case uint16(1075), uint16(1085), uint16(1095), uint16(1115), uint16(1125):
-            message := NewRtcm3Msm5Message(message)
+            message := NewRtcm3MessageMsm5(message)
             return &message, nil
 
         case uint16(1076), uint16(1086), uint16(1096), uint16(1116), uint16(1126):
-            message := NewRtcm3Msm6Message(message)
+            message := NewRtcm3MessageMsm6(message)
             return &message, nil
 
         case uint16(1077), uint16(1087), uint16(1097), uint16(1117), uint16(1127):
-            message := NewRtcm3Msm7Message(message)
+            message := NewRtcm3MessageMsm7(message)
             return &message, nil
     }
 

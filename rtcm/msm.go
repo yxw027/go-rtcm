@@ -42,14 +42,14 @@ func NewRtcm3MsmHeader(r *iobit.Reader) (header Rtcm3MsmHeader) {
     return header
 }
 
-type Rtcm3Msm57SatelliteData struct {
+type Rtcm3SatelliteDataMsm57 struct {
     RangeMilliseconds []uint8
     Extended []uint8
     Ranges []uint16
     PhaseRangeRates []int16
 }
 
-func NewRtcm3Msm57SatelliteData(r *iobit.Reader, nsat int) (satData Rtcm3Msm57SatelliteData) {
+func NewRtcm3SatelliteDataMsm57(r *iobit.Reader, nsat int) (satData Rtcm3SatelliteDataMsm57) {
     for i := 0; i < nsat; i++ {
         satData.RangeMilliseconds = append(satData.RangeMilliseconds, r.Uint8(8))
     }
@@ -65,7 +65,7 @@ func NewRtcm3Msm57SatelliteData(r *iobit.Reader, nsat int) (satData Rtcm3Msm57Sa
     return satData
 }
 
-type Rtcm3Msm7SignalData struct {
+type Rtcm3SignalDataMsm7 struct {
     Pseudoranges []int32
     PhaseRanges []int32
     PhaseRangeLocks []uint16
@@ -74,7 +74,7 @@ type Rtcm3Msm7SignalData struct {
     PhaseRangeRates []int16
 }
 
-func NewRtcm3Msm7SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm7SignalData) {
+func NewRtcm3SignalDataMsm7(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm7) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int32(20))
     }
@@ -96,30 +96,30 @@ func NewRtcm3Msm7SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm7Signal
     return sigData
 }
 
-type Rtcm3Msm7Message struct {
+type Rtcm3MessageMsm7 struct {
     Rtcm3Frame
     Header Rtcm3MsmHeader
-    SatelliteData Rtcm3Msm57SatelliteData
-    SignalData Rtcm3Msm7SignalData
+    SatelliteData Rtcm3SatelliteDataMsm57
+    SignalData Rtcm3SignalDataMsm7
 }
 
-func NewRtcm3Msm7Message(msg Rtcm3Frame) Rtcm3Msm7Message {
+func NewRtcm3MessageMsm7(msg Rtcm3Frame) Rtcm3MessageMsm7 {
     r := iobit.NewReader(msg.Payload)
     header := NewRtcm3MsmHeader(&r)
-    return Rtcm3Msm7Message{
+    return Rtcm3MessageMsm7{
         Rtcm3Frame: msg,
         Header: header,
-        SatelliteData: NewRtcm3Msm57SatelliteData(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3Msm7SignalData(&r, bits.OnesCount(uint(header.CellMask))),
+        SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(header.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm7(&r, bits.OnesCount(uint(header.CellMask))),
     }
 }
 
-type Rtcm3Msm46SatelliteData struct {
+type Rtcm3SatelliteDataMsm46 struct {
     RangeMilliseconds []uint8
     Ranges []uint16
 }
 
-func NewRtcm3Msm46SatelliteData(r *iobit.Reader, nsat int) (satData Rtcm3Msm46SatelliteData) {
+func NewRtcm3SatelliteDataMsm46(r *iobit.Reader, nsat int) (satData Rtcm3SatelliteDataMsm46) {
     for i := 0; i < nsat; i++ {
         satData.RangeMilliseconds = append(satData.RangeMilliseconds, r.Uint8(8))
     }
@@ -129,7 +129,7 @@ func NewRtcm3Msm46SatelliteData(r *iobit.Reader, nsat int) (satData Rtcm3Msm46Sa
     return satData
 }
 
-type Rtcm3Msm6SignalData struct {
+type Rtcm3SignalDataMsm6 struct {
     Pseudoranges []int32
     PhaseRanges []int32
     PhaseRangeLocks []uint16
@@ -137,7 +137,7 @@ type Rtcm3Msm6SignalData struct {
     Cnrs []uint16
 }
 
-func NewRtcm3Msm6SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm6SignalData) {
+func NewRtcm3SignalDataMsm6(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm6) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int32(20))
     }
@@ -156,25 +156,25 @@ func NewRtcm3Msm6SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm6Signal
     return sigData
 }
 
-type Rtcm3Msm6Message struct {
+type Rtcm3MessageMsm6 struct {
     Rtcm3Frame
     Header Rtcm3MsmHeader
-    SatelliteData Rtcm3Msm46SatelliteData
-    SignalData Rtcm3Msm6SignalData
+    SatelliteData Rtcm3SatelliteDataMsm46
+    SignalData Rtcm3SignalDataMsm6
 }
 
-func NewRtcm3Msm6Message(msg Rtcm3Frame) Rtcm3Msm6Message {
+func NewRtcm3MessageMsm6(msg Rtcm3Frame) Rtcm3MessageMsm6 {
     r := iobit.NewReader(msg.Payload)
     header := NewRtcm3MsmHeader(&r)
-    return Rtcm3Msm6Message{
+    return Rtcm3MessageMsm6{
         Rtcm3Frame: msg,
         Header: header,
-        SatelliteData: NewRtcm3Msm46SatelliteData(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3Msm6SignalData(&r, bits.OnesCount(uint(header.CellMask))),
+        SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(header.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm6(&r, bits.OnesCount(uint(header.CellMask))),
     }
 }
 
-type Rtcm3Msm5SignalData struct {
+type Rtcm3SignalDataMsm5 struct {
     Pseudoranges []int16
     PhaseRanges []int32
     PhaseRangeLocks []uint8
@@ -183,7 +183,7 @@ type Rtcm3Msm5SignalData struct {
     PhaseRangeRates []int16
 }
 
-func NewRtcm3Msm5SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm5SignalData) {
+func NewRtcm3SignalDataMsm5(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm5) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -205,25 +205,25 @@ func NewRtcm3Msm5SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm5Signal
     return sigData
 }
 
-type Rtcm3Msm5Message struct {
+type Rtcm3MessageMsm5 struct {
     Rtcm3Frame
     Header Rtcm3MsmHeader
-    SatelliteData Rtcm3Msm57SatelliteData
-    SignalData Rtcm3Msm5SignalData
+    SatelliteData Rtcm3SatelliteDataMsm57
+    SignalData Rtcm3SignalDataMsm5
 }
 
-func NewRtcm3Msm5Message(msg Rtcm3Frame) Rtcm3Msm5Message {
+func NewRtcm3MessageMsm5(msg Rtcm3Frame) Rtcm3MessageMsm5 {
     r := iobit.NewReader(msg.Payload)
     header := NewRtcm3MsmHeader(&r)
-    return Rtcm3Msm5Message{
+    return Rtcm3MessageMsm5{
         Rtcm3Frame: msg,
         Header: header,
-        SatelliteData: NewRtcm3Msm57SatelliteData(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3Msm5SignalData(&r, bits.OnesCount(uint(header.CellMask))),
+        SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(header.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm5(&r, bits.OnesCount(uint(header.CellMask))),
     }
 }
 
-type Rtcm3Msm4SignalData struct {
+type Rtcm3SignalDataMsm4 struct {
     Pseudoranges []int16
     PhaseRanges []int32
     PhaseRangeLocks []uint8
@@ -231,7 +231,7 @@ type Rtcm3Msm4SignalData struct {
     Cnrs []uint8
 }
 
-func NewRtcm3Msm4SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm4SignalData) {
+func NewRtcm3SignalDataMsm4(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm4) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -250,43 +250,43 @@ func NewRtcm3Msm4SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm4Signal
     return sigData
 }
 
-type Rtcm3Msm4Message struct {
+type Rtcm3MessageMsm4 struct {
     Rtcm3Frame
     Header Rtcm3MsmHeader
-    SatelliteData Rtcm3Msm46SatelliteData
-    SignalData Rtcm3Msm4SignalData
+    SatelliteData Rtcm3SatelliteDataMsm46
+    SignalData Rtcm3SignalDataMsm4
 }
 
-func NewRtcm3Msm4Message(msg Rtcm3Frame) Rtcm3Msm4Message {
+func NewRtcm3MessageMsm4(msg Rtcm3Frame) Rtcm3MessageMsm4 {
     r := iobit.NewReader(msg.Payload)
     header := NewRtcm3MsmHeader(&r)
-    return Rtcm3Msm4Message{
+    return Rtcm3MessageMsm4{
         Rtcm3Frame: msg,
         Header: header,
-        SatelliteData: NewRtcm3Msm46SatelliteData(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3Msm4SignalData(&r, bits.OnesCount(uint(header.CellMask))),
+        SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(header.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm4(&r, bits.OnesCount(uint(header.CellMask))),
     }
 }
 
-type Rtcm3Msm123SatelliteData struct {
+type Rtcm3SatelliteDataMsm123 struct {
     Ranges []uint16
 }
 
-func NewRtcm3Msm123SatelliteData(r *iobit.Reader, nsat int) (satData Rtcm3Msm123SatelliteData) {
+func NewRtcm3SatelliteDataMsm123(r *iobit.Reader, nsat int) (satData Rtcm3SatelliteDataMsm123) {
     for i := 0; i < nsat; i++ {
         satData.Ranges = append(satData.Ranges, r.Uint16(10))
     }
     return satData
 }
 
-type Rtcm3Msm3SignalData struct {
+type Rtcm3SignalDataMsm3 struct {
     Pseudoranges []int16
     PhaseRanges []int32
     PhaseRangeLocks []uint8
     HalfCycles []bool
 }
 
-func NewRtcm3Msm3SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm3SignalData) {
+func NewRtcm3SignalDataMsm3(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm3) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -302,31 +302,31 @@ func NewRtcm3Msm3SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm3Signal
     return sigData
 }
 
-type Rtcm3Msm3Message struct {
+type Rtcm3MessageMsm3 struct {
     Rtcm3Frame
     Header Rtcm3MsmHeader
-    SatelliteData Rtcm3Msm123SatelliteData
-    SignalData Rtcm3Msm3SignalData
+    SatelliteData Rtcm3SatelliteDataMsm123
+    SignalData Rtcm3SignalDataMsm3
 }
 
-func NewRtcm3Msm3Message(msg Rtcm3Frame) Rtcm3Msm3Message {
+func NewRtcm3MessageMsm3(msg Rtcm3Frame) Rtcm3MessageMsm3 {
     r := iobit.NewReader(msg.Payload)
     header := NewRtcm3MsmHeader(&r)
-    return Rtcm3Msm3Message{
+    return Rtcm3MessageMsm3{
         Rtcm3Frame: msg,
         Header: header,
-        SatelliteData: NewRtcm3Msm123SatelliteData(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3Msm3SignalData(&r, bits.OnesCount(uint(header.CellMask))),
+        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(header.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm3(&r, bits.OnesCount(uint(header.CellMask))),
     }
 }
 
-type Rtcm3Msm2SignalData struct {
+type Rtcm3SignalDataMsm2 struct {
     PhaseRanges []int32
     PhaseRangeLocks []uint8
     HalfCycles []bool
 }
 
-func NewRtcm3Msm2SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm2SignalData) {
+func NewRtcm3SignalDataMsm2(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm2) {
     for i := 0; i < ncell; i++ {
         sigData.PhaseRanges = append(sigData.PhaseRanges, r.Int32(22))
     }
@@ -339,110 +339,110 @@ func NewRtcm3Msm2SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm2Signal
     return sigData
 }
 
-type Rtcm3Msm2Message struct {
+type Rtcm3MessageMsm2 struct {
     Rtcm3Frame
     Header Rtcm3MsmHeader
-    SatelliteData Rtcm3Msm123SatelliteData
-    SignalData Rtcm3Msm2SignalData
+    SatelliteData Rtcm3SatelliteDataMsm123
+    SignalData Rtcm3SignalDataMsm2
 }
 
-func NewRtcm3Msm2Message(msg Rtcm3Frame) Rtcm3Msm2Message {
+func NewRtcm3MessageMsm2(msg Rtcm3Frame) Rtcm3MessageMsm2 {
     r := iobit.NewReader(msg.Payload)
     header := NewRtcm3MsmHeader(&r)
-    return Rtcm3Msm2Message{
+    return Rtcm3MessageMsm2{
         Rtcm3Frame: msg,
         Header: header,
-        SatelliteData: NewRtcm3Msm123SatelliteData(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3Msm2SignalData(&r, bits.OnesCount(uint(header.CellMask))),
+        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(header.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm2(&r, bits.OnesCount(uint(header.CellMask))),
     }
 }
 
-type Rtcm3Msm1SignalData struct {
+type Rtcm3SignalDataMsm1 struct {
     Pseudoranges []int16
 }
 
-func NewRtcm3Msm1SignalData(r *iobit.Reader, ncell int) (sigData Rtcm3Msm1SignalData) {
+func NewRtcm3SignalDataMsm1(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm1) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
     return sigData
 }
 
-type Rtcm3Msm1Message struct {
+type Rtcm3MessageMsm1 struct {
     Rtcm3Frame
     Header Rtcm3MsmHeader
-    SatelliteData Rtcm3Msm123SatelliteData
-    SignalData Rtcm3Msm1SignalData
+    SatelliteData Rtcm3SatelliteDataMsm123
+    SignalData Rtcm3SignalDataMsm1
 }
 
-func NewRtcm3Msm1Message(msg Rtcm3Frame) Rtcm3Msm1Message {
+func NewRtcm3MessageMsm1(msg Rtcm3Frame) Rtcm3MessageMsm1 {
     r := iobit.NewReader(msg.Payload)
     header := NewRtcm3MsmHeader(&r)
-    return Rtcm3Msm1Message{
+    return Rtcm3MessageMsm1{
         Rtcm3Frame: msg,
         Header: header,
-        SatelliteData: NewRtcm3Msm123SatelliteData(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3Msm1SignalData(&r, bits.OnesCount(uint(header.CellMask))),
+        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(header.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm1(&r, bits.OnesCount(uint(header.CellMask))),
     }
 }
 
 // Presumably will need seperate types for the MSM7 messages eventually
 //type Rtcm31077 struct {
 //    Rtcm3Frame
-//    Rtcm3Msm7Message
+//    Rtcm3MessageMsm7
 //}
 //
 //func NewRtcm31077(msg Rtcm3Frame) Rtcm31077 {
 //    return Rtcm31077{
 //        Rtcm3Frame: msg,
-//        Rtcm3Msm7Message: NewRtcm3Msm7Message(msg.Payload),
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
 //    }
 //}
 //
 //type Rtcm31087 struct {
 //    Rtcm3Frame
-//    Rtcm3Msm7Message
+//    Rtcm3MessageMsm7
 //}
 //
 //func NewRtcm31087(msg Rtcm3Frame) Rtcm31087 {
 //    return Rtcm31087{
 //        Rtcm3Frame: msg,
-//        Rtcm3Msm7Message: NewRtcm3Msm7Message(msg.Payload),
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
 //    }
 //}
 //
 //type Rtcm31097 struct {
 //    Rtcm3Frame
-//    Rtcm3Msm7Message
+//    Rtcm3MessageMsm7
 //}
 //
 //func NewRtcm31097(msg Rtcm3Frame) Rtcm31097 {
 //    return Rtcm31097{
 //        Rtcm3Frame: msg,
-//        Rtcm3Msm7Message: NewRtcm3Msm7Message(msg.Payload),
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
 //    }
 //}
 //
 //type Rtcm31117 struct {
 //    Rtcm3Frame
-//    Rtcm3Msm7Message
+//    Rtcm3MessageMsm7
 //}
 //
 //func NewRtcm31117(msg Rtcm3Frame) Rtcm31117 {
 //    return Rtcm31117{
 //        Rtcm3Frame: msg,
-//        Rtcm3Msm7Message: NewRtcm3Msm7Message(msg.Payload),
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
 //    }
 //}
 //
 //type Rtcm31127 struct {
 //    Rtcm3Frame
-//    Rtcm3Msm7Message
+//    Rtcm3MessageMsm7
 //}
 //
 //func NewRtcm31127(msg Rtcm3Frame) Rtcm31127 {
 //    return Rtcm31127{
 //        Rtcm3Frame: msg,
-//        Rtcm3Msm7Message: NewRtcm3Msm7Message(msg.Payload),
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
 //    }
 //}
