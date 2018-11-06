@@ -1,4 +1,4 @@
-package rtcm //TODO: come up with better type naming convention perhaps make the package name rtcm3 and remove that as a prefix
+package rtcm //TODO: come up with better type naming convention - perhaps make the package name rtcm3 and remove that as a prefix
 
 import (
     "github.com/bamiaux/iobit"
@@ -22,6 +22,7 @@ func NewRtcm3GpsObservationHeader(r *iobit.Reader) (header Rtcm3GpsObservationHe
         SynchronousGnss: r.Bit(),
         SignalsProcessed: r.Uint8(5),
         SmoothingIndicator: r.Bit(),
+        SmoothingInterval: r.Uint8(3),
     }
 }
 
