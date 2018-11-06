@@ -199,3 +199,76 @@ func NewRtcm3Message1004(f Rtcm3Frame) Rtcm3Message1004 {
         SatelliteData: NewRtcm31004SatelliteData(&r, int(header.SignalsProcessed)),
     }
 }
+
+type Rtcm3Message1019 struct {
+    Rtcm3Frame
+    MessageNumber uint16
+    SatelliteId uint8
+    GpsWeekNumber uint16
+    SvAccuracy uint8
+    L2Code uint8
+    Idot int16
+    Iode uint8
+    Toc uint16
+    Af2 int8
+    Af1 int16
+    Af0 int32
+    Iodc uint16
+    Crs int16
+    DeltaN int16
+    M0 int32
+    Cuc int16
+    Eccentricity uint32
+    Cus int16
+    SrA uint32
+    Toe uint16
+    Cic int16
+    Omega0 int32
+    Cis int16
+    I0 int32
+    C_rc int16
+    Perigee int32
+    OmegaDot int32
+    TGD int8
+    SvHealth uint8
+    L2PDataFlag bool
+    FitInterval bool
+}
+
+func NewRtcm3Message1019(f Rtcm3Frame) Rtcm3Message1019 {
+    r := iobit.NewReader(f.Payload)
+    return Rtcm3Message1019{
+        Rtcm3Frame: f,
+        MessageNumber: r.Uint16(12),
+        SatelliteId: r.Uint8(6),
+        GpsWeekNumber: r.Uint16(10),
+        SvAccuracy: r.Uint8(4),
+        L2Code: r.Uint8(2),
+        Idot: r.Int16(14),
+        Iode: r.Uint8(8),
+        Toc: r.Uint16(16),
+        Af2: r.Int8(8),
+        Af1: r.Int16(16),
+        Af0: r.Int32(22),
+        Iodc: r.Uint16(10),
+        Crs: r.Int16(16),
+        DeltaN: r.Int16(16),
+        M0: r.Int32(32),
+        Cuc: r.Int16(16),
+        Eccentricity: r.Uint32(32),
+        Cus: r.Int16(16),
+        SrA: r.Uint32(32),
+        Toe: r.Uint16(16),
+        Cic: r.Int16(16),
+        Omega0: r.Int32(32),
+        Cis: r.Int16(16),
+        I0: r.Int32(32),
+        C_rc: r.Int16(16),
+        Perigee: r.Int32(32),
+        OmegaDot: r.Int32(24),
+        TGD: r.Int8(8),
+        SvHealth: r.Uint8(6),
+        L2PDataFlag: r.Bit(),
+        FitInterval: r.Bit(),
+    }
+}
