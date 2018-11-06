@@ -16,7 +16,7 @@ func main() {
     e := rtcm.Scan(r, func(msg rtcm.Rtcm3Message) {
         now := time.Now().UTC()
         sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
-        switch int(msg.Number()) {
+        switch int(msg.Number()) { //TODO: Make Time() a method of the Rtcm3Message interface (maybe - this would mean frame isn't an Rtcm3Message but maybe it shouldn't be)
             case 1077, 1097, 1117, 1127:
                 tow := time.Duration(msg.(*rtcm.Rtcm3MessageMsm7).Header.Epoch) * time.Millisecond
                 latency := now.Sub(sow.Add(-(18 * time.Second)).Add(tow))
