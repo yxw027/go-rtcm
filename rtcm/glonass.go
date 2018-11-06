@@ -207,3 +207,88 @@ func NewRtcm3Message1012(f Rtcm3Frame) (msg Rtcm3Message1012) {
     msg.SignalData = NewRtcm31012SignalData(&r, int(msg.Header.SignalCount))
     return msg
 }
+
+type Rtcm3Message1020 struct {
+    Rtcm3Frame
+    MessageNumber uint16
+    SatelliteId uint8
+    FrequencyChannel uint8
+    AlmanacHealth bool
+    AlmanacHealthAvailability bool
+    P1 uint8
+    Tk uint16
+    Msb bool
+    P2 bool
+    Tb uint8
+    XnTb1 int32
+    XnTb int32
+    XnTb2 int8
+    YnTb1 int32
+    YnTb int32
+    YnTb2 int8
+    ZnTb1 int32
+    ZnTb int32
+    ZnTb2 int8
+    P3 bool
+    GammaN int16
+    Mp uint8
+    M1n3 bool
+    TauN int32
+    MDeltaTauN int8
+    En uint8
+    MP4 bool
+    MFt uint8
+    MNt uint16
+    MM uint8
+    AdditionalData bool
+    Na uint16
+    TauC int32
+    MN4 uint8
+    MTauGps int32
+    M1n5 bool
+    Reserved uint8
+}
+
+func NewRtcm3Message1020(f Rtcm3Frame) Rtcm3Message1020 {
+    r := iobit.NewReader(f.Payload)
+    return Rtcm3Message1020{ //TODO: Make sint type
+        Rtcm3Frame: f,
+        MessageNumber: r.Uint16(12),
+        SatelliteId: r.Uint8(6),
+        FrequencyChannel: r.Uint8(5),
+        AlmanacHealth: r.Bit(),
+        AlmanacHealthAvailability: r.Bit(),
+        P1: r.Uint8(2),
+        Tk: r.Uint16(12),
+        Msb: r.Bit(),
+        P2: r.Bit(),
+        Tb: r.Uint8(7),
+        XnTb1: Sint32(r, 24),
+        XnTb: Sint32(r, 27),
+        XnTb2: Sint8(r, 5),
+        YnTb1: Sint32(r, 24),
+        YnTb: Sint32(r, 27),
+        YnTb2: Sint8(r, 5),
+        ZnTb1: Sint32(r, 24),
+        ZnTb: Sint32(r, 27),
+        ZnTb2: Sint8(r, 5),
+        P3: r.Bit(),
+        GammaN: Sint16(r, 11),
+        Mp: r.Uint8(2),
+        M1n3: r.Bit(),
+        TauN: Sint32(r, 22),
+        MDeltaTauN: Sint8(r, 5),
+        En: r.Uint8(5),
+        MP4: r.Bit(),
+        MFt: r.Uint8(4),
+        MNt: r.Uint16(11),
+        MM: r.Uint8(2),
+        AdditionalData: r.Bit(),
+        Na: r.Uint16(11),
+        TauC: Sint32(r, 32),
+        MN4: r.Uint8(5),
+        MTauGps: Sint32(r, 22),
+        M1n5: r.Bit(),
+        Reserved: r.Uint8(7),
+    }
+}

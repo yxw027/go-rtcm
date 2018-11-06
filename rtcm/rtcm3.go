@@ -130,6 +130,10 @@ func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
             message := NewRtcm3Message1019(message)
             return &message, nil
 
+        case 1020:
+            message := NewRtcm3Message1020(message)
+            return &message, nil
+
         case 1071, 1081, 1091, 1111, 1121:
             message := NewRtcm3MessageMsm1(message)
             return &message, nil
@@ -176,4 +180,30 @@ func Scan(r io.Reader, callback Callback) (err error) {
 
         go callback(message)
     }
+}
+
+// Sign-Magnitude Ints
+
+func Sint8(r iobit.Reader, length int) int8 {
+    n, v := r.Bit(), int8(r.Uint8(uint(length - 1)))
+    if n == true {
+        v = -v
+    }
+    return v
+}
+
+func Sint16(r iobit.Reader, length int) int16 {
+    n, v := r.Bit(), int16(r.Uint16(uint(length - 1)))
+    if n == true {
+        v = -v
+    }
+    return v
+}
+
+func Sint32(r iobit.Reader, length int) int32 {
+    n, v := r.Bit(), int32(r.Uint32(uint(length - 1)))
+    if n == true {
+        v = -v
+    }
+    return v
 }
