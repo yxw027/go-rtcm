@@ -43,10 +43,10 @@ type Rtcm3Message1005 struct {
     AntennaReferencePoint
 }
 
-func NewRtcm3Message1005(msg Rtcm3Frame) Rtcm3Message1005 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3Message1005(f Rtcm3Frame) Rtcm3Message1005 {
+    r := iobit.NewReader(f.Payload)
     return Rtcm3Message1005{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         AntennaReferencePoint: NewAntennaReferencePoint(&r),
     }
 }
@@ -57,10 +57,10 @@ type Rtcm3Message1006 struct {
     AntennaHeight uint16
 }
 
-func NewRtcm3Message1006(msg Rtcm3Frame) Rtcm3Message1006 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3Message1006(f Rtcm3Frame) Rtcm3Message1006 {
+    r := iobit.NewReader(f.Payload)
     return Rtcm3Message1006{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         AntennaReferencePoint: NewAntennaReferencePoint(&r),
         AntennaHeight: r.Uint16(16),
     }
@@ -90,10 +90,10 @@ type Rtcm3Message1007 struct {
     AntennaDescriptor
 }
 
-func NewRtcm3Message1007(msg Rtcm3Frame) Rtcm3Message1007 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3Message1007(f Rtcm3Frame) Rtcm3Message1007 {
+    r := iobit.NewReader(f.Payload)
     return Rtcm3Message1007{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         AntennaDescriptor: NewAntennaDescriptor(&r),
     }
 }
@@ -105,13 +105,13 @@ type Rtcm3Message1008 struct {
     SerialNumber string
 }
 
-func NewRtcm3Message1008(msg Rtcm3Frame) (desc Rtcm3Message1008) {
-    r := iobit.NewReader(msg.Payload)
-    desc = Rtcm3Message1008{
-        Rtcm3Frame: msg,
+func NewRtcm3Message1008(f Rtcm3Frame) (msg Rtcm3Message1008) {
+    r := iobit.NewReader(f.Payload)
+    msg = Rtcm3Message1008{
+        Rtcm3Frame: f,
         AntennaDescriptor: NewAntennaDescriptor(&r),
         SerialNumberLength: r.Uint8(8),
     }
-    desc.SerialNumber = r.String(8 * int(desc.SerialNumberLength))
-    return desc
+    msg.SerialNumber = r.String(8 * int(msg.SerialNumberLength))
+    return msg
 }

@@ -103,11 +103,11 @@ type Rtcm3MessageMsm7 struct {
     SignalData Rtcm3SignalDataMsm7
 }
 
-func NewRtcm3MessageMsm7(msg Rtcm3Frame) Rtcm3MessageMsm7 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3MessageMsm7(f Rtcm3Frame) Rtcm3MessageMsm7 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm7{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm7(&r, bits.OnesCount(uint(header.CellMask))),
@@ -163,11 +163,11 @@ type Rtcm3MessageMsm6 struct {
     SignalData Rtcm3SignalDataMsm6
 }
 
-func NewRtcm3MessageMsm6(msg Rtcm3Frame) Rtcm3MessageMsm6 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3MessageMsm6(f Rtcm3Frame) Rtcm3MessageMsm6 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm6{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm6(&r, bits.OnesCount(uint(header.CellMask))),
@@ -212,11 +212,11 @@ type Rtcm3MessageMsm5 struct {
     SignalData Rtcm3SignalDataMsm5
 }
 
-func NewRtcm3MessageMsm5(msg Rtcm3Frame) Rtcm3MessageMsm5 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3MessageMsm5(f Rtcm3Frame) Rtcm3MessageMsm5 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm5{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm5(&r, bits.OnesCount(uint(header.CellMask))),
@@ -257,11 +257,11 @@ type Rtcm3MessageMsm4 struct {
     SignalData Rtcm3SignalDataMsm4
 }
 
-func NewRtcm3MessageMsm4(msg Rtcm3Frame) Rtcm3MessageMsm4 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3MessageMsm4(f Rtcm3Frame) Rtcm3MessageMsm4 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm4{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm4(&r, bits.OnesCount(uint(header.CellMask))),
@@ -309,11 +309,11 @@ type Rtcm3MessageMsm3 struct {
     SignalData Rtcm3SignalDataMsm3
 }
 
-func NewRtcm3MessageMsm3(msg Rtcm3Frame) Rtcm3MessageMsm3 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3MessageMsm3(f Rtcm3Frame) Rtcm3MessageMsm3 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm3{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm3(&r, bits.OnesCount(uint(header.CellMask))),
@@ -346,11 +346,11 @@ type Rtcm3MessageMsm2 struct {
     SignalData Rtcm3SignalDataMsm2
 }
 
-func NewRtcm3MessageMsm2(msg Rtcm3Frame) Rtcm3MessageMsm2 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3MessageMsm2(f Rtcm3Frame) Rtcm3MessageMsm2 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm2{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm2(&r, bits.OnesCount(uint(header.CellMask))),
@@ -375,11 +375,11 @@ type Rtcm3MessageMsm1 struct {
     SignalData Rtcm3SignalDataMsm1
 }
 
-func NewRtcm3MessageMsm1(msg Rtcm3Frame) Rtcm3MessageMsm1 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3MessageMsm1(f Rtcm3Frame) Rtcm3MessageMsm1 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm1{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm1(&r, bits.OnesCount(uint(header.CellMask))),
@@ -392,10 +392,10 @@ func NewRtcm3MessageMsm1(msg Rtcm3Frame) Rtcm3MessageMsm1 {
 //    Rtcm3MessageMsm7
 //}
 //
-//func NewRtcm31077(msg Rtcm3Frame) Rtcm31077 {
+//func NewRtcm31077(f Rtcm3Frame) Rtcm31077 {
 //    return Rtcm31077{
-//        Rtcm3Frame: msg,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
+//        Rtcm3Frame: f,
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
 //    }
 //}
 //
@@ -404,10 +404,10 @@ func NewRtcm3MessageMsm1(msg Rtcm3Frame) Rtcm3MessageMsm1 {
 //    Rtcm3MessageMsm7
 //}
 //
-//func NewRtcm31087(msg Rtcm3Frame) Rtcm31087 {
+//func NewRtcm31087(f Rtcm3Frame) Rtcm31087 {
 //    return Rtcm31087{
-//        Rtcm3Frame: msg,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
+//        Rtcm3Frame: f,
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
 //    }
 //}
 //
@@ -416,10 +416,10 @@ func NewRtcm3MessageMsm1(msg Rtcm3Frame) Rtcm3MessageMsm1 {
 //    Rtcm3MessageMsm7
 //}
 //
-//func NewRtcm31097(msg Rtcm3Frame) Rtcm31097 {
+//func NewRtcm31097(f Rtcm3Frame) Rtcm31097 {
 //    return Rtcm31097{
-//        Rtcm3Frame: msg,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
+//        Rtcm3Frame: f,
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
 //    }
 //}
 //
@@ -428,10 +428,10 @@ func NewRtcm3MessageMsm1(msg Rtcm3Frame) Rtcm3MessageMsm1 {
 //    Rtcm3MessageMsm7
 //}
 //
-//func NewRtcm31117(msg Rtcm3Frame) Rtcm31117 {
+//func NewRtcm31117(f Rtcm3Frame) Rtcm31117 {
 //    return Rtcm31117{
-//        Rtcm3Frame: msg,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
+//        Rtcm3Frame: f,
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
 //    }
 //}
 //
@@ -440,9 +440,9 @@ func NewRtcm3MessageMsm1(msg Rtcm3Frame) Rtcm3MessageMsm1 {
 //    Rtcm3MessageMsm7
 //}
 //
-//func NewRtcm31127(msg Rtcm3Frame) Rtcm31127 {
+//func NewRtcm31127(f Rtcm3Frame) Rtcm31127 {
 //    return Rtcm31127{
-//        Rtcm3Frame: msg,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(msg.Payload),
+//        Rtcm3Frame: f,
+//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
 //    }
 //}

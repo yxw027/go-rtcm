@@ -106,6 +106,10 @@ func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
             message := NewRtcm3Message1008(message)
             return &message, nil
 
+        case 1009:
+            message := NewRtcm3Message1009(message)
+            return &message, nil
+
         case 1071, 1081, 1091, 1111, 1121:
             message := NewRtcm3MessageMsm1(message)
             return &message, nil

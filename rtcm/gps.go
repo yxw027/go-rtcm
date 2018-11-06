@@ -53,11 +53,11 @@ type Rtcm3Message1001 struct {
     SatelliteData []Rtcm31001SatelliteData
 }
 
-func NewRtcm3Message1001(msg Rtcm3Frame) Rtcm3Message1001 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3Message1001(f Rtcm3Frame) Rtcm3Message1001 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3GpsObservationHeader(&r)
     return Rtcm3Message1001{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm31001SatelliteData(&r, int(header.SignalsProcessed)),
     }
@@ -94,11 +94,11 @@ type Rtcm3Message1002 struct {
     SatelliteData []Rtcm31002SatelliteData
 }
 
-func NewRtcm3Message1002(msg Rtcm3Frame) Rtcm3Message1002 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3Message1002(f Rtcm3Frame) Rtcm3Message1002 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3GpsObservationHeader(&r)
     return Rtcm3Message1002{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm31002SatelliteData(&r, int(header.SignalsProcessed)),
     }
@@ -139,11 +139,11 @@ type Rtcm3Message1003 struct {
     SatelliteData []Rtcm31003SatelliteData
 }
 
-func NewRtcm3Message1003(msg Rtcm3Frame) Rtcm3Message1003 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3Message1003(f Rtcm3Frame) Rtcm3Message1003 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3GpsObservationHeader(&r)
     return Rtcm3Message1003{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm31003SatelliteData(&r, int(header.SignalsProcessed)),
     }
@@ -190,11 +190,11 @@ type Rtcm3Message1004 struct {
     SatelliteData []Rtcm31004SatelliteData
 }
 
-func NewRtcm3Message1004(msg Rtcm3Frame) Rtcm3Message1004 {
-    r := iobit.NewReader(msg.Payload)
+func NewRtcm3Message1004(f Rtcm3Frame) Rtcm3Message1004 {
+    r := iobit.NewReader(f.Payload)
     header := NewRtcm3GpsObservationHeader(&r)
     return Rtcm3Message1004{
-        Rtcm3Frame: msg,
+        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm31004SatelliteData(&r, int(header.SignalsProcessed)),
     }
