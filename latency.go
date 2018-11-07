@@ -26,7 +26,7 @@ func GlonassTime(e uint32) time.Duration {
 
 func GlonassTimeShort(e uint32) time.Duration {
     now := time.Now().UTC()
-    dow := now.Truncate(time.Hour * 24).AddDate(0, 0, 1)
+    dow := now.Truncate(time.Hour * 24)
     tod := time.Duration(e) * time.Millisecond
     return now.Sub(dow.Add(tod).Add(-(3 * time.Hour)))
 }
