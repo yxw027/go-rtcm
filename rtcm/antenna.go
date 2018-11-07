@@ -115,3 +115,31 @@ func NewRtcm3Message1008(f Rtcm3Frame) (msg Rtcm3Message1008) {
     msg.SerialNumber = r.String(8 * int(msg.SerialNumberLength))
     return msg
 }
+
+type Rtcm3Message1033 struct {
+    Rtcm3Frame
+    MessageNumber uint16
+    ReferenceStationId uint16
+    AntennaDescriptor string
+    AntennaSetupId uint8
+    AntennaSerialNumber string
+    ReceiverTypeDescriptor string
+    ReceiverFirmwareVersion string
+    ReceiverSerialNumber string
+}
+
+func NewRtcm3Message1033(f Rtcm3Frame) (msg Rtcm3Message1033) {
+    r := iobit.NewReader(f.Payload)
+    msg = Rtcm3Message1033{
+        Rtcm3Frame: f,
+        MessageNumber: r.Uint16(12),
+        ReferenceStationId: r.Uint16(12),
+    }
+    msg.AntennaDescriptor = r.String(int(r.Uint8(8)))
+    msg.AntennaSetupId = r.Uint8(8)
+    msg.AntennaSerialNumber = r.String(int(r.Uint8(8)))
+    msg.ReceiverTypeDescriptor = r.String(int(r.Uint8(8)))
+    msg.ReceiverFirmwareVersion = r.String(int(r.Uint8(8)))
+    msg.ReceiverSerialNumber = r.String(int(r.Uint8(8)))
+    return msg
+}

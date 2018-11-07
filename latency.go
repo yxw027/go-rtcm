@@ -7,7 +7,6 @@ import (
     "fmt"
     "os"
     "time"
-//    "encoding/json"
 )
 
 func GpsTime(e uint32) time.Duration {
@@ -37,11 +36,6 @@ func main() {
     r, _ := ntrip.Client(c, os.Args[2], os.Args[3])
 
     e := rtcm.Scan(r, func(msg rtcm.Rtcm3Message) {
-        //if msg.Number() == uint16(1020) {
-        //    j, _ := json.Marshal(msg)
-        //    fmt.Println(string(j))
-        //}
-        //return
         switch int(msg.Number()) {
             case 1077, 1097, 1117:
                 fmt.Println(msg.Number(), GpsTime(msg.(*rtcm.Rtcm3MessageMsm7).Header.Epoch))

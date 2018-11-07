@@ -292,3 +292,41 @@ func NewRtcm3Message1020(f Rtcm3Frame) Rtcm3Message1020 {
         Reserved: r.Uint8(7),
     }
 }
+
+type Rtcm3Message1230 struct {
+    Rtcm3Frame
+    MessageNumber uint16
+    ReferenceStationId uint16
+    CodePhaseBias bool
+    Reserved uint8
+    SignalsMask uint8
+    L1CACodePhaseBias int16
+    L1PCodePhaseBias int16
+    L2CACodePhaseBias int16
+    L2PCodePhaseBias int16
+}
+
+func NewRtcm3Message1230(f Rtcm3Frame) (msg Rtcm3Message1230) {
+    r := iobit.NewReader(f.Payload)
+    msg = Rtcm3Message1230{
+        Rtcm3Frame: f,
+        MessageNumber: r.Uint16(12),
+        ReferenceStationId: r.Uint16(12),
+        CodePhaseBias: r.Bit(),
+        Reserved: r.Uint8(3),
+        SignalsMask: r.Uint8(4),
+    }
+    if (msg.SignalsMask & 8) == 8 {
+        msg.L1CACodePhaseBias = r.Int16(16)
+    }
+    if (msg.SignalsMask & 4) == 4 {
+        msg.L1PCodePhaseBias = r.Int16(16)
+    }
+    if (msg.SignalsMask & 2) == 2 {
+        msg.L2CACodePhaseBias = r.Int16(16)
+    }
+    if (msg.SignalsMask & 1) == 1 {
+        msg.L2PCodePhaseBias = r.Int16(16)
+    }
+    return msg
+}
