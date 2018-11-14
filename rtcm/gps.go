@@ -2,6 +2,7 @@ package rtcm //TODO: come up with better type naming convention - perhaps make t
 
 import (
     "github.com/bamiaux/iobit"
+    "time"
 )
 
 type Rtcm3GpsObservationHeader struct {
@@ -24,6 +25,13 @@ func NewRtcm3GpsObservationHeader(r *iobit.Reader) (header Rtcm3GpsObservationHe
         SmoothingIndicator: r.Bit(),
         SmoothingInterval: r.Uint8(3),
     }
+}
+
+func GpsTime(e uint32) time.Time {
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    tow := time.Duration(e) * time.Millisecond
+    return sow.Add(-(18 * time.Second)).Add(tow)
 }
 
 type Rtcm31001SatelliteData struct {
@@ -61,6 +69,10 @@ func NewRtcm3Message1001(f Rtcm3Frame) Rtcm3Message1001 {
         Header: header,
         SatelliteData: NewRtcm31001SatelliteData(&r, int(header.SignalsProcessed)),
     }
+}
+
+func (msg Rtcm3Message1001) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
 }
 
 type Rtcm31002SatelliteData struct {
@@ -102,6 +114,10 @@ func NewRtcm3Message1002(f Rtcm3Frame) Rtcm3Message1002 {
         Header: header,
         SatelliteData: NewRtcm31002SatelliteData(&r, int(header.SignalsProcessed)),
     }
+}
+
+func (msg Rtcm3Message1002) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
 }
 
 type Rtcm31003SatelliteData struct {
@@ -147,6 +163,10 @@ func NewRtcm3Message1003(f Rtcm3Frame) Rtcm3Message1003 {
         Header: header,
         SatelliteData: NewRtcm31003SatelliteData(&r, int(header.SignalsProcessed)),
     }
+}
+
+func (msg Rtcm3Message1003) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
 }
 
 type Rtcm31004SatelliteData struct {
@@ -198,6 +218,10 @@ func NewRtcm3Message1004(f Rtcm3Frame) Rtcm3Message1004 {
         Header: header,
         SatelliteData: NewRtcm31004SatelliteData(&r, int(header.SignalsProcessed)),
     }
+}
+
+func (msg Rtcm3Message1004) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
 }
 
 type Rtcm3Message1019 struct {

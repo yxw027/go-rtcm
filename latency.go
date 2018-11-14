@@ -37,28 +37,8 @@ func main() {
 
     e := rtcm.Scan(r, func(msg rtcm.Rtcm3Message) {
         switch int(msg.Number()) {
-            case 1077, 1097, 1117:
-                fmt.Println(msg.Number(), GpsTime(msg.(*rtcm.Rtcm3MessageMsm7).Header.Epoch))
-            case 1087:
-                fmt.Println(msg.Number(), GlonassTime(msg.(*rtcm.Rtcm3MessageMsm7).Header.Epoch))
-            case 1127:
-                fmt.Println(msg.Number(), GpsTime(msg.(*rtcm.Rtcm3MessageMsm7).Header.Epoch) - (14 * time.Second))
-            case 1001:
-                fmt.Println(msg.Number(), GpsTime(msg.(*rtcm.Rtcm3Message1001).Header.Epoch))
-            case 1002:
-                fmt.Println(msg.Number(), GpsTime(msg.(*rtcm.Rtcm3Message1002).Header.Epoch))
-            case 1003:
-                fmt.Println(msg.Number(), GpsTime(msg.(*rtcm.Rtcm3Message1003).Header.Epoch))
-            case 1004:
-                fmt.Println(msg.Number(), GpsTime(msg.(*rtcm.Rtcm3Message1004).Header.Epoch))
-            case 1009:
-                fmt.Println(msg.Number(), GlonassTimeShort(msg.(*rtcm.Rtcm3Message1009).Header.Epoch))
-            case 1010:
-                fmt.Println(msg.Number(), GlonassTimeShort(msg.(*rtcm.Rtcm3Message1010).Header.Epoch))
-            case 1011:
-                fmt.Println(msg.Number(), GlonassTimeShort(msg.(*rtcm.Rtcm3Message1011).Header.Epoch))
-            case 1012:
-                fmt.Println(msg.Number(), GlonassTimeShort(msg.(*rtcm.Rtcm3Message1012).Header.Epoch))
+            case 1077, 1097, 1117, 1087, 1127, 1001, 1002, 1003, 1004, 1009, 1010, 1011, 1012:
+                fmt.Println(msg.Number(), msg.(rtcm.Rtcm3Observable).Time())
         }
     })
     fmt.Println(e)

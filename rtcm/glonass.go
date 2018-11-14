@@ -2,6 +2,7 @@ package rtcm
 
 import (
     "github.com/bamiaux/iobit"
+    "time"
 )
 
 type Rtcm3GlonassObservationHeader struct {
@@ -25,6 +26,22 @@ func NewRtcm3GlonassObservationHeader(r *iobit.Reader) Rtcm3GlonassObservationHe
         SmoothingInterval: r.Uint8(3),
     }
 }
+
+func GlonassTime(e uint32) time.Time {
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    dow := int((e >> 27) & 0x7)
+    tod := time.Duration(e & 0x7FFFFFF) * time.Millisecond
+    return sow.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))
+}
+
+func GlonassTimeShort(e uint32) time.Time {
+    now := time.Now().UTC()
+    dow := now.Truncate(time.Hour * 24)
+    tod := time.Duration(e) * time.Millisecond
+    return dow.Add(tod).Add(-(3 * time.Hour))
+}
+
 
 type Rtcm31009SignalData struct {
     SatelliteId uint8
@@ -63,6 +80,10 @@ func NewRtcm3Message1009(f Rtcm3Frame) (msg Rtcm3Message1009) {
     }
     msg.SignalData = NewRtcm31009SignalData(&r, int(msg.Header.SignalCount))
     return msg
+}
+
+func (msg Rtcm3Message1009) Time() time.Time {
+    return GlonassTimeShort(msg.Header.Epoch)
 }
 
 type Rtcm31010SignalData struct {
@@ -106,6 +127,10 @@ func NewRtcm3Message1010(f Rtcm3Frame) (msg Rtcm3Message1010) {
     }
     msg.SignalData = NewRtcm31010SignalData(&r, int(msg.Header.SignalCount))
     return msg
+}
+
+func (msg Rtcm3Message1010) Time() time.Time {
+    return GlonassTimeShort(msg.Header.Epoch)
 }
 
 type Rtcm31011SignalData struct {
@@ -153,6 +178,10 @@ func NewRtcm3Message1011(f Rtcm3Frame) (msg Rtcm3Message1011) {
     }
     msg.SignalData = NewRtcm31011SignalData(&r, int(msg.Header.SignalCount))
     return msg
+}
+
+func (msg Rtcm3Message1011) Time() time.Time {
+    return GlonassTimeShort(msg.Header.Epoch)
 }
 
 type Rtcm31012SignalData struct {
@@ -206,6 +235,10 @@ func NewRtcm3Message1012(f Rtcm3Frame) (msg Rtcm3Message1012) {
     }
     msg.SignalData = NewRtcm31012SignalData(&r, int(msg.Header.SignalCount))
     return msg
+}
+
+func (msg Rtcm3Message1012) Time() time.Time {
+    return GlonassTimeShort(msg.Header.Epoch)
 }
 
 type Rtcm3Message1020 struct {

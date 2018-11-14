@@ -3,6 +3,7 @@ package rtcm
 import (
     "github.com/bamiaux/iobit"
     "math/bits"
+    "time"
 )
 
 type Rtcm3MsmHeader struct {
@@ -112,6 +113,10 @@ func NewRtcm3MessageMsm7(f Rtcm3Frame) Rtcm3MessageMsm7 {
         SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm7(&r, bits.OnesCount(uint(header.CellMask))),
     }
+}
+
+func (msg Rtcm3MessageMsm7) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
 }
 
 type Rtcm3SatelliteDataMsm46 struct {
@@ -386,63 +391,82 @@ func NewRtcm3MessageMsm1(f Rtcm3Frame) Rtcm3MessageMsm1 {
     }
 }
 
-// Presumably will need seperate types for the MSM7 messages eventually
-//type Rtcm31077 struct {
-//    Rtcm3Frame
-//    Rtcm3MessageMsm7
-//}
-//
-//func NewRtcm31077(f Rtcm3Frame) Rtcm31077 {
-//    return Rtcm31077{
-//        Rtcm3Frame: f,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
-//    }
-//}
-//
-//type Rtcm31087 struct {
-//    Rtcm3Frame
-//    Rtcm3MessageMsm7
-//}
-//
-//func NewRtcm31087(f Rtcm3Frame) Rtcm31087 {
-//    return Rtcm31087{
-//        Rtcm3Frame: f,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
-//    }
-//}
-//
-//type Rtcm31097 struct {
-//    Rtcm3Frame
-//    Rtcm3MessageMsm7
-//}
-//
-//func NewRtcm31097(f Rtcm3Frame) Rtcm31097 {
-//    return Rtcm31097{
-//        Rtcm3Frame: f,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
-//    }
-//}
-//
-//type Rtcm31117 struct {
-//    Rtcm3Frame
-//    Rtcm3MessageMsm7
-//}
-//
-//func NewRtcm31117(f Rtcm3Frame) Rtcm31117 {
-//    return Rtcm31117{
-//        Rtcm3Frame: f,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
-//    }
-//}
-//
-//type Rtcm31127 struct {
-//    Rtcm3Frame
-//    Rtcm3MessageMsm7
-//}
-//
-//func NewRtcm31127(f Rtcm3Frame) Rtcm31127 {
-//    return Rtcm31127{
-//        Rtcm3Frame: f,
-//        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
-//    }
-//}
+type Rtcm3Message1077 struct {
+    Rtcm3Frame
+    Rtcm3MessageMsm7
+}
+
+func NewRtcm3Message1077(f Rtcm3Frame) Rtcm3Message1077 {
+    return Rtcm3Message1077{
+        Rtcm3Frame: f,
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+    }
+}
+
+func (msg Rtcm3Message1077) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1087 struct {
+    Rtcm3Frame
+    Rtcm3MessageMsm7
+}
+
+func NewRtcm3Message1087(f Rtcm3Frame) Rtcm3Message1087 {
+    return Rtcm3Message1087{
+        Rtcm3Frame: f,
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+    }
+}
+
+func (msg Rtcm3Message1087) Time() time.Time {
+    return GlonassTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1097 struct {
+    Rtcm3Frame
+    Rtcm3MessageMsm7
+}
+
+func NewRtcm3Message1097(f Rtcm3Frame) Rtcm3Message1097 {
+    return Rtcm3Message1097{
+        Rtcm3Frame: f,
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+    }
+}
+
+func (msg Rtcm3Message1097) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1117 struct {
+    Rtcm3Frame
+    Rtcm3MessageMsm7
+}
+
+func NewRtcm3Message1117(f Rtcm3Frame) Rtcm3Message1117 {
+    return Rtcm3Message1117{
+        Rtcm3Frame: f,
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+    }
+}
+
+func (msg Rtcm3Message1117) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1127 struct {
+    Rtcm3Frame
+    Rtcm3MessageMsm7
+}
+
+func NewRtcm3Message1127(f Rtcm3Frame) Rtcm3Message1127 {
+    return Rtcm3Message1127{
+        Rtcm3Frame: f,
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+    }
+}
+
+func (msg Rtcm3Message1127) Time() time.Time {
+    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+}
