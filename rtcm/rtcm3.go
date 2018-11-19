@@ -7,7 +7,7 @@ import (
 //    "fmt"
     "errors"
     "github.com/bamiaux/iobit"
-//    "time"
+    "time"
 )
 
 type Rtcm3Message interface {
@@ -23,6 +23,10 @@ type Rtcm3Frame struct {
     Length uint16
     Payload []byte
     Crc uint32
+}
+
+type Rtcm3Observable interface {
+    Time() time.Time
 }
 
 func (f Rtcm3Frame) Number() uint16 {
@@ -182,8 +186,20 @@ func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
             message := NewRtcm3MessageMsm6(message)
             return &message, nil
 
-        case 1077, 1087, 1097, 1117, 1127:
-            message := NewRtcm3MessageMsm7(message)
+        case 1077:
+            message := NewRtcm3Message1077(message)
+            return &message, nil
+        case 1087:
+            message := NewRtcm3Message1087(message)
+            return &message, nil
+        case 1097:
+            message := NewRtcm3Message1097(message)
+            return &message, nil
+        case 1117:
+            message := NewRtcm3Message1117(message)
+            return &message, nil
+        case 1127:
+            message := NewRtcm3Message1127(message)
             return &message, nil
     }
 
