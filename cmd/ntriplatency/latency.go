@@ -1,7 +1,7 @@
 package main
 
 import (
-    "./rtcm"
+    "../../pkgs/rtcm"
     "github.com/umeat/go-ntrip/pkgs/ntrip"
     "fmt"
     "os"
