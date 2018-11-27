@@ -27,13 +27,13 @@ func TestMessageTypes(t *testing.T) {
 
         data, err := rtcm.Deserialize(br)
         if err != nil {
-            t.Error("Failed to Deserialize " + msgNumber + "data:", err)
+            t.Error("Failed to Deserialize " + msgNumber + " data:", err)
         }
 
         msg := msgType
         msg = data
         if reflect.TypeOf(msg) != reflect.TypeOf(msgType) {
-            t.Error(reflect.TypeOf(msg), reflect.TypeOf(msgType))
+            t.Error("Could not assert " + msgNumber + " data as type " + reflect.TypeOf(msgType).Elem().Name())
         }
     }
 }
