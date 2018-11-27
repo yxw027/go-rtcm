@@ -5,7 +5,7 @@ import (
     "os"
     "bufio"
     "reflect"
-    "../rtcm"
+    "../pkgs/rtcm"
 )
 
 var messages = map[string]interface{}{
