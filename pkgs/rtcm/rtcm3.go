@@ -4,7 +4,6 @@ import (
     "io"
     "bufio"
     "encoding/binary"
-//    "fmt"
     "errors"
     "github.com/bamiaux/iobit"
     "time"
@@ -72,7 +71,7 @@ func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
     }
 
     if Crc24q(data[:len(data)-3]) != int(message.Crc) {
-        return &message, errors.New("CRC Failed")
+        return message, errors.New("CRC Failed")
     }
 
     reader.Discard(len(data) - 1)
@@ -80,130 +79,130 @@ func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
     switch int(message.Number()) {
         case 1001:
             message := NewRtcm3Message1001(message)
-            return &message, nil
+            return message, nil
 
         case 1002:
             message := NewRtcm3Message1002(message)
-            return &message, nil
+            return message, nil
 
         case 1003:
             message := NewRtcm3Message1003(message)
-            return &message, nil
+            return message, nil
 
         case 1004:
             message := NewRtcm3Message1004(message)
-            return &message, nil
+            return message, nil
 
         case 1005:
             message := NewRtcm3Message1005(message)
-            return &message, nil
+            return message, nil
 
         case 1006:
             message := NewRtcm3Message1006(message)
-            return &message, nil
+            return message, nil
 
         case 1007:
             message := NewRtcm3Message1007(message)
-            return &message, nil
+            return message, nil
 
         case 1008:
             message := NewRtcm3Message1008(message)
-            return &message, nil
+            return message, nil
 
         case 1009:
             message := NewRtcm3Message1009(message)
-            return &message, nil
+            return message, nil
 
         case 1010:
             message := NewRtcm3Message1010(message)
-            return &message, nil
+            return message, nil
 
         case 1011:
             message := NewRtcm3Message1011(message)
-            return &message, nil
+            return message, nil
 
         case 1012:
             message := NewRtcm3Message1012(message)
-            return &message, nil
+            return message, nil
 
         case 1013:
             message := NewRtcm3Message1013(message)
-            return &message, nil
+            return message, nil
 
         case 1019:
             message := NewRtcm3Message1019(message)
-            return &message, nil
+            return message, nil
 
         case 1020:
             message := NewRtcm3Message1020(message)
-            return &message, nil
+            return message, nil
 
         case 1029:
             message := NewRtcm3Message1029(message)
-            return &message, nil
+            return message, nil
 
         case 1030:
             message := NewRtcm3Message1030(message)
-            return &message, nil
+            return message, nil
 
         case 1031:
             message := NewRtcm3Message1031(message)
-            return &message, nil
+            return message, nil
 
         case 1032:
             message := NewRtcm3Message1032(message)
-            return &message, nil
+            return message, nil
 
         case 1033:
             message := NewRtcm3Message1033(message)
-            return &message, nil
+            return message, nil
 
         case 1230:
             message := NewRtcm3Message1230(message)
-            return &message, nil
+            return message, nil
 
         case 1071, 1081, 1091, 1111, 1121:
             message := NewRtcm3MessageMsm1(message)
-            return &message, nil
+            return message, nil
 
         case 1072, 1082, 1092, 1112, 1122:
             message := NewRtcm3MessageMsm2(message)
-            return &message, nil
+            return message, nil
 
         case 1073, 1083, 1093, 1113, 1123:
             message := NewRtcm3MessageMsm3(message)
-            return &message, nil
+            return message, nil
 
         case 1074, 1084, 1094, 1114, 1124:
             message := NewRtcm3MessageMsm4(message)
-            return &message, nil
+            return message, nil
 
         case 1075, 1085, 1095, 1115, 1125:
             message := NewRtcm3MessageMsm5(message)
-            return &message, nil
+            return message, nil
 
         case 1076, 1086, 1096, 1116, 1126:
-            message := NewRtcm3MessageMsm6(message)
-            return &message, nil
+            message := NewRtcm3MessageMsm6(message.Payload)
+            return message, nil
 
         case 1077:
-            message := NewRtcm3Message1077(message)
-            return &message, nil
+            message := NewRtcm3Message1077(message.Payload)
+            return message, nil
         case 1087:
             message := NewRtcm3Message1087(message)
-            return &message, nil
+            return message, nil
         case 1097:
             message := NewRtcm3Message1097(message)
-            return &message, nil
+            return message, nil
         case 1117:
             message := NewRtcm3Message1117(message)
-            return &message, nil
+            return message, nil
         case 1127:
             message := NewRtcm3Message1127(message)
-            return &message, nil
+            return message, nil
     }
 
-    return &message, nil
+    return message, nil
 }
 
 type Callback func(Rtcm3Message)

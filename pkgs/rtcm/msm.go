@@ -2,6 +2,7 @@ package rtcm
 
 import (
     "github.com/bamiaux/iobit"
+    "math"
     "math/bits"
     "time"
 )
@@ -98,25 +99,82 @@ func NewRtcm3SignalDataMsm7(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
 }
 
 type Rtcm3MessageMsm7 struct {
-    Rtcm3Frame
     Header Rtcm3MsmHeader
     SatelliteData Rtcm3SatelliteDataMsm57
     SignalData Rtcm3SignalDataMsm7
 }
 
-func NewRtcm3MessageMsm7(f Rtcm3Frame) Rtcm3MessageMsm7 {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3MessageMsm7(payload []byte) Rtcm3MessageMsm7 {
+    r := iobit.NewReader(payload)
     header := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm7{
-        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm7(&r, bits.OnesCount(uint(header.CellMask))),
     }
 }
 
-func (msg Rtcm3MessageMsm7) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+func (msg Rtcm3MessageMsm7) Serialize() (data []byte) {
+    satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
+    sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
+    cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (80 * cellMaskBits)
+    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
+    w := iobit.NewWriter(data)
+
+    w.PutUint16(12, msg.Header.MessageNumber)
+    w.PutUint16(12, msg.Header.StationId)
+    w.PutUint32(30, msg.Header.Epoch)
+    w.PutBit(msg.Header.MultipleMessageBit)
+    w.PutUint8(3, msg.Header.Iods)
+    w.PutUint8(7, msg.Header.Reserved)
+    w.PutUint8(2, msg.Header.ClockSteeringIndicator)
+    w.PutUint8(2, msg.Header.ExternalClockIndicator)
+    w.PutBit(msg.Header.SmoothingIndicator)
+    w.PutUint8(3, msg.Header.SmoothingInterval)
+    w.PutUint64(64, msg.Header.SatelliteMask)
+    w.PutUint32(32, msg.Header.SignalMask)
+    w.PutUint64(uint(sigMaskBits * satMaskBits), msg.Header.CellMask)
+
+    for _, rangeMillis := range msg.SatelliteData.RangeMilliseconds {
+        w.PutUint8(8, rangeMillis)
+    }
+    for _, extended := range msg.SatelliteData.Extended {
+        w.PutUint8(4, extended)
+    }
+    for _, ranges := range msg.SatelliteData.Ranges {
+        w.PutUint16(10, ranges)
+    }
+    for _, phaseRangeRate := range msg.SatelliteData.PhaseRangeRates {
+        w.PutInt16(14, phaseRangeRate)
+    }
+
+    for _, pseudorange := range msg.SignalData.Pseudoranges {
+        w.PutInt32(20, pseudorange)
+    }
+    for _, phaseRange := range msg.SignalData.PhaseRanges {
+        w.PutInt32(24, phaseRange)
+    }
+    for _, phaseRangeLock := range msg.SignalData.PhaseRangeLocks {
+        w.PutUint16(10, phaseRangeLock)
+    }
+    for _, halfCycle := range msg.SignalData.HalfCycles {
+        w.PutBit(halfCycle)
+    }
+    for _, cnr := range msg.SignalData.Cnrs {
+        w.PutUint16(10, cnr)
+    }
+    for _, sigPhaseRangeRate := range msg.SignalData.PhaseRangeRates {
+        w.PutInt16(15, sigPhaseRangeRate)
+    }
+
+    w.PutUint8(uint(w.Bits()), 0) // Pad with 0s - Should always be less than 1 byte, should check
+    w.Flush()
+    return data
+}
+
+func (msg Rtcm3MessageMsm7) Number() uint16 {
+    return msg.Header.MessageNumber
 }
 
 type Rtcm3SatelliteDataMsm46 struct {
@@ -162,21 +220,27 @@ func NewRtcm3SignalDataMsm6(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
 }
 
 type Rtcm3MessageMsm6 struct {
-    Rtcm3Frame
     Header Rtcm3MsmHeader
     SatelliteData Rtcm3SatelliteDataMsm46
     SignalData Rtcm3SignalDataMsm6
 }
 
-func NewRtcm3MessageMsm6(f Rtcm3Frame) Rtcm3MessageMsm6 {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3MessageMsm6(payload []byte) Rtcm3MessageMsm6 {
+    r := iobit.NewReader(payload)
     header := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm6{
-        Rtcm3Frame: f,
         Header: header,
         SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(header.SatelliteMask))),
         SignalData: NewRtcm3SignalDataMsm6(&r, bits.OnesCount(uint(header.CellMask))),
     }
+}
+
+func (msg Rtcm3MessageMsm6) Number() uint16 {
+    return msg.Header.MessageNumber
+}
+
+func (msg Rtcm3MessageMsm6) Serialize() (data []byte) {
+    return data
 }
 
 type Rtcm3SignalDataMsm5 struct {
@@ -392,14 +456,12 @@ func NewRtcm3MessageMsm1(f Rtcm3Frame) Rtcm3MessageMsm1 {
 }
 
 type Rtcm3Message1077 struct {
-    Rtcm3Frame
     Rtcm3MessageMsm7
 }
 
-func NewRtcm3Message1077(f Rtcm3Frame) Rtcm3Message1077 {
+func NewRtcm3Message1077(payload []byte) Rtcm3Message1077 {
     return Rtcm3Message1077{
-        Rtcm3Frame: f,
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(payload),
     }
 }
 
@@ -408,14 +470,12 @@ func (msg Rtcm3Message1077) Time() time.Time {
 }
 
 type Rtcm3Message1087 struct {
-    Rtcm3Frame
     Rtcm3MessageMsm7
 }
 
 func NewRtcm3Message1087(f Rtcm3Frame) Rtcm3Message1087 {
     return Rtcm3Message1087{
-        Rtcm3Frame: f,
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
     }
 }
 
@@ -424,14 +484,12 @@ func (msg Rtcm3Message1087) Time() time.Time {
 }
 
 type Rtcm3Message1097 struct {
-    Rtcm3Frame
     Rtcm3MessageMsm7
 }
 
 func NewRtcm3Message1097(f Rtcm3Frame) Rtcm3Message1097 {
     return Rtcm3Message1097{
-        Rtcm3Frame: f,
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
     }
 }
 
@@ -440,14 +498,12 @@ func (msg Rtcm3Message1097) Time() time.Time {
 }
 
 type Rtcm3Message1117 struct {
-    Rtcm3Frame
     Rtcm3MessageMsm7
 }
 
 func NewRtcm3Message1117(f Rtcm3Frame) Rtcm3Message1117 {
     return Rtcm3Message1117{
-        Rtcm3Frame: f,
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
     }
 }
 
@@ -456,14 +512,12 @@ func (msg Rtcm3Message1117) Time() time.Time {
 }
 
 type Rtcm3Message1127 struct {
-    Rtcm3Frame
     Rtcm3MessageMsm7
 }
 
 func NewRtcm3Message1127(f Rtcm3Frame) Rtcm3Message1127 {
     return Rtcm3Message1127{
-        Rtcm3Frame: f,
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
     }
 }
 
