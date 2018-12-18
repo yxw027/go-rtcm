@@ -5,6 +5,21 @@ import (
     "time"
 )
 
+func GlonassTime(e uint32) time.Time {
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    dow := int((e >> 27) & 0x7)
+    tod := time.Duration(e & 0x7FFFFFF) * time.Millisecond
+    return sow.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))
+}
+
+func GlonassTimeShort(e uint32) time.Time {
+    now := time.Now().UTC().Add(time.Hour)
+    dow := now.Truncate(time.Hour * 24)
+    tod := time.Duration(e) * time.Millisecond
+    return dow.Add(tod).Add(-(3 * time.Hour))
+}
+
 type Rtcm3GlonassObservationHeader struct {
     MessageNumber uint16
     ReferenceStationId uint16
@@ -27,21 +42,9 @@ func NewRtcm3GlonassObservationHeader(r *iobit.Reader) Rtcm3GlonassObservationHe
     }
 }
 
-func GlonassTime(e uint32) time.Time {
-    now := time.Now().UTC()
-    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
-    dow := int((e >> 27) & 0x7)
-    tod := time.Duration(e & 0x7FFFFFF) * time.Millisecond
-    return sow.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))
+func (h Rtcm3GlonassObservationHeader) Time() time.Time {
+    return GlonassTimeShort(h.Epoch)
 }
-
-func GlonassTimeShort(e uint32) time.Time {
-    now := time.Now().UTC().Add(time.Hour)
-    dow := now.Truncate(time.Hour * 24)
-    tod := time.Duration(e) * time.Millisecond
-    return dow.Add(tod).Add(-(3 * time.Hour))
-}
-
 
 type Rtcm31009SignalData struct {
     SatelliteId uint8
@@ -67,23 +70,21 @@ func NewRtcm31009SignalData(r *iobit.Reader, numSig int) (sigData []Rtcm31009Sig
 }
 
 type Rtcm3Message1009 struct {
-    Rtcm3Frame
-    Header Rtcm3GlonassObservationHeader
+    ObservationHeader Rtcm3GlonassObservationHeader
     SignalData []Rtcm31009SignalData
 }
 
-func NewRtcm3Message1009(f Rtcm3Frame) (msg Rtcm3Message1009) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1009(data []byte) (msg Rtcm3Message1009) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1009{
-        Rtcm3Frame: f,
-        Header: NewRtcm3GlonassObservationHeader(&r),
+        ObservationHeader: NewRtcm3GlonassObservationHeader(&r),
     }
-    msg.SignalData = NewRtcm31009SignalData(&r, int(msg.Header.SignalCount))
+    msg.SignalData = NewRtcm31009SignalData(&r, int(msg.ObservationHeader.SignalCount))
     return msg
 }
 
-func (msg Rtcm3Message1009) Time() time.Time {
-    return GlonassTimeShort(msg.Header.Epoch)
+func (msg Rtcm3Message1009) Serialize() []byte {
+    return []byte{}
 }
 
 type Rtcm31010SignalData struct {
@@ -114,23 +115,21 @@ func NewRtcm31010SignalData(r *iobit.Reader, numSig int) (sigData []Rtcm31010Sig
 }
 
 type Rtcm3Message1010 struct {
-    Rtcm3Frame
-    Header Rtcm3GlonassObservationHeader
+    ObservationHeader Rtcm3GlonassObservationHeader
     SignalData []Rtcm31010SignalData
 }
 
-func NewRtcm3Message1010(f Rtcm3Frame) (msg Rtcm3Message1010) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1010(data []byte) (msg Rtcm3Message1010) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1010{
-        Rtcm3Frame: f,
-        Header: NewRtcm3GlonassObservationHeader(&r),
+        ObservationHeader: NewRtcm3GlonassObservationHeader(&r),
     }
-    msg.SignalData = NewRtcm31010SignalData(&r, int(msg.Header.SignalCount))
+    msg.SignalData = NewRtcm31010SignalData(&r, int(msg.ObservationHeader.SignalCount))
     return msg
 }
 
-func (msg Rtcm3Message1010) Time() time.Time {
-    return GlonassTimeShort(msg.Header.Epoch)
+func (msg Rtcm3Message1010) Serialize() []byte {
+    return []byte{}
 }
 
 type Rtcm31011SignalData struct {
@@ -165,23 +164,21 @@ func NewRtcm31011SignalData(r *iobit.Reader, numSig int) (sigData []Rtcm31011Sig
 }
 
 type Rtcm3Message1011 struct {
-    Rtcm3Frame
-    Header Rtcm3GlonassObservationHeader
+    ObservationHeader Rtcm3GlonassObservationHeader
     SignalData []Rtcm31011SignalData
 }
 
-func NewRtcm3Message1011(f Rtcm3Frame) (msg Rtcm3Message1011) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1011(data []byte) (msg Rtcm3Message1011) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1011{
-        Rtcm3Frame: f,
-        Header: NewRtcm3GlonassObservationHeader(&r),
+        ObservationHeader: NewRtcm3GlonassObservationHeader(&r),
     }
-    msg.SignalData = NewRtcm31011SignalData(&r, int(msg.Header.SignalCount))
+    msg.SignalData = NewRtcm31011SignalData(&r, int(msg.ObservationHeader.SignalCount))
     return msg
 }
 
-func (msg Rtcm3Message1011) Time() time.Time {
-    return GlonassTimeShort(msg.Header.Epoch)
+func (msg Rtcm3Message1011) Serialize() []byte {
+    return []byte{}
 }
 
 type Rtcm31012SignalData struct {
@@ -222,27 +219,24 @@ func NewRtcm31012SignalData(r *iobit.Reader, numSig int) (sigData []Rtcm31012Sig
 }
 
 type Rtcm3Message1012 struct {
-    Rtcm3Frame
-    Header Rtcm3GlonassObservationHeader
+    ObservationHeader Rtcm3GlonassObservationHeader
     SignalData []Rtcm31012SignalData
 }
 
-func NewRtcm3Message1012(f Rtcm3Frame) (msg Rtcm3Message1012) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1012(data []byte) (msg Rtcm3Message1012) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1012{
-        Rtcm3Frame: f,
-        Header: NewRtcm3GlonassObservationHeader(&r),
+        ObservationHeader: NewRtcm3GlonassObservationHeader(&r),
     }
-    msg.SignalData = NewRtcm31012SignalData(&r, int(msg.Header.SignalCount))
+    msg.SignalData = NewRtcm31012SignalData(&r, int(msg.ObservationHeader.SignalCount))
     return msg
 }
 
-func (msg Rtcm3Message1012) Time() time.Time {
-    return GlonassTimeShort(msg.Header.Epoch)
+func (msg Rtcm3Message1012) Serialize() []byte {
+    return []byte{}
 }
 
 type Rtcm3Message1020 struct {
-    Rtcm3Frame
     MessageNumber uint16
     SatelliteId uint8
     FrequencyChannel uint8
@@ -282,10 +276,9 @@ type Rtcm3Message1020 struct {
     Reserved uint8
 }
 
-func NewRtcm3Message1020(f Rtcm3Frame) Rtcm3Message1020 {
-    r := iobit.NewReader(f.Payload)
-    return Rtcm3Message1020{ //TODO: Make sint type
-        Rtcm3Frame: f,
+func NewRtcm3Message1020(data []byte) Rtcm3Message1020 {
+    r := iobit.NewReader(data)
+    return Rtcm3Message1020{
         MessageNumber: r.Uint16(12),
         SatelliteId: r.Uint8(6),
         FrequencyChannel: r.Uint8(5),
@@ -326,8 +319,11 @@ func NewRtcm3Message1020(f Rtcm3Frame) Rtcm3Message1020 {
     }
 }
 
+func (msg Rtcm3Message1020) Serialize() []byte {
+    return []byte{}
+}
+
 type Rtcm3Message1230 struct {
-    Rtcm3Frame
     MessageNumber uint16
     ReferenceStationId uint16
     CodePhaseBias bool
@@ -339,10 +335,9 @@ type Rtcm3Message1230 struct {
     L2PCodePhaseBias int16
 }
 
-func NewRtcm3Message1230(f Rtcm3Frame) (msg Rtcm3Message1230) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1230(data []byte) (msg Rtcm3Message1230) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1230{
-        Rtcm3Frame: f,
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
         CodePhaseBias: r.Bit(),
@@ -362,4 +357,8 @@ func NewRtcm3Message1230(f Rtcm3Frame) (msg Rtcm3Message1230) {
         msg.L2PCodePhaseBias = r.Int16(16)
     }
     return msg
+}
+
+func (msg Rtcm3Message1230) Serialize() []byte {
+    return []byte{}
 }

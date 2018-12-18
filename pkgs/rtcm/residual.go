@@ -28,7 +28,6 @@ func NewRtcm3ResidualSatelliteData(r *iobit.Reader, nsat int) (satData []Rtcm3Re
 }
 
 type Rtcm3Message1030 struct {
-    Rtcm3Frame
     MessageNumber uint16
     Epoch uint32
     ReferenceStationId uint16
@@ -37,10 +36,9 @@ type Rtcm3Message1030 struct {
     SatelliteData []Rtcm3ResidualSatelliteData
 }
 
-func NewRtcm3Message1030(f Rtcm3Frame) (msg Rtcm3Message1030) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1030(data []byte) (msg Rtcm3Message1030) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1030{
-        Rtcm3Frame: f,
         MessageNumber: r.Uint16(12),
         Epoch: r.Uint32(20),
         ReferenceStationId: r.Uint16(12),
@@ -51,8 +49,11 @@ func NewRtcm3Message1030(f Rtcm3Frame) (msg Rtcm3Message1030) {
     return msg
 }
 
+func (msg Rtcm3Message1030) Serialize() (data []byte) {
+    return data
+}
+
 type Rtcm3Message1031 struct {
-    Rtcm3Frame
     MessageNumber uint16
     Epoch uint32
     ReferenceStationId uint16
@@ -61,10 +62,9 @@ type Rtcm3Message1031 struct {
     SatelliteData []Rtcm3ResidualSatelliteData
 }
 
-func NewRtcm3Message1031(f Rtcm3Frame) (msg Rtcm3Message1031) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1031(data []byte) (msg Rtcm3Message1031) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1031{
-        Rtcm3Frame: f,
         MessageNumber: r.Uint16(12),
         Epoch: r.Uint32(17),
         ReferenceStationId: r.Uint16(12),
@@ -75,27 +75,33 @@ func NewRtcm3Message1031(f Rtcm3Frame) (msg Rtcm3Message1031) {
     return msg
 }
 
+func (msg Rtcm3Message1031) Serialize() (data []byte) {
+    return data
+}
+
 type Rtcm3Message1032 struct {
-    Rtcm3Frame
     MessageNumber uint16
-    NPReferenceStationId uint16
-    ReferenceStationId uint16
+    NonPhysicalReferenceStationId uint16
+    PhysicalReferenceStationId uint16
     EpochYear uint8
     ArpEcefX int64
     ArpEcefY int64
     ArpEcefZ int64
 }
 
-func NewRtcm3Message1032(f Rtcm3Frame) Rtcm3Message1032 {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1032(data []byte) Rtcm3Message1032 {
+    r := iobit.NewReader(data)
     return Rtcm3Message1032{
-        Rtcm3Frame: f,
         MessageNumber: r.Uint16(12),
-        NPReferenceStationId: r.Uint16(12),
-        ReferenceStationId: r.Uint16(12),
+        NonPhysicalReferenceStationId: r.Uint16(12),
+        PhysicalReferenceStationId: r.Uint16(12),
         EpochYear: r.Uint8(6),
         ArpEcefX: r.Int64(38),
         ArpEcefY: r.Int64(38),
         ArpEcefZ: r.Int64(38),
     }
+}
+
+func (msg Rtcm3Message1032) Serialize() (data []byte) {
+    return data
 }

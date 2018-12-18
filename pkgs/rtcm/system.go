@@ -11,7 +11,6 @@ type Rtcm3MessageAnnouncement struct {
 }
 
 type Rtcm3Message1013 struct {
-    Rtcm3Frame
     MessageNumber uint16
     ReferenceStationId uint16
     Mjd uint16
@@ -21,10 +20,9 @@ type Rtcm3Message1013 struct {
     Messages []Rtcm3MessageAnnouncement
 }
 
-func NewRtcm3Message1013(f Rtcm3Frame) (msg Rtcm3Message1013) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1013(data []byte) (msg Rtcm3Message1013) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1013{
-        Rtcm3Frame: f,
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
         Mjd: r.Uint16(16),
@@ -42,8 +40,11 @@ func NewRtcm3Message1013(f Rtcm3Frame) (msg Rtcm3Message1013) {
     return msg
 }
 
+func (msg Rtcm3Message1013) Serialize() (data []byte) {
+    return data
+}
+
 type Rtcm3Message1029 struct {
-    Rtcm3Frame
     MessageNumber uint16
     ReferenceStationId uint16
     Mjd uint16
@@ -53,10 +54,9 @@ type Rtcm3Message1029 struct {
     CodeUnits string
 }
 
-func NewRtcm3Message1029(f Rtcm3Frame) (msg Rtcm3Message1029) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1029(data []byte) (msg Rtcm3Message1029) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1029{
-        Rtcm3Frame: f,
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
         Mjd: r.Uint16(16),
@@ -66,4 +66,8 @@ func NewRtcm3Message1029(f Rtcm3Frame) (msg Rtcm3Message1029) {
     }
     msg.CodeUnits = r.String(8 * int(msg.CodeUnitsLength))
     return msg
+}
+
+func (msg Rtcm3Message1029) Serialize() (data []byte) {
+    return data
 }

@@ -7,16 +7,38 @@ import (
     "errors"
     "github.com/bamiaux/iobit"
     "time"
+
+    "fmt"
 )
 
 type Rtcm3Message interface {
     Serialize() []byte
-    Number() uint16
+//    Number() uint16
 }
+
+// This is probably less efficient than making Number() be a method of Rtcm3Message and having each Specific Message type implement it
+func GetMessageNumber(msg Rtcm3Message) uint16 {
+    return binary.BigEndian.Uint16(msg.Serialize()[4:6]) >> 4
+}
+
+
+type Rtcm3MessageUnknown struct {
+    Payload []byte
+}
+
+func (msg Rtcm3MessageUnknown) Serialize() []byte {
+    return msg.Payload
+}
+
+
+type Rtcm3Observable interface {
+    Time() time.Time
+}
+
 
 var Rtcm3FramePreamble byte = 0xD3
 
-type Rtcm3Frame struct {
+type Rtcm3Frame struct { // Contains Serialized Rtcm3Message - Should not be used as Rtcm3Message
     Preamble uint8
     Reserved uint8
     Length uint16
@@ -24,45 +46,51 @@ type Rtcm3Frame struct {
     Crc uint32
 }
 
-type Rtcm3Observable interface {
-    Time() time.Time
+func NewRtcm3Frame(msg Rtcm3Message) (frame Rtcm3Frame) {
+    data := msg.Serialize()
+    frame = Rtcm3Frame{
+        Preamble: Rtcm3FramePreamble,
+        Reserved: 0,
+        Length: uint16(len(data)),
+        Payload: data,
+        Crc: uint32(0),
+    }
+    frame.Crc = Crc24q(frame.Serialize()[:len(data)+3])
+    return frame
 }
 
-func (f Rtcm3Frame) Number() uint16 {
-    return binary.BigEndian.Uint16(f.Payload[0:2]) >> 4
-}
-
-func (f Rtcm3Frame) Serialize() []byte {
-    data := make([]byte, f.Length + 6)
+func (frame Rtcm3Frame) Serialize() []byte {
+    data := make([]byte, frame.Length + 6)
     w := iobit.NewWriter(data)
-    w.PutUint8(8, f.Preamble)
-    w.PutUint8(6, f.Reserved)
-    w.PutUint16(10, f.Length)
-    w.Write(f.Payload)
-    w.PutUint32(24, f.Crc)
+    w.PutUint8(8, frame.Preamble)
+    w.PutUint8(6, frame.Reserved)
+    w.PutUint16(10, frame.Length)
+    w.Write(frame.Payload)
+    w.PutUint32(24, frame.Crc)
     w.Flush()
     return data
 }
 
-func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
+func DeserializeRtcm3Frame(reader *bufio.Reader) (frame Rtcm3Frame, err error) {
     // Only reads first byte from reader if Preamble or CRC are incorrect
     // Unfortunatly can't construct anything that will read bits (like iobit) until we have a byte array
     preamble, err := reader.ReadByte()
-    if err != nil { return msg, err }
-    if preamble != Rtcm3FramePreamble { return msg, errors.New("Invalid Preamble") }
+    if err != nil { return frame, err }
+    if preamble != Rtcm3FramePreamble { return frame, errors.New("Invalid Preamble") }
 
     header, err := reader.Peek(2)
-    if err != nil { return msg, err }
+    if err != nil { return frame, err }
 
     reserved := uint8(header[0]) & 0xFC
     length := binary.BigEndian.Uint16(header) & 0x3FF
     data, err := reader.Peek(int(length + 5))
-    if err != nil { return msg, err }
+    if err != nil { return frame, err }
 
     data = append([]byte{preamble}, data...)
     crc := binary.BigEndian.Uint32(data[len(data)-4:]) & 0xFFFFFF
+    fmt.Println(data)
 
-    message := Rtcm3Frame{
+    frame = Rtcm3Frame{
         Preamble: preamble,
         Reserved: reserved,
         Length: length,
@@ -70,153 +98,134 @@ func Deserialize(reader *bufio.Reader) (msg Rtcm3Message, err error) {
         Crc: crc,
     }
 
-    if Crc24q(data[:len(data)-3]) != int(message.Crc) {
-        return message, errors.New("CRC Failed")
+    if Crc24q(data[:len(data)-3]) != frame.Crc {
+        return frame, errors.New("CRC Failed")
     }
 
     reader.Discard(len(data) - 1)
-
-    switch int(message.Number()) {
-        case 1001:
-            message := NewRtcm3Message1001(message)
-            return message, nil
-
-        case 1002:
-            message := NewRtcm3Message1002(message)
-            return message, nil
-
-        case 1003:
-            message := NewRtcm3Message1003(message)
-            return message, nil
-
-        case 1004:
-            message := NewRtcm3Message1004(message)
-            return message, nil
-
-        case 1005:
-            message := NewRtcm3Message1005(message)
-            return message, nil
-
-        case 1006:
-            message := NewRtcm3Message1006(message)
-            return message, nil
-
-        case 1007:
-            message := NewRtcm3Message1007(message)
-            return message, nil
-
-        case 1008:
-            message := NewRtcm3Message1008(message)
-            return message, nil
-
-        case 1009:
-            message := NewRtcm3Message1009(message)
-            return message, nil
-
-        case 1010:
-            message := NewRtcm3Message1010(message)
-            return message, nil
-
-        case 1011:
-            message := NewRtcm3Message1011(message)
-            return message, nil
-
-        case 1012:
-            message := NewRtcm3Message1012(message)
-            return message, nil
-
-        case 1013:
-            message := NewRtcm3Message1013(message)
-            return message, nil
-
-        case 1019:
-            message := NewRtcm3Message1019(message)
-            return message, nil
-
-        case 1020:
-            message := NewRtcm3Message1020(message)
-            return message, nil
-
-        case 1029:
-            message := NewRtcm3Message1029(message)
-            return message, nil
-
-        case 1030:
-            message := NewRtcm3Message1030(message)
-            return message, nil
-
-        case 1031:
-            message := NewRtcm3Message1031(message)
-            return message, nil
-
-        case 1032:
-            message := NewRtcm3Message1032(message)
-            return message, nil
-
-        case 1033:
-            message := NewRtcm3Message1033(message)
-            return message, nil
-
-        case 1230:
-            message := NewRtcm3Message1230(message)
-            return message, nil
-
-        case 1071, 1081, 1091, 1111, 1121:
-            message := NewRtcm3MessageMsm1(message)
-            return message, nil
-
-        case 1072, 1082, 1092, 1112, 1122:
-            message := NewRtcm3MessageMsm2(message)
-            return message, nil
-
-        case 1073, 1083, 1093, 1113, 1123:
-            message := NewRtcm3MessageMsm3(message)
-            return message, nil
-
-        case 1074, 1084, 1094, 1114, 1124:
-            message := NewRtcm3MessageMsm4(message)
-            return message, nil
-
-        case 1075, 1085, 1095, 1115, 1125:
-            message := NewRtcm3MessageMsm5(message)
-            return message, nil
-
-        case 1076, 1086, 1096, 1116, 1126:
-            message := NewRtcm3MessageMsm6(message.Payload)
-            return message, nil
-
-        case 1077:
-            message := NewRtcm3Message1077(message.Payload)
-            return message, nil
-        case 1087:
-            message := NewRtcm3Message1087(message)
-            return message, nil
-        case 1097:
-            message := NewRtcm3Message1097(message)
-            return message, nil
-        case 1117:
-            message := NewRtcm3Message1117(message)
-            return message, nil
-        case 1127:
-            message := NewRtcm3Message1127(message)
-            return message, nil
-    }
-
-    return message, nil
+    return frame, nil
 }
 
-type Callback func(Rtcm3Message)
+func (frame Rtcm3Frame) Message() Rtcm3Message {
+    messageNumber := binary.BigEndian.Uint16(frame.Payload[0:2]) >> 4
 
-func Scan(r io.Reader, callback Callback) (err error) {
-    // Not sure if a function of this signature makes sense, or if we should just be writing back to an io object, or even if Deserialize should just be looping like this
-    reader := bufio.NewReader(r)
+    switch int(messageNumber) {
+        case 1001:
+            return NewRtcm3Message1001(frame.Payload)
+
+        case 1002:
+            return NewRtcm3Message1002(frame.Payload)
+
+        case 1003:
+            return NewRtcm3Message1003(frame.Payload)
+
+        case 1004:
+            return NewRtcm3Message1004(frame.Payload)
+
+        case 1005:
+            return NewRtcm3Message1005(frame.Payload)
+
+        case 1006:
+            return NewRtcm3Message1006(frame.Payload)
+
+        case 1007:
+            return NewRtcm3Message1007(frame.Payload)
+
+        case 1008:
+            return NewRtcm3Message1008(frame.Payload)
+
+        case 1009:
+            return NewRtcm3Message1009(frame.Payload)
+
+        case 1010:
+            return NewRtcm3Message1010(frame.Payload)
+
+        case 1011:
+            return NewRtcm3Message1011(frame.Payload)
+
+        case 1012:
+            return NewRtcm3Message1012(frame.Payload)
+
+        case 1013:
+            return NewRtcm3Message1013(frame.Payload)
+
+        case 1019:
+            return NewRtcm3Message1019(frame.Payload)
+
+        case 1020:
+            return NewRtcm3Message1020(frame.Payload)
+
+        case 1029:
+            return NewRtcm3Message1029(frame.Payload)
+
+        case 1030:
+            return NewRtcm3Message1030(frame.Payload)
+
+        case 1031:
+            return NewRtcm3Message1031(frame.Payload)
+
+        case 1032:
+            return NewRtcm3Message1032(frame.Payload)
+
+        case 1033:
+            return NewRtcm3Message1033(frame.Payload)
+
+        case 1230:
+            return NewRtcm3Message1230(frame.Payload)
+
+        case 1071, 1081, 1091, 1111, 1121:
+            return NewRtcm3MessageMsm1(frame.Payload)
+
+        case 1072, 1082, 1092, 1112, 1122:
+            return NewRtcm3MessageMsm2(frame.Payload)
+
+        case 1073, 1083, 1093, 1113, 1123:
+            return NewRtcm3MessageMsm3(frame.Payload)
+
+        case 1074, 1084, 1094, 1114, 1124:
+            return NewRtcm3MessageMsm4(frame.Payload)
+
+        case 1075, 1085, 1095, 1115, 1125:
+            return NewRtcm3MessageMsm5(frame.Payload)
+
+        case 1076, 1086, 1096, 1116, 1126:
+            return NewRtcm3MessageMsm6(frame.Payload)
+
+        case 1077:
+            return NewRtcm3Message1077(frame.Payload)
+
+        case 1087:
+            return NewRtcm3Message1087(frame.Payload)
+
+        case 1097:
+            return NewRtcm3Message1097(frame.Payload)
+
+        case 1117:
+            return NewRtcm3Message1117(frame.Payload)
+
+        case 1127:
+            return NewRtcm3Message1127(frame.Payload)
+
+        default:
+            return Rtcm3MessageUnknown{frame.Payload}
+    }
+}
+
+
+type Scanner struct {
+    Reader *bufio.Reader
+}
+
+func NewScanner(r io.Reader) Scanner {
+    return Scanner{bufio.NewReader(r)}
+}
+
+func (scanner Scanner) Next() (message Rtcm3Message, err error) {
     for {
-        message, err := Deserialize(reader)
+        frame, err := DeserializeRtcm3Frame(scanner.Reader)
         if err != nil {
             if err.Error() == "Invalid Preamble" || err.Error() == "CRC Failed" { continue }
-            return err
         }
-
-        go callback(message)
+        return frame.Message(), err
     }
 }

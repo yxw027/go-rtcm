@@ -9,7 +9,7 @@ import (
 
 type Rtcm3MsmHeader struct {
     MessageNumber uint16
-    StationId uint16
+    ReferenceStationId uint16
     Epoch uint32
     MultipleMessageBit bool
     Iods uint8
@@ -26,7 +26,7 @@ type Rtcm3MsmHeader struct {
 func NewRtcm3MsmHeader(r *iobit.Reader) (header Rtcm3MsmHeader) {
     header = Rtcm3MsmHeader{
         MessageNumber: r.Uint16(12),
-        StationId: r.Uint16(12),
+        ReferenceStationId: r.Uint16(12),
         Epoch: r.Uint32(30),
         MultipleMessageBit: r.Bit(),
         Iods: r.Uint8(3),
@@ -42,6 +42,32 @@ func NewRtcm3MsmHeader(r *iobit.Reader) (header Rtcm3MsmHeader) {
     cellMaskLength := bits.OnesCount(uint(header.SignalMask)) * bits.OnesCount(uint(header.SatelliteMask))
     header.CellMask = r.Uint64(uint(cellMaskLength))
     return header
+}
+
+func SerializeRtcm3MsmHeader(header Rtcm3MsmHeader) (data []byte, w iobit.Writer) {
+    satMaskBits := bits.OnesCount(uint(header.SatelliteMask))
+    sigMaskBits := bits.OnesCount(uint(header.SignalMask))
+    cellMaskBits := bits.OnesCount(uint(header.CellMask))
+
+    // Header + SatelliteData + SignalData
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (80 * cellMaskBits)
+    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
+    w = iobit.NewWriter(data)
+
+    w.PutUint16(12, header.MessageNumber)
+    w.PutUint16(12, header.ReferenceStationId)
+    w.PutUint32(30, header.Epoch)
+    w.PutBit(header.MultipleMessageBit)
+    w.PutUint8(3, header.Iods)
+    w.PutUint8(7, header.Reserved)
+    w.PutUint8(2, header.ClockSteeringIndicator)
+    w.PutUint8(2, header.ExternalClockIndicator)
+    w.PutBit(header.SmoothingIndicator)
+    w.PutUint8(3, header.SmoothingInterval)
+    w.PutUint64(64, header.SatelliteMask)
+    w.PutUint32(32, header.SignalMask)
+    w.PutUint64(uint(sigMaskBits * satMaskBits), header.CellMask)
+    return data, w
 }
 
 type Rtcm3SatelliteDataMsm57 struct {
@@ -65,6 +91,21 @@ func NewRtcm3SatelliteDataMsm57(r *iobit.Reader, nsat int) (satData Rtcm3Satelli
         satData.PhaseRangeRates = append(satData.PhaseRangeRates, r.Int16(14))
     }
     return satData
+}
+
+func SerializeRtcm3SatelliteDataMsm57(w *iobit.Writer, satelliteData Rtcm3SatelliteDataMsm57) {
+    for _, rangeMillis := range satelliteData.RangeMilliseconds {
+        w.PutUint8(8, rangeMillis)
+    }
+    for _, extended := range satelliteData.Extended {
+        w.PutUint8(4, extended)
+    }
+    for _, ranges := range satelliteData.Ranges {
+        w.PutUint16(10, ranges)
+    }
+    for _, phaseRangeRate := range satelliteData.PhaseRangeRates {
+        w.PutInt16(14, phaseRangeRate)
+    }
 }
 
 type Rtcm3SignalDataMsm7 struct {
@@ -106,48 +147,17 @@ type Rtcm3MessageMsm7 struct {
 
 func NewRtcm3MessageMsm7(payload []byte) Rtcm3MessageMsm7 {
     r := iobit.NewReader(payload)
-    header := NewRtcm3MsmHeader(&r)
+    msmHeader := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm7{
-        Header: header,
-        SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm7(&r, bits.OnesCount(uint(header.CellMask))),
+        Header: msmHeader,
+        SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm7(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
 func (msg Rtcm3MessageMsm7) Serialize() (data []byte) {
-    satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
-    sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
-    cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
-    msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (80 * cellMaskBits)
-    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
-    w := iobit.NewWriter(data)
-
-    w.PutUint16(12, msg.Header.MessageNumber)
-    w.PutUint16(12, msg.Header.StationId)
-    w.PutUint32(30, msg.Header.Epoch)
-    w.PutBit(msg.Header.MultipleMessageBit)
-    w.PutUint8(3, msg.Header.Iods)
-    w.PutUint8(7, msg.Header.Reserved)
-    w.PutUint8(2, msg.Header.ClockSteeringIndicator)
-    w.PutUint8(2, msg.Header.ExternalClockIndicator)
-    w.PutBit(msg.Header.SmoothingIndicator)
-    w.PutUint8(3, msg.Header.SmoothingInterval)
-    w.PutUint64(64, msg.Header.SatelliteMask)
-    w.PutUint32(32, msg.Header.SignalMask)
-    w.PutUint64(uint(sigMaskBits * satMaskBits), msg.Header.CellMask)
-
-    for _, rangeMillis := range msg.SatelliteData.RangeMilliseconds {
-        w.PutUint8(8, rangeMillis)
-    }
-    for _, extended := range msg.SatelliteData.Extended {
-        w.PutUint8(4, extended)
-    }
-    for _, ranges := range msg.SatelliteData.Ranges {
-        w.PutUint16(10, ranges)
-    }
-    for _, phaseRangeRate := range msg.SatelliteData.PhaseRangeRates {
-        w.PutInt16(14, phaseRangeRate)
-    }
+    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    SerializeRtcm3SatelliteDataMsm57(&w, msg.SatelliteData)
 
     for _, pseudorange := range msg.SignalData.Pseudoranges {
         w.PutInt32(20, pseudorange)
@@ -173,10 +183,6 @@ func (msg Rtcm3MessageMsm7) Serialize() (data []byte) {
     return data
 }
 
-func (msg Rtcm3MessageMsm7) Number() uint16 {
-    return msg.Header.MessageNumber
-}
-
 type Rtcm3SatelliteDataMsm46 struct {
     RangeMilliseconds []uint8
     Ranges []uint16
@@ -190,6 +196,15 @@ func NewRtcm3SatelliteDataMsm46(r *iobit.Reader, nsat int) (satData Rtcm3Satelli
         satData.Ranges = append(satData.Ranges, r.Uint16(10))
     }
     return satData
+}
+
+func SerializeRtcm3SatelliteDataMsm46(w *iobit.Writer, satelliteData Rtcm3SatelliteDataMsm46) {
+    for _, rangeMillis := range satelliteData.RangeMilliseconds {
+        w.PutUint8(8, rangeMillis)
+    }
+    for _, ranges := range satelliteData.Ranges {
+        w.PutUint16(10, ranges)
+    }
 }
 
 type Rtcm3SignalDataMsm6 struct {
@@ -227,19 +242,36 @@ type Rtcm3MessageMsm6 struct {
 
 func NewRtcm3MessageMsm6(payload []byte) Rtcm3MessageMsm6 {
     r := iobit.NewReader(payload)
-    header := NewRtcm3MsmHeader(&r)
+    msmHeader := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm6{
-        Header: header,
-        SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm6(&r, bits.OnesCount(uint(header.CellMask))),
+        Header: msmHeader,
+        SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm6(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
-func (msg Rtcm3MessageMsm6) Number() uint16 {
-    return msg.Header.MessageNumber
-}
-
 func (msg Rtcm3MessageMsm6) Serialize() (data []byte) {
+    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    SerializeRtcm3SatelliteDataMsm46(&w, msg.SatelliteData)
+
+    for _, pseudorange := range msg.SignalData.Pseudoranges {
+        w.PutInt32(20, pseudorange)
+    }
+    for _, phaseRange := range msg.SignalData.PhaseRanges {
+        w.PutInt32(24, phaseRange)
+    }
+    for _, phaseRangeLock := range msg.SignalData.PhaseRangeLocks {
+        w.PutUint16(10, phaseRangeLock)
+    }
+    for _, halfCycle := range msg.SignalData.HalfCycles {
+        w.PutBit(halfCycle)
+    }
+    for _, cnr := range msg.SignalData.Cnrs {
+        w.PutUint16(10, cnr)
+    }
+
+    w.PutUint8(uint(w.Bits()), 0) // Pad with 0s - Should always be less than 1 byte, should check
+    w.Flush()
     return data
 }
 
@@ -275,21 +307,47 @@ func NewRtcm3SignalDataMsm5(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
 }
 
 type Rtcm3MessageMsm5 struct {
-    Rtcm3Frame
     Header Rtcm3MsmHeader
     SatelliteData Rtcm3SatelliteDataMsm57
     SignalData Rtcm3SignalDataMsm5
 }
 
-func NewRtcm3MessageMsm5(f Rtcm3Frame) Rtcm3MessageMsm5 {
-    r := iobit.NewReader(f.Payload)
-    header := NewRtcm3MsmHeader(&r)
+func NewRtcm3MessageMsm5(data []byte) Rtcm3MessageMsm5 {
+    r := iobit.NewReader(data)
+    msmHeader := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm5{
-        Rtcm3Frame: f,
-        Header: header,
-        SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm5(&r, bits.OnesCount(uint(header.CellMask))),
+        Header: msmHeader,
+        SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm5(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
+}
+
+func (msg Rtcm3MessageMsm5) Serialize() (data []byte) {
+    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    SerializeRtcm3SatelliteDataMsm57(&w, msg.SatelliteData)
+
+    for _, pseudorange := range msg.SignalData.Pseudoranges {
+        w.PutInt16(15, pseudorange)
+    }
+    for _, phaseRange := range msg.SignalData.PhaseRanges {
+        w.PutInt32(22, phaseRange)
+    }
+    for _, phaseRangeLock := range msg.SignalData.PhaseRangeLocks {
+        w.PutUint8(4, phaseRangeLock)
+    }
+    for _, halfCycle := range msg.SignalData.HalfCycles {
+        w.PutBit(halfCycle)
+    }
+    for _, cnr := range msg.SignalData.Cnrs {
+        w.PutUint8(6, cnr)
+    }
+    for _, sigPhaseRangeRate := range msg.SignalData.PhaseRangeRates {
+        w.PutInt16(15, sigPhaseRangeRate)
+    }
+
+    w.PutUint8(uint(w.Bits()), 0) // Pad with 0s - Should always be less than 1 byte, should check
+    w.Flush()
+    return data
 }
 
 type Rtcm3SignalDataMsm4 struct {
@@ -320,21 +378,44 @@ func NewRtcm3SignalDataMsm4(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
 }
 
 type Rtcm3MessageMsm4 struct {
-    Rtcm3Frame
     Header Rtcm3MsmHeader
     SatelliteData Rtcm3SatelliteDataMsm46
     SignalData Rtcm3SignalDataMsm4
 }
 
-func NewRtcm3MessageMsm4(f Rtcm3Frame) Rtcm3MessageMsm4 {
-    r := iobit.NewReader(f.Payload)
-    header := NewRtcm3MsmHeader(&r)
+func NewRtcm3MessageMsm4(data []byte) Rtcm3MessageMsm4 {
+    r := iobit.NewReader(data)
+    msmHeader := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm4{
-        Rtcm3Frame: f,
-        Header: header,
-        SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm4(&r, bits.OnesCount(uint(header.CellMask))),
+        Header: msmHeader,
+        SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm4(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
+}
+
+func (msg Rtcm3MessageMsm4) Serialize() (data []byte) {
+    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    SerializeRtcm3SatelliteDataMsm46(&w, msg.SatelliteData)
+
+    for _, pseudorange := range msg.SignalData.Pseudoranges {
+        w.PutInt16(15, pseudorange)
+    }
+    for _, phaseRange := range msg.SignalData.PhaseRanges {
+        w.PutInt32(22, phaseRange)
+    }
+    for _, phaseRangeLock := range msg.SignalData.PhaseRangeLocks {
+        w.PutUint8(4, phaseRangeLock)
+    }
+    for _, halfCycle := range msg.SignalData.HalfCycles {
+        w.PutBit(halfCycle)
+    }
+    for _, cnr := range msg.SignalData.Cnrs {
+        w.PutUint8(6, cnr)
+    }
+
+    w.PutUint8(uint(w.Bits()), 0) // Pad with 0s - Should always be less than 1 byte, should check
+    w.Flush()
+    return data
 }
 
 type Rtcm3SatelliteDataMsm123 struct {
@@ -372,21 +453,43 @@ func NewRtcm3SignalDataMsm3(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
 }
 
 type Rtcm3MessageMsm3 struct {
-    Rtcm3Frame
     Header Rtcm3MsmHeader
     SatelliteData Rtcm3SatelliteDataMsm123
     SignalData Rtcm3SignalDataMsm3
 }
 
-func NewRtcm3MessageMsm3(f Rtcm3Frame) Rtcm3MessageMsm3 {
-    r := iobit.NewReader(f.Payload)
-    header := NewRtcm3MsmHeader(&r)
+func NewRtcm3MessageMsm3(data []byte) Rtcm3MessageMsm3 {
+    r := iobit.NewReader(data)
+    msmHeader := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm3{
-        Rtcm3Frame: f,
-        Header: header,
-        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm3(&r, bits.OnesCount(uint(header.CellMask))),
+        Header: msmHeader,
+        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm3(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
+}
+
+func (msg Rtcm3MessageMsm3) Serialize() (data []byte) {
+    data, w := SerializeRtcm3MsmHeader(msg.Header)
+
+    for _, ranges := range msg.SatelliteData.Ranges {
+        w.PutUint16(10, ranges)
+    }
+    for _, pseudorange := range msg.SignalData.Pseudoranges {
+        w.PutInt16(15, pseudorange)
+    }
+    for _, phaseRange := range msg.SignalData.PhaseRanges {
+        w.PutInt32(22, phaseRange)
+    }
+    for _, phaseRangeLock := range msg.SignalData.PhaseRangeLocks {
+        w.PutUint8(4, phaseRangeLock)
+    }
+    for _, halfCycle := range msg.SignalData.HalfCycles {
+        w.PutBit(halfCycle)
+    }
+
+    w.PutUint8(uint(w.Bits()), 0) // Pad with 0s - Should always be less than 1 byte, should check
+    w.Flush()
+    return data
 }
 
 type Rtcm3SignalDataMsm2 struct {
@@ -409,21 +512,40 @@ func NewRtcm3SignalDataMsm2(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
 }
 
 type Rtcm3MessageMsm2 struct {
-    Rtcm3Frame
     Header Rtcm3MsmHeader
     SatelliteData Rtcm3SatelliteDataMsm123
     SignalData Rtcm3SignalDataMsm2
 }
 
-func NewRtcm3MessageMsm2(f Rtcm3Frame) Rtcm3MessageMsm2 {
-    r := iobit.NewReader(f.Payload)
-    header := NewRtcm3MsmHeader(&r)
+func NewRtcm3MessageMsm2(data []byte) Rtcm3MessageMsm2 {
+    r := iobit.NewReader(data)
+    msmHeader := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm2{
-        Rtcm3Frame: f,
-        Header: header,
-        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm2(&r, bits.OnesCount(uint(header.CellMask))),
+        Header: msmHeader,
+        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm2(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
+}
+
+func (msg Rtcm3MessageMsm2) Serialize() (data []byte) {
+    data, w := SerializeRtcm3MsmHeader(msg.Header)
+
+    for _, ranges := range msg.SatelliteData.Ranges {
+        w.PutUint16(10, ranges)
+    }
+    for _, phaseRange := range msg.SignalData.PhaseRanges {
+        w.PutInt32(22, phaseRange)
+    }
+    for _, phaseRangeLock := range msg.SignalData.PhaseRangeLocks {
+        w.PutUint8(4, phaseRangeLock)
+    }
+    for _, halfCycle := range msg.SignalData.HalfCycles {
+        w.PutBit(halfCycle)
+    }
+
+    w.PutUint8(uint(w.Bits()), 0) // Pad with 0s - Should always be less than 1 byte, should check
+    w.Flush()
+    return data
 }
 
 type Rtcm3SignalDataMsm1 struct {
@@ -438,30 +560,43 @@ func NewRtcm3SignalDataMsm1(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
 }
 
 type Rtcm3MessageMsm1 struct {
-    Rtcm3Frame
     Header Rtcm3MsmHeader
     SatelliteData Rtcm3SatelliteDataMsm123
     SignalData Rtcm3SignalDataMsm1
 }
 
-func NewRtcm3MessageMsm1(f Rtcm3Frame) Rtcm3MessageMsm1 {
-    r := iobit.NewReader(f.Payload)
-    header := NewRtcm3MsmHeader(&r)
+func NewRtcm3MessageMsm1(data []byte) Rtcm3MessageMsm1 {
+    r := iobit.NewReader(data)
+    msmHeader := NewRtcm3MsmHeader(&r)
     return Rtcm3MessageMsm1{
-        Rtcm3Frame: f,
-        Header: header,
-        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(header.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm1(&r, bits.OnesCount(uint(header.CellMask))),
+        Header: msmHeader,
+        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewRtcm3SignalDataMsm1(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
+}
+
+func (msg Rtcm3MessageMsm1) Serialize() (data []byte) {
+    data, w := SerializeRtcm3MsmHeader(msg.Header)
+
+    for _, ranges := range msg.SatelliteData.Ranges {
+        w.PutUint16(10, ranges)
+    }
+    for _, pseudorange := range msg.SignalData.Pseudoranges {
+        w.PutInt16(15, pseudorange)
+    }
+
+    w.PutUint8(uint(w.Bits()), 0) // Pad with 0s - Should always be less than 1 byte, should check
+    w.Flush()
+    return data
 }
 
 type Rtcm3Message1077 struct {
     Rtcm3MessageMsm7
 }
 
-func NewRtcm3Message1077(payload []byte) Rtcm3Message1077 {
+func NewRtcm3Message1077(data []byte) Rtcm3Message1077 {
     return Rtcm3Message1077{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(payload),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
     }
 }
 
@@ -473,9 +608,9 @@ type Rtcm3Message1087 struct {
     Rtcm3MessageMsm7
 }
 
-func NewRtcm3Message1087(f Rtcm3Frame) Rtcm3Message1087 {
+func NewRtcm3Message1087(data []byte) Rtcm3Message1087 {
     return Rtcm3Message1087{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
     }
 }
 
@@ -487,9 +622,9 @@ type Rtcm3Message1097 struct {
     Rtcm3MessageMsm7
 }
 
-func NewRtcm3Message1097(f Rtcm3Frame) Rtcm3Message1097 {
+func NewRtcm3Message1097(data []byte) Rtcm3Message1097 {
     return Rtcm3Message1097{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
     }
 }
 
@@ -501,9 +636,9 @@ type Rtcm3Message1117 struct {
     Rtcm3MessageMsm7
 }
 
-func NewRtcm3Message1117(f Rtcm3Frame) Rtcm3Message1117 {
+func NewRtcm3Message1117(data []byte) Rtcm3Message1117 {
     return Rtcm3Message1117{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
     }
 }
 
@@ -515,9 +650,9 @@ type Rtcm3Message1127 struct {
     Rtcm3MessageMsm7
 }
 
-func NewRtcm3Message1127(f Rtcm3Frame) Rtcm3Message1127 {
+func NewRtcm3Message1127(data []byte) Rtcm3Message1127 {
     return Rtcm3Message1127{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(f.Payload),
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
     }
 }
 
