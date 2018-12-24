@@ -3,6 +3,7 @@ package rtcm
 import (
     "github.com/bamiaux/iobit"
     "time"
+    "math"
 )
 
 func GlonassTime(e uint32) time.Time {
@@ -40,6 +41,17 @@ func NewRtcm3GlonassObservationHeader(r *iobit.Reader) Rtcm3GlonassObservationHe
         SmoothingIndicator: r.Bit(),
         SmoothingInterval: r.Uint8(3),
     }
+}
+
+func (h Rtcm3GlonassObservationHeader) Serialize(w *iobit.Writer) {
+    w.PutUint16(12, h.MessageNumber)
+    w.PutUint16(12, h.ReferenceStationId)
+    w.PutUint32(27, h.Epoch)
+    w.PutBit(h.SynchronousGnss)
+    w.PutUint8(5, h.SignalCount)
+    w.PutBit(h.SmoothingIndicator)
+    w.PutUint8(3, h.SmoothingInterval)
+    return
 }
 
 func (h Rtcm3GlonassObservationHeader) Time() time.Time {
@@ -84,7 +96,20 @@ func NewRtcm3Message1009(data []byte) (msg Rtcm3Message1009) {
 }
 
 func (msg Rtcm3Message1009) Serialize() []byte {
-    return []byte{}
+    data := make([]byte, int(math.Ceil(float64(61 + (64 * int(msg.ObservationHeader.SignalCount))) / 8)))
+    w := iobit.NewWriter(data)
+    msg.ObservationHeader.Serialize(&w)
+    for _, s := range msg.SignalData {
+        w.PutUint8(6, s.SatelliteId)
+        w.PutBit(s.L1CodeIndicator)
+        w.PutUint8(5, s.FrequencyChannel)
+        w.PutUint32(25, s.L1Pseudorange)
+        w.PutInt32(20, s.L1PhaseRange)
+        w.PutUint8(7, s.L1LockTimeIndicator)
+    }
+    w.PutUint8(uint(w.Bits()), 0)
+    w.Flush()
+    return data
 }
 
 type Rtcm31010SignalData struct {
@@ -129,8 +154,24 @@ func NewRtcm3Message1010(data []byte) (msg Rtcm3Message1010) {
 }
 
 func (msg Rtcm3Message1010) Serialize() []byte {
-    return []byte{}
+    data := make([]byte, int(math.Ceil(float64(61 + (79 * int(msg.ObservationHeader.SignalCount))) / 8)))
+    w := iobit.NewWriter(data)
+    msg.ObservationHeader.Serialize(&w)
+    for _, s := range msg.SignalData {
+        w.PutUint8(6, s.SatelliteId)
+        w.PutBit(s.L1CodeIndicator)
+        w.PutUint8(5, s.FrequencyChannel)
+        w.PutUint32(25, s.L1Pseudorange)
+        w.PutInt32(20, s.L1PhaseRange)
+        w.PutUint8(7, s.L1LockTimeIndicator)
+        w.PutUint8(7, s.L1PseudorangeAmbiguity)
+        w.PutUint8(8, s.L1Cnr)
+    }
+    w.PutUint8(uint(w.Bits()), 0)
+    w.Flush()
+    return data
 }
+
 
 type Rtcm31011SignalData struct {
     SatelliteId uint8
@@ -178,8 +219,26 @@ func NewRtcm3Message1011(data []byte) (msg Rtcm3Message1011) {
 }
 
 func (msg Rtcm3Message1011) Serialize() []byte {
-    return []byte{}
+    data := make([]byte, int(math.Ceil(float64(61 + (107 * int(msg.ObservationHeader.SignalCount))) / 8)))
+    w := iobit.NewWriter(data)
+    msg.ObservationHeader.Serialize(&w)
+    for _, s := range msg.SignalData {
+        w.PutUint8(6, s.SatelliteId)
+        w.PutBit(s.L1CodeIndicator)
+        w.PutUint8(5, s.FrequencyChannel)
+        w.PutUint32(25, s.L1Pseudorange)
+        w.PutInt32(20, s.L1PhaseRange)
+        w.PutUint8(7, s.L1LockTimeIndicator)
+        w.PutUint8(2, s.L2CodeIndicator)
+        w.PutUint16(14, s.L2Pseudorange)
+        w.PutInt32(20, s.L2PhaseRange)
+        w.PutUint8(7, s.L2LockTimeIndicator)
+    }
+    w.PutUint8(uint(w.Bits()), 0)
+    w.Flush()
+    return data
 }
+
 
 type Rtcm31012SignalData struct {
     SatelliteId uint8
@@ -233,7 +292,27 @@ func NewRtcm3Message1012(data []byte) (msg Rtcm3Message1012) {
 }
 
 func (msg Rtcm3Message1012) Serialize() []byte {
-    return []byte{}
+    data := make([]byte, int(math.Ceil(float64(61 + (130 * int(msg.ObservationHeader.SignalCount))) / 8)))
+    w := iobit.NewWriter(data)
+    msg.ObservationHeader.Serialize(&w)
+    for _, s := range msg.SignalData {
+        w.PutUint8(6, s.SatelliteId)
+        w.PutBit(s.L1CodeIndicator)
+        w.PutUint8(5, s.FrequencyChannel)
+        w.PutUint32(25, s.L1Pseudorange)
+        w.PutInt32(20, s.L1PhaseRange)
+        w.PutUint8(7, s.L1LockTimeIndicator)
+        w.PutUint8(7, s.L1PseudorangeAmbiguity)
+        w.PutUint8(8, s.L1Cnr)
+        w.PutUint8(2, s.L2CodeIndicator)
+        w.PutUint16(14, s.L2Pseudorange)
+        w.PutInt32(20, s.L2PhaseRange)
+        w.PutUint8(7, s.L2LockTimeIndicator)
+        w.PutUint8(8, s.L2Cnr)
+    }
+    w.PutUint8(uint(w.Bits()), 0)
+    w.Flush()
+    return data
 }
 
 type Rtcm3Message1020 struct {
@@ -289,21 +368,21 @@ func NewRtcm3Message1020(data []byte) Rtcm3Message1020 {
         Msb: r.Bit(),
         P2: r.Bit(),
         Tb: r.Uint8(7),
-        XnTb1: Sint32(r, 24),
-        XnTb: Sint32(r, 27),
-        XnTb2: Sint8(r, 5),
-        YnTb1: Sint32(r, 24),
-        YnTb: Sint32(r, 27),
-        YnTb2: Sint8(r, 5),
-        ZnTb1: Sint32(r, 24),
-        ZnTb: Sint32(r, 27),
-        ZnTb2: Sint8(r, 5),
+        XnTb1: Sint32(&r, 24),
+        XnTb: Sint32(&r, 27),
+        XnTb2: Sint8(&r, 5),
+        YnTb1: Sint32(&r, 24),
+        YnTb: Sint32(&r, 27),
+        YnTb2: Sint8(&r, 5),
+        ZnTb1: Sint32(&r, 24),
+        ZnTb: Sint32(&r, 27),
+        ZnTb2: Sint8(&r, 5),
         P3: r.Bit(),
-        GammaN: Sint16(r, 11),
+        GammaN: Sint16(&r, 11),
         Mp: r.Uint8(2),
         M1n3: r.Bit(),
-        TauN: Sint32(r, 22),
-        MDeltaTauN: Sint8(r, 5),
+        TauN: Sint32(&r, 22),
+        MDeltaTauN: Sint8(&r, 5),
         En: r.Uint8(5),
         MP4: r.Bit(),
         MFt: r.Uint8(4),
@@ -311,16 +390,56 @@ func NewRtcm3Message1020(data []byte) Rtcm3Message1020 {
         MM: r.Uint8(2),
         AdditionalData: r.Bit(),
         Na: r.Uint16(11),
-        TauC: Sint32(r, 32),
+        TauC: Sint32(&r, 32),
         MN4: r.Uint8(5),
-        MTauGps: Sint32(r, 22),
+        MTauGps: Sint32(&r, 22),
         M1n5: r.Bit(),
         Reserved: r.Uint8(7),
     }
 }
 
 func (msg Rtcm3Message1020) Serialize() []byte {
-    return []byte{}
+    data := make([]byte, 45)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint8(6, msg.SatelliteId)
+    w.PutUint8(5, msg.FrequencyChannel)
+    w.PutBit(msg.AlmanacHealth)
+    w.PutBit(msg.AlmanacHealthAvailability)
+    w.PutUint8(2, msg.P1)
+    w.PutUint16(12, msg.Tk)
+    w.PutBit(msg.Msb)
+    w.PutBit(msg.P2)
+    w.PutUint8(7, msg.Tb)
+    PutSint32(&w, 24, msg.XnTb1)
+    PutSint32(&w, 27, msg.XnTb)
+    PutSint8(&w, 5, msg.XnTb2)
+    PutSint32(&w, 24, msg.YnTb1)
+    PutSint32(&w, 27, msg.YnTb)
+    PutSint8(&w, 5, msg.YnTb2)
+    PutSint32(&w, 24, msg.ZnTb1)
+    PutSint32(&w, 27, msg.ZnTb)
+    PutSint8(&w, 5, msg.ZnTb2)
+    w.PutBit(msg.P3)
+    PutSint16(&w, 11, msg.GammaN)
+    w.PutUint8(2, msg.Mp)
+    w.PutBit(msg.M1n3)
+    PutSint32(&w, 22, msg.TauN)
+    PutSint8(&w, 5, msg.MDeltaTauN)
+    w.PutUint8(5, msg.En)
+    w.PutBit(msg.MP4)
+    w.PutUint8(4, msg.MFt)
+    w.PutUint16(11, msg.MNt)
+    w.PutUint8(2, msg.MM)
+    w.PutBit(msg.AdditionalData)
+    w.PutUint16(11, msg.Na)
+    PutSint32(&w, 32, msg.TauC)
+    w.PutUint8(5, msg.MN4)
+    PutSint32(&w, 22, msg.MTauGps)
+    w.PutBit(msg.M1n5)
+    w.PutUint8(7, msg.Reserved)
+    w.Flush()
+    return data
 }
 
 type Rtcm3Message1230 struct {

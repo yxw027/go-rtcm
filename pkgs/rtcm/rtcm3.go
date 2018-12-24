@@ -7,8 +7,6 @@ import (
     "errors"
     "github.com/bamiaux/iobit"
     "time"
-
-    "fmt"
 )
 
 type Rtcm3Message interface {
@@ -88,7 +86,6 @@ func DeserializeRtcm3Frame(reader *bufio.Reader) (frame Rtcm3Frame, err error) {
 
     data = append([]byte{preamble}, data...)
     crc := binary.BigEndian.Uint32(data[len(data)-4:]) & 0xFFFFFF
-    fmt.Println(data)
 
     frame = Rtcm3Frame{
         Preamble: preamble,
@@ -106,7 +103,7 @@ func DeserializeRtcm3Frame(reader *bufio.Reader) (frame Rtcm3Frame, err error) {
     return frame, nil
 }
 
-func (frame Rtcm3Frame) Message() Rtcm3Message {
+func (frame Rtcm3Frame) Message() (msg Rtcm3Message) {
     messageNumber := binary.BigEndian.Uint16(frame.Payload[0:2]) >> 4
 
     switch int(messageNumber) {
@@ -225,7 +222,8 @@ func (scanner Scanner) Next() (message Rtcm3Message, err error) {
         frame, err := DeserializeRtcm3Frame(scanner.Reader)
         if err != nil {
             if err.Error() == "Invalid Preamble" || err.Error() == "CRC Failed" { continue }
+            return frame, err
         }
-        return frame.Message(), err
+        return frame.Message(), err // probably have frame.Message() return err
     }
 }

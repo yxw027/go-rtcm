@@ -2,6 +2,7 @@ package rtcm
 
 import (
     "github.com/bamiaux/iobit"
+    "math"
 )
 
 type Rtcm3MessageAnnouncement struct {
@@ -40,7 +41,22 @@ func NewRtcm3Message1013(data []byte) (msg Rtcm3Message1013) {
     return msg
 }
 
-func (msg Rtcm3Message1013) Serialize() (data []byte) {
+func (msg Rtcm3Message1013) Serialize() []byte {
+    data := make([]byte, int(math.Ceil(float64(70 + (29 * int(msg.MessageCount))) / 8)))
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint16(12, msg.ReferenceStationId)
+    w.PutUint16(16, msg.Mjd)
+    w.PutUint32(17, msg.SecondsOfDay)
+    w.PutUint8(5, msg.MessageCount)
+    w.PutUint8(8, msg.LeapSeconds)
+    for _, a := range msg.Messages {
+        w.PutUint16(12, a.Id)
+        w.PutBit(a.SyncFlag)
+        w.PutUint16(16, a.TransmissionInterval)
+    }
+    w.PutUint8(uint(w.Bits()), 0)
+    w.Flush()
     return data
 }
 
@@ -68,6 +84,15 @@ func NewRtcm3Message1029(data []byte) (msg Rtcm3Message1029) {
     return msg
 }
 
-func (msg Rtcm3Message1029) Serialize() (data []byte) {
-    return data
+func (msg Rtcm3Message1029) Serialize() []byte {
+    data := make([]byte, 9)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint16(12, msg.ReferenceStationId)
+    w.PutUint16(16, msg.Mjd)
+    w.PutUint32(17, msg.SecondsOfDay)
+    w.PutUint8(7, msg.Characters)
+    w.PutUint8(8, msg.CodeUnitsLength)
+    w.Flush()
+    return append(data, []byte(msg.CodeUnits)...)
 }
