@@ -17,7 +17,9 @@ func main() {
 //            case 1077, 1097, 1117, 1087, 1127, 1001, 1002, 1003, 1004, 1009, 1010, 1011, 1012:
 //                fmt.Println(rtcm.GetMessageNumber(msg), time.Now().UTC().Sub(msg.(rtcm.Rtcm3Observable).Time()))
 //        }
-        fmt.Println(rtcm.NewRtcm3Frame(msg).Serialize(), "\n")
+//        fmt.Println(msg.Serialize(), "\n")
+        msg.Serialize()
+        continue
     }
 
     fmt.Println(err)

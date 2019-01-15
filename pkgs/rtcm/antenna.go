@@ -20,6 +20,23 @@ type AntennaReferencePoint struct {
     ReferencePointZ int64
 }
 
+func SerializeAntennaReferencePoint(w iobit.Writer, arp AntennaReferencePoint) {
+    w.PutUint16(12, arp.MessageNumber)
+    w.PutUint16(12, arp.ReferenceStationId)
+    w.PutUint8(6, arp.ItrfRealizationYear)
+    w.PutBit(arp.GpsIndicator)
+    w.PutBit(arp.GlonassIndicator)
+    w.PutBit(arp.GalileoIndicator)
+    w.PutBit(arp.ReferenceStationIndicator)
+    w.PutInt64(38, arp.ReferencePointX)
+    w.PutBit(arp.SingleReceiverOscilator)
+    w.PutBit(arp.Reserved)
+    w.PutInt64(38, arp.ReferencePointY)
+    w.PutUint8(2, arp.QuarterCycleIndicator)
+    w.PutInt64(39, arp.ReferencePointZ)
+    return
+}
+
 func NewAntennaReferencePoint(r *iobit.Reader) AntennaReferencePoint {
     return AntennaReferencePoint{
         MessageNumber: r.Uint16(12),
@@ -49,7 +66,12 @@ func NewRtcm3Message1005(data []byte) Rtcm3Message1005 {
     }
 }
 
-func (msg Rtcm3Message1005) Serialize() (data []byte) {
+func (msg Rtcm3Message1005) Serialize() []byte {
+    data := make([]byte, 20)
+    w := iobit.NewWriter(data)
+    SerializeAntennaReferencePoint(w, msg.AntennaReferencePoint)
+    w.PutUint8(uint(w.Bits()), 0)
+    w.Flush()
     return data
 }
 
@@ -66,7 +88,13 @@ func NewRtcm3Message1006(data []byte) Rtcm3Message1006 {
     }
 }
 
-func (msg Rtcm3Message1006) Serialize() (data []byte) {
+func (msg Rtcm3Message1006) Serialize() []byte {
+    data := make([]byte, 22)
+    w := iobit.NewWriter(data)
+    SerializeAntennaReferencePoint(w, msg.AntennaReferencePoint)
+    w.PutUint16(16, msg.AntennaHeight)
+    w.PutUint8(uint(w.Bits()), 0)
+    w.Flush()
     return data
 }
 
@@ -150,6 +178,20 @@ func NewRtcm3Message1033(data []byte) (msg Rtcm3Message1033) {
     return msg
 }
 
-func (msg Rtcm3Message1033) Serialize() (data []byte) {
+func (msg Rtcm3Message1033) Serialize() []byte {
+    data := make([]byte, 3)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint16(12, msg.ReferenceStationId)
+    w.Flush()
+    data = append(data, byte(len(msg.AntennaDescriptor)))
+    data = append(data, []byte(msg.AntennaDescriptor)...)
+    data = append(data, byte(msg.AntennaSetupId), byte(len(msg.AntennaSerialNumber)))
+    data = append(data, byte(len(msg.ReceiverTypeDescriptor)))
+    data = append(data, []byte(msg.ReceiverTypeDescriptor)...)
+    data = append(data, byte(len(msg.ReceiverFirmwareVersion)))
+    data = append(data, []byte(msg.ReceiverFirmwareVersion)...)
+    data = append(data, byte(len(msg.ReceiverSerialNumber)))
+    data = append(data, []byte(msg.ReceiverSerialNumber)...)
     return data
 }

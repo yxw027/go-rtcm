@@ -16,7 +16,7 @@ type Rtcm3Message interface {
 
 // This is probably less efficient than making Number() be a method of Rtcm3Message and having each Specific Message type implement it
 func GetMessageNumber(msg Rtcm3Message) uint16 {
-    return binary.BigEndian.Uint16(msg.Serialize()[4:6]) >> 4
+    return binary.BigEndian.Uint16(msg.Serialize()[0:4]) >> 4
 }
 
 

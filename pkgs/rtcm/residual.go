@@ -53,6 +53,7 @@ func (msg Rtcm3Message1030) Serialize() (data []byte) {
     return data
 }
 
+// Need to implement a Time method for GLONASS Residuals Epoch Time - DF225
 type Rtcm3Message1031 struct {
     MessageNumber uint16
     Epoch uint32

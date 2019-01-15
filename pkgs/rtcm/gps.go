@@ -161,6 +161,10 @@ func (msg Rtcm3Message1002) Serialize() []byte {
     return append(headerData, satData...)
 }
 
+func (msg Rtcm3Message1002) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
 
 type Rtcm31003SatelliteData struct {
     SatelliteId uint8
@@ -223,6 +227,10 @@ func (msg Rtcm3Message1003) Serialize() []byte {
     w.PutUint8(uint(w.Bits()), 0)
     w.Flush()
     return append(headerData, satData...)
+}
+
+func (msg Rtcm3Message1003) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
 }
 
 
@@ -296,6 +304,10 @@ func (msg Rtcm3Message1004) Serialize() []byte {
     w.PutUint8(uint(w.Bits()), 0)
     w.Flush()
     return append(headerData, satData...)
+}
+
+func (msg Rtcm3Message1004) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
 }
 
 

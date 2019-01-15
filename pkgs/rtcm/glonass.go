@@ -43,7 +43,7 @@ func NewRtcm3GlonassObservationHeader(r *iobit.Reader) Rtcm3GlonassObservationHe
     }
 }
 
-func (h Rtcm3GlonassObservationHeader) Serialize(w *iobit.Writer) {
+func SerializeRtcm3GlonassObservationHeader(w *iobit.Writer, h Rtcm3GlonassObservationHeader) {
     w.PutUint16(12, h.MessageNumber)
     w.PutUint16(12, h.ReferenceStationId)
     w.PutUint32(27, h.Epoch)
@@ -82,23 +82,23 @@ func NewRtcm31009SignalData(r *iobit.Reader, numSig int) (sigData []Rtcm31009Sig
 }
 
 type Rtcm3Message1009 struct {
-    ObservationHeader Rtcm3GlonassObservationHeader
+    Rtcm3GlonassObservationHeader
     SignalData []Rtcm31009SignalData
 }
 
 func NewRtcm3Message1009(data []byte) (msg Rtcm3Message1009) {
     r := iobit.NewReader(data)
     msg = Rtcm3Message1009{
-        ObservationHeader: NewRtcm3GlonassObservationHeader(&r),
+        Rtcm3GlonassObservationHeader: NewRtcm3GlonassObservationHeader(&r),
     }
-    msg.SignalData = NewRtcm31009SignalData(&r, int(msg.ObservationHeader.SignalCount))
+    msg.SignalData = NewRtcm31009SignalData(&r, int(msg.SignalCount))
     return msg
 }
 
 func (msg Rtcm3Message1009) Serialize() []byte {
-    data := make([]byte, int(math.Ceil(float64(61 + (64 * int(msg.ObservationHeader.SignalCount))) / 8)))
+    data := make([]byte, int(math.Ceil(float64(61 + (64 * int(msg.SignalCount))) / 8)))
     w := iobit.NewWriter(data)
-    msg.ObservationHeader.Serialize(&w)
+    SerializeRtcm3GlonassObservationHeader(&w, msg.Rtcm3GlonassObservationHeader)
     for _, s := range msg.SignalData {
         w.PutUint8(6, s.SatelliteId)
         w.PutBit(s.L1CodeIndicator)
@@ -140,23 +140,23 @@ func NewRtcm31010SignalData(r *iobit.Reader, numSig int) (sigData []Rtcm31010Sig
 }
 
 type Rtcm3Message1010 struct {
-    ObservationHeader Rtcm3GlonassObservationHeader
+    Rtcm3GlonassObservationHeader
     SignalData []Rtcm31010SignalData
 }
 
 func NewRtcm3Message1010(data []byte) (msg Rtcm3Message1010) {
     r := iobit.NewReader(data)
     msg = Rtcm3Message1010{
-        ObservationHeader: NewRtcm3GlonassObservationHeader(&r),
+        Rtcm3GlonassObservationHeader: NewRtcm3GlonassObservationHeader(&r),
     }
-    msg.SignalData = NewRtcm31010SignalData(&r, int(msg.ObservationHeader.SignalCount))
+    msg.SignalData = NewRtcm31010SignalData(&r, int(msg.SignalCount))
     return msg
 }
 
 func (msg Rtcm3Message1010) Serialize() []byte {
-    data := make([]byte, int(math.Ceil(float64(61 + (79 * int(msg.ObservationHeader.SignalCount))) / 8)))
+    data := make([]byte, int(math.Ceil(float64(61 + (79 * int(msg.SignalCount))) / 8)))
     w := iobit.NewWriter(data)
-    msg.ObservationHeader.Serialize(&w)
+    SerializeRtcm3GlonassObservationHeader(&w, msg.Rtcm3GlonassObservationHeader)
     for _, s := range msg.SignalData {
         w.PutUint8(6, s.SatelliteId)
         w.PutBit(s.L1CodeIndicator)
@@ -205,23 +205,23 @@ func NewRtcm31011SignalData(r *iobit.Reader, numSig int) (sigData []Rtcm31011Sig
 }
 
 type Rtcm3Message1011 struct {
-    ObservationHeader Rtcm3GlonassObservationHeader
+    Rtcm3GlonassObservationHeader
     SignalData []Rtcm31011SignalData
 }
 
 func NewRtcm3Message1011(data []byte) (msg Rtcm3Message1011) {
     r := iobit.NewReader(data)
     msg = Rtcm3Message1011{
-        ObservationHeader: NewRtcm3GlonassObservationHeader(&r),
+        Rtcm3GlonassObservationHeader: NewRtcm3GlonassObservationHeader(&r),
     }
-    msg.SignalData = NewRtcm31011SignalData(&r, int(msg.ObservationHeader.SignalCount))
+    msg.SignalData = NewRtcm31011SignalData(&r, int(msg.SignalCount))
     return msg
 }
 
 func (msg Rtcm3Message1011) Serialize() []byte {
-    data := make([]byte, int(math.Ceil(float64(61 + (107 * int(msg.ObservationHeader.SignalCount))) / 8)))
+    data := make([]byte, int(math.Ceil(float64(61 + (107 * int(msg.SignalCount))) / 8)))
     w := iobit.NewWriter(data)
-    msg.ObservationHeader.Serialize(&w)
+    SerializeRtcm3GlonassObservationHeader(&w, msg.Rtcm3GlonassObservationHeader)
     for _, s := range msg.SignalData {
         w.PutUint8(6, s.SatelliteId)
         w.PutBit(s.L1CodeIndicator)
@@ -278,23 +278,23 @@ func NewRtcm31012SignalData(r *iobit.Reader, numSig int) (sigData []Rtcm31012Sig
 }
 
 type Rtcm3Message1012 struct {
-    ObservationHeader Rtcm3GlonassObservationHeader
+    Rtcm3GlonassObservationHeader
     SignalData []Rtcm31012SignalData
 }
 
 func NewRtcm3Message1012(data []byte) (msg Rtcm3Message1012) {
     r := iobit.NewReader(data)
     msg = Rtcm3Message1012{
-        ObservationHeader: NewRtcm3GlonassObservationHeader(&r),
+        Rtcm3GlonassObservationHeader: NewRtcm3GlonassObservationHeader(&r),
     }
-    msg.SignalData = NewRtcm31012SignalData(&r, int(msg.ObservationHeader.SignalCount))
+    msg.SignalData = NewRtcm31012SignalData(&r, int(msg.SignalCount))
     return msg
 }
 
 func (msg Rtcm3Message1012) Serialize() []byte {
-    data := make([]byte, int(math.Ceil(float64(61 + (130 * int(msg.ObservationHeader.SignalCount))) / 8)))
+    data := make([]byte, int(math.Ceil(float64(61 + (130 * int(msg.SignalCount))) / 8)))
     w := iobit.NewWriter(data)
-    msg.ObservationHeader.Serialize(&w)
+    SerializeRtcm3GlonassObservationHeader(&w, msg.Rtcm3GlonassObservationHeader)
     for _, s := range msg.SignalData {
         w.PutUint8(6, s.SatelliteId)
         w.PutBit(s.L1CodeIndicator)
@@ -479,5 +479,25 @@ func NewRtcm3Message1230(data []byte) (msg Rtcm3Message1230) {
 }
 
 func (msg Rtcm3Message1230) Serialize() []byte {
-    return []byte{}
+    data := make([]byte, 32)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint16(12, msg.ReferenceStationId)
+    w.PutBit(msg.CodePhaseBias)
+    w.PutUint8(3, msg.Reserved)
+    w.PutUint8(4, msg.SignalsMask)
+    w.Flush()
+    if (msg.SignalsMask & 8) == 8 {
+        data = append(data, uint8(msg.L1CACodePhaseBias>>8), uint8(msg.L1CACodePhaseBias&0xff))
+    }
+    if (msg.SignalsMask & 4) == 4 {
+        data = append(data, uint8(msg.L1PCodePhaseBias>>8), uint8(msg.L1PCodePhaseBias&0xff))
+    }
+    if (msg.SignalsMask & 2) == 2 {
+        data = append(data, uint8(msg.L2CACodePhaseBias>>8), uint8(msg.L2CACodePhaseBias&0xff))
+    }
+    if (msg.SignalsMask & 1) == 1 {
+        data = append(data, uint8(msg.L2PCodePhaseBias>>8), uint8(msg.L2PCodePhaseBias&0xff))
+    }
+    return data
 }
