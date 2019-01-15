@@ -170,35 +170,107 @@ func (frame Rtcm3Frame) Message() (msg Rtcm3Message) {
         case 1230:
             return NewRtcm3Message1230(frame.Payload)
 
-        case 1071, 1081, 1091, 1111, 1121:
-            return NewRtcm3MessageMsm1(frame.Payload)
+        case 1071:
+            return NewRtcm3Message1071(frame.Payload)
 
-        case 1072, 1082, 1092, 1112, 1122:
-            return NewRtcm3MessageMsm2(frame.Payload)
+        case 1072:
+            return NewRtcm3Message1072(frame.Payload)
 
-        case 1073, 1083, 1093, 1113, 1123:
-            return NewRtcm3MessageMsm3(frame.Payload)
+        case 1073:
+            return NewRtcm3Message1073(frame.Payload)
 
-        case 1074, 1084, 1094, 1114, 1124:
-            return NewRtcm3MessageMsm4(frame.Payload)
+        case 1074:
+            return NewRtcm3Message1074(frame.Payload)
 
-        case 1075, 1085, 1095, 1115, 1125:
-            return NewRtcm3MessageMsm5(frame.Payload)
+        case 1075:
+            return NewRtcm3Message1075(frame.Payload)
 
-        case 1076, 1086, 1096, 1116, 1126:
-            return NewRtcm3MessageMsm6(frame.Payload)
+        case 1076:
+            return NewRtcm3Message1076(frame.Payload)
 
         case 1077:
             return NewRtcm3Message1077(frame.Payload)
 
+        case 1081:
+            return NewRtcm3Message1081(frame.Payload)
+
+        case 1082:
+            return NewRtcm3Message1082(frame.Payload)
+
+        case 1083:
+            return NewRtcm3Message1083(frame.Payload)
+
+        case 1084:
+            return NewRtcm3Message1084(frame.Payload)
+
+        case 1085:
+            return NewRtcm3Message1085(frame.Payload)
+
+        case 1086:
+            return NewRtcm3Message1086(frame.Payload)
+
         case 1087:
             return NewRtcm3Message1087(frame.Payload)
+
+        case 1091:
+            return NewRtcm3Message1091(frame.Payload)
+
+        case 1092:
+            return NewRtcm3Message1092(frame.Payload)
+
+        case 1093:
+            return NewRtcm3Message1093(frame.Payload)
+
+        case 1094:
+            return NewRtcm3Message1094(frame.Payload)
+
+        case 1095:
+            return NewRtcm3Message1095(frame.Payload)
+
+        case 1096:
+            return NewRtcm3Message1096(frame.Payload)
 
         case 1097:
             return NewRtcm3Message1097(frame.Payload)
 
+        case 1111:
+            return NewRtcm3Message1111(frame.Payload)
+
+        case 1112:
+            return NewRtcm3Message1112(frame.Payload)
+
+        case 1113:
+            return NewRtcm3Message1113(frame.Payload)
+
+        case 1114:
+            return NewRtcm3Message1114(frame.Payload)
+
+        case 1115:
+            return NewRtcm3Message1115(frame.Payload)
+
+        case 1116:
+            return NewRtcm3Message1116(frame.Payload)
+
         case 1117:
             return NewRtcm3Message1117(frame.Payload)
+
+        case 1121:
+            return NewRtcm3Message1121(frame.Payload)
+
+        case 1122:
+            return NewRtcm3Message1122(frame.Payload)
+
+        case 1123:
+            return NewRtcm3Message1123(frame.Payload)
+
+        case 1124:
+            return NewRtcm3Message1124(frame.Payload)
+
+        case 1125:
+            return NewRtcm3Message1125(frame.Payload)
+
+        case 1126:
+            return NewRtcm3Message1126(frame.Payload)
 
         case 1127:
             return NewRtcm3Message1127(frame.Payload)

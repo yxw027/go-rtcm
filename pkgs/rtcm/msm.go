@@ -665,6 +665,90 @@ func (msg Rtcm3MessageMsm1) Serialize() (data []byte) {
     return data
 }
 
+type Rtcm3Message1071 struct {
+    Rtcm3MessageMsm1
+}
+
+func NewRtcm3Message1071(data []byte) Rtcm3Message1071 {
+    return Rtcm3Message1071{
+        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+    }
+}
+
+func (msg Rtcm3Message1071) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1072 struct {
+    Rtcm3MessageMsm2
+}
+
+func NewRtcm3Message1072(data []byte) Rtcm3Message1072 {
+    return Rtcm3Message1072{
+        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+    }
+}
+
+func (msg Rtcm3Message1072) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1073 struct {
+    Rtcm3MessageMsm3
+}
+
+func NewRtcm3Message1073(data []byte) Rtcm3Message1073 {
+    return Rtcm3Message1073{
+        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+    }
+}
+
+func (msg Rtcm3Message1073) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1074 struct {
+    Rtcm3MessageMsm4
+}
+
+func NewRtcm3Message1074(data []byte) Rtcm3Message1074 {
+    return Rtcm3Message1074{
+        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+    }
+}
+
+func (msg Rtcm3Message1074) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1075 struct {
+    Rtcm3MessageMsm5
+}
+
+func NewRtcm3Message1075(data []byte) Rtcm3Message1075 {
+    return Rtcm3Message1075{
+        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+    }
+}
+
+func (msg Rtcm3Message1075) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1076 struct {
+    Rtcm3MessageMsm6
+}
+
+func NewRtcm3Message1076(data []byte) Rtcm3Message1076 {
+    return Rtcm3Message1076{
+        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+    }
+}
+
+func (msg Rtcm3Message1076) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
 type Rtcm3Message1077 struct {
     Rtcm3MessageMsm7
 }
@@ -677,6 +761,90 @@ func NewRtcm3Message1077(data []byte) Rtcm3Message1077 {
 
 func (msg Rtcm3Message1077) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1081 struct {
+    Rtcm3MessageMsm1
+}
+
+func NewRtcm3Message1081(data []byte) Rtcm3Message1081 {
+    return Rtcm3Message1081{
+        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+    }
+}
+
+func (msg Rtcm3Message1081) Time() time.Time {
+    return GlonassTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1082 struct {
+    Rtcm3MessageMsm2
+}
+
+func NewRtcm3Message1082(data []byte) Rtcm3Message1082 {
+    return Rtcm3Message1082{
+        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+    }
+}
+
+func (msg Rtcm3Message1082) Time() time.Time {
+    return GlonassTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1083 struct {
+    Rtcm3MessageMsm3
+}
+
+func NewRtcm3Message1083(data []byte) Rtcm3Message1083 {
+    return Rtcm3Message1083{
+        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+    }
+}
+
+func (msg Rtcm3Message1083) Time() time.Time {
+    return GlonassTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1084 struct {
+    Rtcm3MessageMsm4
+}
+
+func NewRtcm3Message1084(data []byte) Rtcm3Message1084 {
+    return Rtcm3Message1084{
+        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+    }
+}
+
+func (msg Rtcm3Message1084) Time() time.Time {
+    return GlonassTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1085 struct {
+    Rtcm3MessageMsm5
+}
+
+func NewRtcm3Message1085(data []byte) Rtcm3Message1085 {
+    return Rtcm3Message1085{
+        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+    }
+}
+
+func (msg Rtcm3Message1085) Time() time.Time {
+    return GlonassTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1086 struct {
+    Rtcm3MessageMsm6
+}
+
+func NewRtcm3Message1086(data []byte) Rtcm3Message1086 {
+    return Rtcm3Message1086{
+        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+    }
+}
+
+func (msg Rtcm3Message1086) Time() time.Time {
+    return GlonassTime(msg.Header.Epoch)
 }
 
 type Rtcm3Message1087 struct {
@@ -693,6 +861,90 @@ func (msg Rtcm3Message1087) Time() time.Time {
     return GlonassTime(msg.Header.Epoch)
 }
 
+type Rtcm3Message1091 struct {
+    Rtcm3MessageMsm1
+}
+
+func NewRtcm3Message1091(data []byte) Rtcm3Message1091 {
+    return Rtcm3Message1091{
+        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+    }
+}
+
+func (msg Rtcm3Message1091) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1092 struct {
+    Rtcm3MessageMsm2
+}
+
+func NewRtcm3Message1092(data []byte) Rtcm3Message1092 {
+    return Rtcm3Message1092{
+        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+    }
+}
+
+func (msg Rtcm3Message1092) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1093 struct {
+    Rtcm3MessageMsm3
+}
+
+func NewRtcm3Message1093(data []byte) Rtcm3Message1093 {
+    return Rtcm3Message1093{
+        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+    }
+}
+
+func (msg Rtcm3Message1093) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1094 struct {
+    Rtcm3MessageMsm4
+}
+
+func NewRtcm3Message1094(data []byte) Rtcm3Message1094 {
+    return Rtcm3Message1094{
+        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+    }
+}
+
+func (msg Rtcm3Message1094) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1095 struct {
+    Rtcm3MessageMsm5
+}
+
+func NewRtcm3Message1095(data []byte) Rtcm3Message1095 {
+    return Rtcm3Message1095{
+        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+    }
+}
+
+func (msg Rtcm3Message1095) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1096 struct {
+    Rtcm3MessageMsm6
+}
+
+func NewRtcm3Message1096(data []byte) Rtcm3Message1096 {
+    return Rtcm3Message1096{
+        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+    }
+}
+
+func (msg Rtcm3Message1096) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
 type Rtcm3Message1097 struct {
     Rtcm3MessageMsm7
 }
@@ -704,6 +956,90 @@ func NewRtcm3Message1097(data []byte) Rtcm3Message1097 {
 }
 
 func (msg Rtcm3Message1097) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1111 struct {
+    Rtcm3MessageMsm1
+}
+
+func NewRtcm3Message1111(data []byte) Rtcm3Message1111 {
+    return Rtcm3Message1111{
+        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+    }
+}
+
+func (msg Rtcm3Message1111) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1112 struct {
+    Rtcm3MessageMsm2
+}
+
+func NewRtcm3Message1112(data []byte) Rtcm3Message1112 {
+    return Rtcm3Message1112{
+        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+    }
+}
+
+func (msg Rtcm3Message1112) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1113 struct {
+    Rtcm3MessageMsm3
+}
+
+func NewRtcm3Message1113(data []byte) Rtcm3Message1113 {
+    return Rtcm3Message1113{
+        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+    }
+}
+
+func (msg Rtcm3Message1113) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1114 struct {
+    Rtcm3MessageMsm4
+}
+
+func NewRtcm3Message1114(data []byte) Rtcm3Message1114 {
+    return Rtcm3Message1114{
+        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+    }
+}
+
+func (msg Rtcm3Message1114) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1115 struct {
+    Rtcm3MessageMsm5
+}
+
+func NewRtcm3Message1115(data []byte) Rtcm3Message1115 {
+    return Rtcm3Message1115{
+        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+    }
+}
+
+func (msg Rtcm3Message1115) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1116 struct {
+    Rtcm3MessageMsm6
+}
+
+func NewRtcm3Message1116(data []byte) Rtcm3Message1116 {
+    return Rtcm3Message1116{
+        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+    }
+}
+
+func (msg Rtcm3Message1116) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
@@ -719,6 +1055,90 @@ func NewRtcm3Message1117(data []byte) Rtcm3Message1117 {
 
 func (msg Rtcm3Message1117) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1121 struct {
+    Rtcm3MessageMsm1
+}
+
+func NewRtcm3Message1121(data []byte) Rtcm3Message1121 {
+    return Rtcm3Message1121{
+        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+    }
+}
+
+func (msg Rtcm3Message1121) Time() time.Time {
+    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+}
+
+type Rtcm3Message1122 struct {
+    Rtcm3MessageMsm2
+}
+
+func NewRtcm3Message1122(data []byte) Rtcm3Message1122 {
+    return Rtcm3Message1122{
+        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+    }
+}
+
+func (msg Rtcm3Message1122) Time() time.Time {
+    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+}
+
+type Rtcm3Message1123 struct {
+    Rtcm3MessageMsm3
+}
+
+func NewRtcm3Message1123(data []byte) Rtcm3Message1123 {
+    return Rtcm3Message1123{
+        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+    }
+}
+
+func (msg Rtcm3Message1123) Time() time.Time {
+    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+}
+
+type Rtcm3Message1124 struct {
+    Rtcm3MessageMsm4
+}
+
+func NewRtcm3Message1124(data []byte) Rtcm3Message1124 {
+    return Rtcm3Message1124{
+        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+    }
+}
+
+func (msg Rtcm3Message1124) Time() time.Time {
+    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+}
+
+type Rtcm3Message1125 struct {
+    Rtcm3MessageMsm5
+}
+
+func NewRtcm3Message1125(data []byte) Rtcm3Message1125 {
+    return Rtcm3Message1125{
+        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+    }
+}
+
+func (msg Rtcm3Message1125) Time() time.Time {
+    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+}
+
+type Rtcm3Message1126 struct {
+    Rtcm3MessageMsm6
+}
+
+func NewRtcm3Message1126(data []byte) Rtcm3Message1126 {
+    return Rtcm3Message1126{
+        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+    }
+}
+
+func (msg Rtcm3Message1126) Time() time.Time {
+    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
 type Rtcm3Message1127 struct {
