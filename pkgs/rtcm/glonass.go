@@ -15,7 +15,7 @@ func GlonassTime(e uint32) time.Time {
 }
 
 func GlonassTimeShort(e uint32) time.Time {
-    now := time.Now().UTC().Add(time.Hour)
+    now := time.Now().UTC()
     dow := now.Truncate(time.Hour * 24)
     tod := time.Duration(e) * time.Millisecond
     return dow.Add(tod).Add(-(3 * time.Hour))
@@ -33,6 +33,10 @@ type Rtcm3GlonassObservationHeader struct {
 
 func (obsHeader Rtcm3GlonassObservationHeader) Number() uint16 {
     return obsHeader.MessageNumber
+}
+
+func (h Rtcm3GlonassObservationHeader) Time() time.Time {
+    return GlonassTimeShort(h.Epoch)
 }
 
 func NewRtcm3GlonassObservationHeader(r *iobit.Reader) Rtcm3GlonassObservationHeader {
@@ -56,10 +60,6 @@ func SerializeRtcm3GlonassObservationHeader(w *iobit.Writer, h Rtcm3GlonassObser
     w.PutBit(h.SmoothingIndicator)
     w.PutUint8(3, h.SmoothingInterval)
     return
-}
-
-func (h Rtcm3GlonassObservationHeader) Time() time.Time {
-    return GlonassTimeShort(h.Epoch)
 }
 
 type Rtcm31009SignalData struct {
