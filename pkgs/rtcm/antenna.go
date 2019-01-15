@@ -24,7 +24,7 @@ func (arp AntennaReferencePoint) Number() uint16 {
     return arp.MessageNumber
 }
 
-func SerializeAntennaReferencePoint(w iobit.Writer, arp AntennaReferencePoint) {
+func SerializeAntennaReferencePoint(w *iobit.Writer, arp AntennaReferencePoint) {
     w.PutUint16(12, arp.MessageNumber)
     w.PutUint16(12, arp.ReferenceStationId)
     w.PutUint8(6, arp.ItrfRealizationYear)
@@ -73,7 +73,7 @@ func NewRtcm3Message1005(data []byte) Rtcm3Message1005 {
 func (msg Rtcm3Message1005) Serialize() []byte {
     data := make([]byte, 20)
     w := iobit.NewWriter(data)
-    SerializeAntennaReferencePoint(w, msg.AntennaReferencePoint)
+    SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
     w.PutUint8(uint(w.Bits()), 0)
     w.Flush()
     return data
@@ -95,7 +95,7 @@ func NewRtcm3Message1006(data []byte) Rtcm3Message1006 {
 func (msg Rtcm3Message1006) Serialize() []byte {
     data := make([]byte, 22)
     w := iobit.NewWriter(data)
-    SerializeAntennaReferencePoint(w, msg.AntennaReferencePoint)
+    SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
     w.PutUint16(16, msg.AntennaHeight)
     w.PutUint8(uint(w.Bits()), 0)
     w.Flush()

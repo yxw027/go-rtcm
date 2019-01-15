@@ -491,7 +491,7 @@ func NewRtcm3Message1230(data []byte) (msg Rtcm3Message1230) {
 }
 
 func (msg Rtcm3Message1230) Serialize() []byte {
-    data := make([]byte, 32)
+    data := make([]byte, 4)
     w := iobit.NewWriter(data)
     w.PutUint16(12, msg.MessageNumber)
     w.PutUint16(12, msg.ReferenceStationId)

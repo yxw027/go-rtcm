@@ -44,16 +44,7 @@ func NewRtcm3MsmHeader(r *iobit.Reader) (header Rtcm3MsmHeader) {
     return header
 }
 
-func SerializeRtcm3MsmHeader(header Rtcm3MsmHeader) (data []byte, w iobit.Writer) {
-    satMaskBits := bits.OnesCount(uint(header.SatelliteMask))
-    sigMaskBits := bits.OnesCount(uint(header.SignalMask))
-    cellMaskBits := bits.OnesCount(uint(header.CellMask))
-
-    // Header + SatelliteData + SignalData
-    msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (80 * cellMaskBits)
-    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
-    w = iobit.NewWriter(data)
-
+func SerializeRtcm3MsmHeader(w *iobit.Writer, header Rtcm3MsmHeader) {
     w.PutUint16(12, header.MessageNumber)
     w.PutUint16(12, header.ReferenceStationId)
     w.PutUint32(30, header.Epoch)
@@ -66,8 +57,8 @@ func SerializeRtcm3MsmHeader(header Rtcm3MsmHeader) (data []byte, w iobit.Writer
     w.PutUint8(3, header.SmoothingInterval)
     w.PutUint64(64, header.SatelliteMask)
     w.PutUint32(32, header.SignalMask)
-    w.PutUint64(uint(sigMaskBits * satMaskBits), header.CellMask)
-    return data, w
+    w.PutUint64(uint(bits.OnesCount(uint(header.SignalMask)) *  bits.OnesCount(uint(header.SatelliteMask))), header.CellMask)
+    return
 }
 
 type Rtcm3SatelliteDataMsm57 struct {
@@ -160,7 +151,15 @@ func NewRtcm3MessageMsm7(payload []byte) Rtcm3MessageMsm7 {
 }
 
 func (msg Rtcm3MessageMsm7) Serialize() (data []byte) {
-    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
+    sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
+    cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (80 * cellMaskBits)
+    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
+    w := iobit.NewWriter(data)
+
+    SerializeRtcm3MsmHeader(&w, msg.Header)
     SerializeRtcm3SatelliteDataMsm57(&w, msg.SatelliteData)
 
     for _, pseudorange := range msg.SignalData.Pseudoranges {
@@ -259,7 +258,15 @@ func NewRtcm3MessageMsm6(payload []byte) Rtcm3MessageMsm6 {
 }
 
 func (msg Rtcm3MessageMsm6) Serialize() (data []byte) {
-    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
+    sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
+    cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (18 * satMaskBits) + (65 * cellMaskBits)
+    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
+    w := iobit.NewWriter(data)
+
+    SerializeRtcm3MsmHeader(&w, msg.Header)
     SerializeRtcm3SatelliteDataMsm46(&w, msg.SatelliteData)
 
     for _, pseudorange := range msg.SignalData.Pseudoranges {
@@ -335,7 +342,15 @@ func NewRtcm3MessageMsm5(data []byte) Rtcm3MessageMsm5 {
 }
 
 func (msg Rtcm3MessageMsm5) Serialize() (data []byte) {
-    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
+    sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
+    cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (65 * cellMaskBits)
+    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
+    w := iobit.NewWriter(data)
+
+    SerializeRtcm3MsmHeader(&w, msg.Header)
     SerializeRtcm3SatelliteDataMsm57(&w, msg.SatelliteData)
 
     for _, pseudorange := range msg.SignalData.Pseudoranges {
@@ -410,7 +425,15 @@ func NewRtcm3MessageMsm4(data []byte) Rtcm3MessageMsm4 {
 }
 
 func (msg Rtcm3MessageMsm4) Serialize() (data []byte) {
-    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
+    sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
+    cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (18 * satMaskBits) + (48 * cellMaskBits)
+    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
+    w := iobit.NewWriter(data)
+
+    SerializeRtcm3MsmHeader(&w, msg.Header)
     SerializeRtcm3SatelliteDataMsm46(&w, msg.SatelliteData)
 
     for _, pseudorange := range msg.SignalData.Pseudoranges {
@@ -489,7 +512,15 @@ func NewRtcm3MessageMsm3(data []byte) Rtcm3MessageMsm3 {
 }
 
 func (msg Rtcm3MessageMsm3) Serialize() (data []byte) {
-    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
+    sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
+    cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (10 * satMaskBits) + (42 * cellMaskBits)
+    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
+    w := iobit.NewWriter(data)
+
+    SerializeRtcm3MsmHeader(&w, msg.Header)
 
     for _, ranges := range msg.SatelliteData.Ranges {
         w.PutUint16(10, ranges)
@@ -552,7 +583,15 @@ func NewRtcm3MessageMsm2(data []byte) Rtcm3MessageMsm2 {
 }
 
 func (msg Rtcm3MessageMsm2) Serialize() (data []byte) {
-    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
+    sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
+    cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (10 * satMaskBits) + (27 * cellMaskBits)
+    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
+    w := iobit.NewWriter(data)
+
+    SerializeRtcm3MsmHeader(&w, msg.Header)
 
     for _, ranges := range msg.SatelliteData.Ranges {
         w.PutUint16(10, ranges)
@@ -604,7 +643,15 @@ func NewRtcm3MessageMsm1(data []byte) Rtcm3MessageMsm1 {
 }
 
 func (msg Rtcm3MessageMsm1) Serialize() (data []byte) {
-    data, w := SerializeRtcm3MsmHeader(msg.Header)
+    satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
+    sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
+    cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (10 * satMaskBits) + (15 * cellMaskBits)
+    data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
+    w := iobit.NewWriter(data)
+
+    SerializeRtcm3MsmHeader(&w, msg.Header)
 
     for _, ranges := range msg.SatelliteData.Ranges {
         w.PutUint16(10, ranges)
@@ -613,7 +660,7 @@ func (msg Rtcm3MessageMsm1) Serialize() (data []byte) {
         w.PutInt16(15, pseudorange)
     }
 
-    w.PutUint8(uint(w.Bits()), 0) // Pad with 0s - Should always be less than 1 byte, should check
+    w.PutUint8(uint(w.Bits()), 0) // Pad with 0s - Should always be less than 1 byte
     w.Flush()
     return data
 }
