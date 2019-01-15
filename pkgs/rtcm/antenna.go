@@ -37,7 +37,7 @@ func SerializeAntennaReferencePoint(w *iobit.Writer, arp AntennaReferencePoint) 
     w.PutBit(arp.Reserved)
     w.PutInt64(38, arp.ReferencePointY)
     w.PutUint8(2, arp.QuarterCycleIndicator)
-    w.PutInt64(39, arp.ReferencePointZ)
+    w.PutInt64(38, arp.ReferencePointZ)
     return
 }
 
@@ -55,7 +55,7 @@ func NewAntennaReferencePoint(r *iobit.Reader) AntennaReferencePoint {
         Reserved: r.Bit(),
         ReferencePointY: r.Int64(38),
         QuarterCycleIndicator: r.Uint8(2),
-        ReferencePointZ: r.Int64(39),
+        ReferencePointZ: r.Int64(38),
     }
 }
 
@@ -71,7 +71,7 @@ func NewRtcm3Message1005(data []byte) Rtcm3Message1005 {
 }
 
 func (msg Rtcm3Message1005) Serialize() []byte {
-    data := make([]byte, 20)
+    data := make([]byte, 19)
     w := iobit.NewWriter(data)
     SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
     w.PutUint8(uint(w.Bits()), 0)
@@ -93,7 +93,7 @@ func NewRtcm3Message1006(data []byte) Rtcm3Message1006 {
 }
 
 func (msg Rtcm3Message1006) Serialize() []byte {
-    data := make([]byte, 22)
+    data := make([]byte, 21)
     w := iobit.NewWriter(data)
     SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
     w.PutUint16(16, msg.AntennaHeight)
