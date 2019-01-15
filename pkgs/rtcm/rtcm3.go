@@ -14,6 +14,183 @@ type Rtcm3Message interface {
     Number() uint16
 }
 
+func NewRtcm3Message(payload []byte) (msg Rtcm3Message) {
+    messageNumber := binary.BigEndian.Uint16(payload[0:2]) >> 4
+
+    switch int(messageNumber) {
+        case 1001:
+            return NewRtcm3Message1001(payload)
+
+        case 1002:
+            return NewRtcm3Message1002(payload)
+
+        case 1003:
+            return NewRtcm3Message1003(payload)
+
+        case 1004:
+            return NewRtcm3Message1004(payload)
+
+        case 1005:
+            return NewRtcm3Message1005(payload)
+
+        case 1006:
+            return NewRtcm3Message1006(payload)
+
+        case 1007:
+            return NewRtcm3Message1007(payload)
+
+        case 1008:
+            return NewRtcm3Message1008(payload)
+
+        case 1009:
+            return NewRtcm3Message1009(payload)
+
+        case 1010:
+            return NewRtcm3Message1010(payload)
+
+        case 1011:
+            return NewRtcm3Message1011(payload)
+
+        case 1012:
+            return NewRtcm3Message1012(payload)
+
+        case 1013:
+            return NewRtcm3Message1013(payload)
+
+        case 1019:
+            return NewRtcm3Message1019(payload)
+
+        case 1020:
+            return NewRtcm3Message1020(payload)
+
+        case 1029:
+            return NewRtcm3Message1029(payload)
+
+        case 1030:
+            return NewRtcm3Message1030(payload)
+
+        case 1031:
+            return NewRtcm3Message1031(payload)
+
+        case 1032:
+            return NewRtcm3Message1032(payload)
+
+        case 1033:
+            return NewRtcm3Message1033(payload)
+
+        case 1230:
+            return NewRtcm3Message1230(payload)
+
+        case 1071:
+            return NewRtcm3Message1071(payload)
+
+        case 1072:
+            return NewRtcm3Message1072(payload)
+
+        case 1073:
+            return NewRtcm3Message1073(payload)
+
+        case 1074:
+            return NewRtcm3Message1074(payload)
+
+        case 1075:
+            return NewRtcm3Message1075(payload)
+
+        case 1076:
+            return NewRtcm3Message1076(payload)
+
+        case 1077:
+            return NewRtcm3Message1077(payload)
+
+        case 1081:
+            return NewRtcm3Message1081(payload)
+
+        case 1082:
+            return NewRtcm3Message1082(payload)
+
+        case 1083:
+            return NewRtcm3Message1083(payload)
+
+        case 1084:
+            return NewRtcm3Message1084(payload)
+
+        case 1085:
+            return NewRtcm3Message1085(payload)
+
+        case 1086:
+            return NewRtcm3Message1086(payload)
+
+        case 1087:
+            return NewRtcm3Message1087(payload)
+
+        case 1091:
+            return NewRtcm3Message1091(payload)
+
+        case 1092:
+            return NewRtcm3Message1092(payload)
+
+        case 1093:
+            return NewRtcm3Message1093(payload)
+
+        case 1094:
+            return NewRtcm3Message1094(payload)
+
+        case 1095:
+            return NewRtcm3Message1095(payload)
+
+        case 1096:
+            return NewRtcm3Message1096(payload)
+
+        case 1097:
+            return NewRtcm3Message1097(payload)
+
+        case 1111:
+            return NewRtcm3Message1111(payload)
+
+        case 1112:
+            return NewRtcm3Message1112(payload)
+
+        case 1113:
+            return NewRtcm3Message1113(payload)
+
+        case 1114:
+            return NewRtcm3Message1114(payload)
+
+        case 1115:
+            return NewRtcm3Message1115(payload)
+
+        case 1116:
+            return NewRtcm3Message1116(payload)
+
+        case 1117:
+            return NewRtcm3Message1117(payload)
+
+        case 1121:
+            return NewRtcm3Message1121(payload)
+
+        case 1122:
+            return NewRtcm3Message1122(payload)
+
+        case 1123:
+            return NewRtcm3Message1123(payload)
+
+        case 1124:
+            return NewRtcm3Message1124(payload)
+
+        case 1125:
+            return NewRtcm3Message1125(payload)
+
+        case 1126:
+            return NewRtcm3Message1126(payload)
+
+        case 1127:
+            return NewRtcm3Message1127(payload)
+
+        default:
+            return Rtcm3MessageUnknown{payload}
+    }
+}
+
 
 type Rtcm3MessageUnknown struct {
     Payload []byte
@@ -103,183 +280,6 @@ func DeserializeRtcm3Frame(reader *bufio.Reader) (frame Rtcm3Frame, err error) {
     return frame, nil
 }
 
-func (frame Rtcm3Frame) Message() (msg Rtcm3Message) {
-    messageNumber := binary.BigEndian.Uint16(frame.Payload[0:2]) >> 4
-
-    switch int(messageNumber) {
-        case 1001:
-            return NewRtcm3Message1001(frame.Payload)
-
-        case 1002:
-            return NewRtcm3Message1002(frame.Payload)
-
-        case 1003:
-            return NewRtcm3Message1003(frame.Payload)
-
-        case 1004:
-            return NewRtcm3Message1004(frame.Payload)
-
-        case 1005:
-            return NewRtcm3Message1005(frame.Payload)
-
-        case 1006:
-            return NewRtcm3Message1006(frame.Payload)
-
-        case 1007:
-            return NewRtcm3Message1007(frame.Payload)
-
-        case 1008:
-            return NewRtcm3Message1008(frame.Payload)
-
-        case 1009:
-            return NewRtcm3Message1009(frame.Payload)
-
-        case 1010:
-            return NewRtcm3Message1010(frame.Payload)
-
-        case 1011:
-            return NewRtcm3Message1011(frame.Payload)
-
-        case 1012:
-            return NewRtcm3Message1012(frame.Payload)
-
-        case 1013:
-            return NewRtcm3Message1013(frame.Payload)
-
-        case 1019:
-            return NewRtcm3Message1019(frame.Payload)
-
-        case 1020:
-            return NewRtcm3Message1020(frame.Payload)
-
-        case 1029:
-            return NewRtcm3Message1029(frame.Payload)
-
-        case 1030:
-            return NewRtcm3Message1030(frame.Payload)
-
-        case 1031:
-            return NewRtcm3Message1031(frame.Payload)
-
-        case 1032:
-            return NewRtcm3Message1032(frame.Payload)
-
-        case 1033:
-            return NewRtcm3Message1033(frame.Payload)
-
-        case 1230:
-            return NewRtcm3Message1230(frame.Payload)
-
-        case 1071:
-            return NewRtcm3Message1071(frame.Payload)
-
-        case 1072:
-            return NewRtcm3Message1072(frame.Payload)
-
-        case 1073:
-            return NewRtcm3Message1073(frame.Payload)
-
-        case 1074:
-            return NewRtcm3Message1074(frame.Payload)
-
-        case 1075:
-            return NewRtcm3Message1075(frame.Payload)
-
-        case 1076:
-            return NewRtcm3Message1076(frame.Payload)
-
-        case 1077:
-            return NewRtcm3Message1077(frame.Payload)
-
-        case 1081:
-            return NewRtcm3Message1081(frame.Payload)
-
-        case 1082:
-            return NewRtcm3Message1082(frame.Payload)
-
-        case 1083:
-            return NewRtcm3Message1083(frame.Payload)
-
-        case 1084:
-            return NewRtcm3Message1084(frame.Payload)
-
-        case 1085:
-            return NewRtcm3Message1085(frame.Payload)
-
-        case 1086:
-            return NewRtcm3Message1086(frame.Payload)
-
-        case 1087:
-            return NewRtcm3Message1087(frame.Payload)
-
-        case 1091:
-            return NewRtcm3Message1091(frame.Payload)
-
-        case 1092:
-            return NewRtcm3Message1092(frame.Payload)
-
-        case 1093:
-            return NewRtcm3Message1093(frame.Payload)
-
-        case 1094:
-            return NewRtcm3Message1094(frame.Payload)
-
-        case 1095:
-            return NewRtcm3Message1095(frame.Payload)
-
-        case 1096:
-            return NewRtcm3Message1096(frame.Payload)
-
-        case 1097:
-            return NewRtcm3Message1097(frame.Payload)
-
-        case 1111:
-            return NewRtcm3Message1111(frame.Payload)
-
-        case 1112:
-            return NewRtcm3Message1112(frame.Payload)
-
-        case 1113:
-            return NewRtcm3Message1113(frame.Payload)
-
-        case 1114:
-            return NewRtcm3Message1114(frame.Payload)
-
-        case 1115:
-            return NewRtcm3Message1115(frame.Payload)
-
-        case 1116:
-            return NewRtcm3Message1116(frame.Payload)
-
-        case 1117:
-            return NewRtcm3Message1117(frame.Payload)
-
-        case 1121:
-            return NewRtcm3Message1121(frame.Payload)
-
-        case 1122:
-            return NewRtcm3Message1122(frame.Payload)
-
-        case 1123:
-            return NewRtcm3Message1123(frame.Payload)
-
-        case 1124:
-            return NewRtcm3Message1124(frame.Payload)
-
-        case 1125:
-            return NewRtcm3Message1125(frame.Payload)
-
-        case 1126:
-            return NewRtcm3Message1126(frame.Payload)
-
-        case 1127:
-            return NewRtcm3Message1127(frame.Payload)
-
-        default:
-            return Rtcm3MessageUnknown{frame.Payload}
-    }
-}
-
 
 type Scanner struct {
     Reader *bufio.Reader
@@ -296,6 +296,6 @@ func (scanner Scanner) Next() (message Rtcm3Message, err error) {
             if err.Error() == "Invalid Preamble" || err.Error() == "CRC Failed" { continue }
             return nil, err
         }
-        return frame.Message(), err // probably have frame.Message() return err
+        return NewRtcm3Message(frame.Payload), err // probably have frame.Message() return err
     }
 }
