@@ -31,6 +31,10 @@ type Rtcm3GlonassObservationHeader struct {
     SmoothingInterval uint8
 }
 
+func (obsHeader Rtcm3GlonassObservationHeader) Number() uint16 {
+    return obsHeader.MessageNumber
+}
+
 func NewRtcm3GlonassObservationHeader(r *iobit.Reader) Rtcm3GlonassObservationHeader {
     return Rtcm3GlonassObservationHeader{
         MessageNumber: r.Uint16(12),
@@ -355,6 +359,10 @@ type Rtcm3Message1020 struct {
     Reserved uint8
 }
 
+func (msg Rtcm3Message1020) Number() uint16 {
+    return msg.MessageNumber
+}
+
 func NewRtcm3Message1020(data []byte) Rtcm3Message1020 {
     r := iobit.NewReader(data)
     return Rtcm3Message1020{
@@ -452,6 +460,10 @@ type Rtcm3Message1230 struct {
     L1PCodePhaseBias int16
     L2CACodePhaseBias int16
     L2PCodePhaseBias int16
+}
+
+func (msg Rtcm3Message1230) Number() uint16 {
+    return msg.MessageNumber
 }
 
 func NewRtcm3Message1230(data []byte) (msg Rtcm3Message1230) {

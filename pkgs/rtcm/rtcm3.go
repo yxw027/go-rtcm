@@ -11,12 +11,7 @@ import (
 
 type Rtcm3Message interface {
     Serialize() []byte
-//    Number() uint16
-}
-
-// This is probably less efficient than making Number() be a method of Rtcm3Message and having each Specific Message type implement it
-func GetMessageNumber(msg Rtcm3Message) uint16 {
-    return binary.BigEndian.Uint16(msg.Serialize()[0:4]) >> 4
+    Number() uint16
 }
 
 
@@ -26,6 +21,10 @@ type Rtcm3MessageUnknown struct {
 
 func (msg Rtcm3MessageUnknown) Serialize() []byte {
     return msg.Payload
+}
+
+func (msg Rtcm3MessageUnknown) Number() (msgNumber uint16) {
+    return binary.BigEndian.Uint16(msg.Payload[0:4]) >> 4
 }
 
 
@@ -44,6 +43,7 @@ type Rtcm3Frame struct { // Contains Serialized Rtcm3Message - Should not be use
     Crc uint32
 }
 
+// Encapsulate Rtcm3Message in Frame
 func NewRtcm3Frame(msg Rtcm3Message) (frame Rtcm3Frame) {
     data := msg.Serialize()
     frame = Rtcm3Frame{
@@ -222,7 +222,7 @@ func (scanner Scanner) Next() (message Rtcm3Message, err error) {
         frame, err := DeserializeRtcm3Frame(scanner.Reader)
         if err != nil {
             if err.Error() == "Invalid Preamble" || err.Error() == "CRC Failed" { continue }
-            return frame, err
+            return nil, err
         }
         return frame.Message(), err // probably have frame.Message() return err
     }

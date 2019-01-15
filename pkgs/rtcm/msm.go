@@ -145,6 +145,10 @@ type Rtcm3MessageMsm7 struct {
     SignalData Rtcm3SignalDataMsm7
 }
 
+func (msg Rtcm3MessageMsm7) Number() uint16 {
+    return msg.Header.MessageNumber
+}
+
 func NewRtcm3MessageMsm7(payload []byte) Rtcm3MessageMsm7 {
     r := iobit.NewReader(payload)
     msmHeader := NewRtcm3MsmHeader(&r)
@@ -240,6 +244,10 @@ type Rtcm3MessageMsm6 struct {
     SignalData Rtcm3SignalDataMsm6
 }
 
+func (msg Rtcm3MessageMsm6) Number() uint16 {
+    return msg.Header.MessageNumber
+}
+
 func NewRtcm3MessageMsm6(payload []byte) Rtcm3MessageMsm6 {
     r := iobit.NewReader(payload)
     msmHeader := NewRtcm3MsmHeader(&r)
@@ -312,6 +320,10 @@ type Rtcm3MessageMsm5 struct {
     SignalData Rtcm3SignalDataMsm5
 }
 
+func (msg Rtcm3MessageMsm5) Number() uint16 {
+    return msg.Header.MessageNumber
+}
+
 func NewRtcm3MessageMsm5(data []byte) Rtcm3MessageMsm5 {
     r := iobit.NewReader(data)
     msmHeader := NewRtcm3MsmHeader(&r)
@@ -381,6 +393,10 @@ type Rtcm3MessageMsm4 struct {
     Header Rtcm3MsmHeader
     SatelliteData Rtcm3SatelliteDataMsm46
     SignalData Rtcm3SignalDataMsm4
+}
+
+func (msg Rtcm3MessageMsm4) Number() uint16 {
+    return msg.Header.MessageNumber
 }
 
 func NewRtcm3MessageMsm4(data []byte) Rtcm3MessageMsm4 {
@@ -458,6 +474,10 @@ type Rtcm3MessageMsm3 struct {
     SignalData Rtcm3SignalDataMsm3
 }
 
+func (msg Rtcm3MessageMsm3) Number() uint16 {
+    return msg.Header.MessageNumber
+}
+
 func NewRtcm3MessageMsm3(data []byte) Rtcm3MessageMsm3 {
     r := iobit.NewReader(data)
     msmHeader := NewRtcm3MsmHeader(&r)
@@ -517,6 +537,10 @@ type Rtcm3MessageMsm2 struct {
     SignalData Rtcm3SignalDataMsm2
 }
 
+func (msg Rtcm3MessageMsm2) Number() uint16 {
+    return msg.Header.MessageNumber
+}
+
 func NewRtcm3MessageMsm2(data []byte) Rtcm3MessageMsm2 {
     r := iobit.NewReader(data)
     msmHeader := NewRtcm3MsmHeader(&r)
@@ -563,6 +587,10 @@ type Rtcm3MessageMsm1 struct {
     Header Rtcm3MsmHeader
     SatelliteData Rtcm3SatelliteDataMsm123
     SignalData Rtcm3SignalDataMsm1
+}
+
+func (msg Rtcm3MessageMsm1) Number() uint16 {
+    return msg.Header.MessageNumber
 }
 
 func NewRtcm3MessageMsm1(data []byte) Rtcm3MessageMsm1 {

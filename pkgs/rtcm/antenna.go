@@ -20,6 +20,10 @@ type AntennaReferencePoint struct {
     ReferencePointZ int64
 }
 
+func (arp AntennaReferencePoint) Number() uint16 {
+    return arp.MessageNumber
+}
+
 func SerializeAntennaReferencePoint(w iobit.Writer, arp AntennaReferencePoint) {
     w.PutUint16(12, arp.MessageNumber)
     w.PutUint16(12, arp.ReferenceStationId)
@@ -98,12 +102,17 @@ func (msg Rtcm3Message1006) Serialize() []byte {
     return data
 }
 
+// TODO: Add serialization for AntennaDescriptor and implement for 1007 and 1008
 type AntennaDescriptor struct {
     MessageNumber uint16
     ReferenceStationId uint16
     DescriptorLength uint8
     Descriptor string
     SetupId uint8
+}
+
+func (ad AntennaDescriptor) Number() uint16 {
+    return ad.MessageNumber
 }
 
 func NewAntennaDescriptor(r *iobit.Reader) (desc AntennaDescriptor) {
@@ -161,6 +170,10 @@ type Rtcm3Message1033 struct {
     ReceiverTypeDescriptor string
     ReceiverFirmwareVersion string
     ReceiverSerialNumber string
+}
+
+func (msg Rtcm3Message1033) Number() uint16 {
+    return msg.MessageNumber
 }
 
 func NewRtcm3Message1033(data []byte) (msg Rtcm3Message1033) {

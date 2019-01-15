@@ -36,6 +36,10 @@ type Rtcm3Message1030 struct {
     SatelliteData []Rtcm3ResidualSatelliteData
 }
 
+func (msg Rtcm3Message1030) Number() uint16 {
+    return msg.MessageNumber
+}
+
 func NewRtcm3Message1030(data []byte) (msg Rtcm3Message1030) {
     r := iobit.NewReader(data)
     msg = Rtcm3Message1030{
@@ -63,6 +67,10 @@ type Rtcm3Message1031 struct {
     SatelliteData []Rtcm3ResidualSatelliteData
 }
 
+func (msg Rtcm3Message1031) Number() uint16 {
+    return msg.MessageNumber
+}
+
 func NewRtcm3Message1031(data []byte) (msg Rtcm3Message1031) {
     r := iobit.NewReader(data)
     msg = Rtcm3Message1031{
@@ -88,6 +96,10 @@ type Rtcm3Message1032 struct {
     ArpEcefX int64
     ArpEcefY int64
     ArpEcefZ int64
+}
+
+func (msg Rtcm3Message1032) Number() uint16 {
+    return msg.MessageNumber
 }
 
 func NewRtcm3Message1032(data []byte) Rtcm3Message1032 {

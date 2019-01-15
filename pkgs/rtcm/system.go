@@ -21,6 +21,10 @@ type Rtcm3Message1013 struct {
     Messages []Rtcm3MessageAnnouncement
 }
 
+func (msg Rtcm3Message1013) Number() uint16 {
+    return msg.MessageNumber
+}
+
 func NewRtcm3Message1013(data []byte) (msg Rtcm3Message1013) {
     r := iobit.NewReader(data)
     msg = Rtcm3Message1013{
@@ -68,6 +72,10 @@ type Rtcm3Message1029 struct {
     Characters uint8
     CodeUnitsLength uint8
     CodeUnits string
+}
+
+func (msg Rtcm3Message1029) Number() uint16 {
+    return msg.MessageNumber
 }
 
 func NewRtcm3Message1029(data []byte) (msg Rtcm3Message1029) {
