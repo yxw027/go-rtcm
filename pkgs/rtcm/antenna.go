@@ -102,7 +102,6 @@ func (msg Rtcm3Message1006) Serialize() []byte {
     return data
 }
 
-// TODO: Add serialization for AntennaDescriptor and implement for 1007 and 1008
 type AntennaDescriptor struct {
     MessageNumber uint16
     ReferenceStationId uint16
@@ -137,8 +136,15 @@ func NewRtcm3Message1007(data []byte) Rtcm3Message1007 {
     }
 }
 
-func (msg Rtcm3Message1007) Serialize() (data []byte) {
-    return data
+func (msg Rtcm3Message1007) Serialize() []byte {
+    data := make([]byte, 4)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint16(12, msg.ReferenceStationId)
+    w.PutUint8(8, msg.DescriptorLength)
+    w.Flush()
+    data = append(data, []byte(msg.Descriptor)...)
+    return append(data, msg.SetupId)
 }
 
 type Rtcm3Message1008 struct {
@@ -157,8 +163,16 @@ func NewRtcm3Message1008(data []byte) (msg Rtcm3Message1008) {
     return msg
 }
 
-func (msg Rtcm3Message1008) Serialize() (data []byte) {
-    return data
+func (msg Rtcm3Message1008) Serialize() []byte {
+    data := make([]byte, 4)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint16(12, msg.ReferenceStationId)
+    w.PutUint8(8, msg.DescriptorLength)
+    w.Flush()
+    data = append(data, []byte(msg.Descriptor)...)
+    data = append(data, msg.SetupId, msg.SerialNumberLength)
+    return append(data, []byte(msg.SerialNumber)...)
 }
 
 type Rtcm3Message1033 struct {
