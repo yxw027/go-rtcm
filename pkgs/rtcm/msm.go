@@ -959,6 +959,104 @@ func (msg Rtcm3Message1097) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
+type Rtcm3Message1101 struct {
+    Rtcm3MessageMsm1
+}
+
+func NewRtcm3Message1101(data []byte) Rtcm3Message1101 {
+    return Rtcm3Message1101{
+        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+    }
+}
+
+func (msg Rtcm3Message1101) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1102 struct {
+    Rtcm3MessageMsm2
+}
+
+func NewRtcm3Message1102(data []byte) Rtcm3Message1102 {
+    return Rtcm3Message1102{
+        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+    }
+}
+
+func (msg Rtcm3Message1102) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1103 struct {
+    Rtcm3MessageMsm3
+}
+
+func NewRtcm3Message1103(data []byte) Rtcm3Message1103 {
+    return Rtcm3Message1103{
+        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+    }
+}
+
+func (msg Rtcm3Message1103) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1104 struct {
+    Rtcm3MessageMsm4
+}
+
+func NewRtcm3Message1104(data []byte) Rtcm3Message1104 {
+    return Rtcm3Message1104{
+        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+    }
+}
+
+func (msg Rtcm3Message1104) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1105 struct {
+    Rtcm3MessageMsm5
+}
+
+func NewRtcm3Message1105(data []byte) Rtcm3Message1105 {
+    return Rtcm3Message1105{
+        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+    }
+}
+
+func (msg Rtcm3Message1105) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1106 struct {
+    Rtcm3MessageMsm6
+}
+
+func NewRtcm3Message1106(data []byte) Rtcm3Message1106 {
+    return Rtcm3Message1106{
+        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+    }
+}
+
+func (msg Rtcm3Message1106) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
+type Rtcm3Message1107 struct {
+    Rtcm3MessageMsm7
+}
+
+func NewRtcm3Message1107(data []byte) Rtcm3Message1107 {
+    return Rtcm3Message1107{
+        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
+    }
+}
+
+func (msg Rtcm3Message1107) Time() time.Time {
+    return GpsTime(msg.Header.Epoch)
+}
+
 type Rtcm3Message1111 struct {
     Rtcm3MessageMsm1
 }
