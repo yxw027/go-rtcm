@@ -20,6 +20,27 @@ type AntennaReferencePoint struct {
     ReferencePointZ int64
 }
 
+func (arp AntennaReferencePoint) Number() uint16 {
+    return arp.MessageNumber
+}
+
+func SerializeAntennaReferencePoint(w *iobit.Writer, arp AntennaReferencePoint) {
+    w.PutUint16(12, arp.MessageNumber)
+    w.PutUint16(12, arp.ReferenceStationId)
+    w.PutUint8(6, arp.ItrfRealizationYear)
+    w.PutBit(arp.GpsIndicator)
+    w.PutBit(arp.GlonassIndicator)
+    w.PutBit(arp.GalileoIndicator)
+    w.PutBit(arp.ReferenceStationIndicator)
+    w.PutInt64(38, arp.ReferencePointX)
+    w.PutBit(arp.SingleReceiverOscilator)
+    w.PutBit(arp.Reserved)
+    w.PutInt64(38, arp.ReferencePointY)
+    w.PutUint8(2, arp.QuarterCycleIndicator)
+    w.PutInt64(38, arp.ReferencePointZ)
+    return
+}
+
 func NewAntennaReferencePoint(r *iobit.Reader) AntennaReferencePoint {
     return AntennaReferencePoint{
         MessageNumber: r.Uint16(12),
@@ -34,36 +55,51 @@ func NewAntennaReferencePoint(r *iobit.Reader) AntennaReferencePoint {
         Reserved: r.Bit(),
         ReferencePointY: r.Int64(38),
         QuarterCycleIndicator: r.Uint8(2),
-        ReferencePointZ: r.Int64(39),
+        ReferencePointZ: r.Int64(38),
     }
 }
 
 type Rtcm3Message1005 struct {
-    Rtcm3Frame
     AntennaReferencePoint
 }
 
-func NewRtcm3Message1005(f Rtcm3Frame) Rtcm3Message1005 {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1005(data []byte) Rtcm3Message1005 {
+    r := iobit.NewReader(data)
     return Rtcm3Message1005{
-        Rtcm3Frame: f,
         AntennaReferencePoint: NewAntennaReferencePoint(&r),
     }
 }
 
+func (msg Rtcm3Message1005) Serialize() []byte {
+    data := make([]byte, 19)
+    w := iobit.NewWriter(data)
+    SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
+    w.PutUint8(uint(w.Bits()), 0)
+    w.Flush()
+    return data
+}
+
 type Rtcm3Message1006 struct {
-    Rtcm3Frame
     AntennaReferencePoint
     AntennaHeight uint16
 }
 
-func NewRtcm3Message1006(f Rtcm3Frame) Rtcm3Message1006 {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1006(data []byte) Rtcm3Message1006 {
+    r := iobit.NewReader(data)
     return Rtcm3Message1006{
-        Rtcm3Frame: f,
         AntennaReferencePoint: NewAntennaReferencePoint(&r),
         AntennaHeight: r.Uint16(16),
     }
+}
+
+func (msg Rtcm3Message1006) Serialize() []byte {
+    data := make([]byte, 21)
+    w := iobit.NewWriter(data)
+    SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
+    w.PutUint16(16, msg.AntennaHeight)
+    w.PutUint8(uint(w.Bits()), 0)
+    w.Flush()
+    return data
 }
 
 type AntennaDescriptor struct {
@@ -72,6 +108,10 @@ type AntennaDescriptor struct {
     DescriptorLength uint8
     Descriptor string
     SetupId uint8
+}
+
+func (ad AntennaDescriptor) Number() uint16 {
+    return ad.MessageNumber
 }
 
 func NewAntennaDescriptor(r *iobit.Reader) (desc AntennaDescriptor) {
@@ -86,29 +126,36 @@ func NewAntennaDescriptor(r *iobit.Reader) (desc AntennaDescriptor) {
 }
 
 type Rtcm3Message1007 struct {
-    Rtcm3Frame
     AntennaDescriptor
 }
 
-func NewRtcm3Message1007(f Rtcm3Frame) Rtcm3Message1007 {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1007(data []byte) Rtcm3Message1007 {
+    r := iobit.NewReader(data)
     return Rtcm3Message1007{
-        Rtcm3Frame: f,
         AntennaDescriptor: NewAntennaDescriptor(&r),
     }
 }
 
+func (msg Rtcm3Message1007) Serialize() []byte {
+    data := make([]byte, 4)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint16(12, msg.ReferenceStationId)
+    w.PutUint8(8, msg.DescriptorLength)
+    w.Flush()
+    data = append(data, []byte(msg.Descriptor)...)
+    return append(data, msg.SetupId)
+}
+
 type Rtcm3Message1008 struct {
-    Rtcm3Frame
     AntennaDescriptor
     SerialNumberLength uint8
     SerialNumber string
 }
 
-func NewRtcm3Message1008(f Rtcm3Frame) (msg Rtcm3Message1008) {
-    r := iobit.NewReader(f.Payload)
+func NewRtcm3Message1008(data []byte) (msg Rtcm3Message1008) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1008{
-        Rtcm3Frame: f,
         AntennaDescriptor: NewAntennaDescriptor(&r),
         SerialNumberLength: r.Uint8(8),
     }
@@ -116,8 +163,19 @@ func NewRtcm3Message1008(f Rtcm3Frame) (msg Rtcm3Message1008) {
     return msg
 }
 
+func (msg Rtcm3Message1008) Serialize() []byte {
+    data := make([]byte, 4)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint16(12, msg.ReferenceStationId)
+    w.PutUint8(8, msg.DescriptorLength)
+    w.Flush()
+    data = append(data, []byte(msg.Descriptor)...)
+    data = append(data, msg.SetupId, msg.SerialNumberLength)
+    return append(data, []byte(msg.SerialNumber)...)
+}
+
 type Rtcm3Message1033 struct {
-    Rtcm3Frame
     MessageNumber uint16
     ReferenceStationId uint16
     AntennaDescriptor string
@@ -128,10 +186,13 @@ type Rtcm3Message1033 struct {
     ReceiverSerialNumber string
 }
 
-func NewRtcm3Message1033(f Rtcm3Frame) (msg Rtcm3Message1033) {
-    r := iobit.NewReader(f.Payload)
+func (msg Rtcm3Message1033) Number() uint16 {
+    return msg.MessageNumber
+}
+
+func NewRtcm3Message1033(data []byte) (msg Rtcm3Message1033) {
+    r := iobit.NewReader(data)
     msg = Rtcm3Message1033{
-        Rtcm3Frame: f,
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
     }
@@ -142,4 +203,23 @@ func NewRtcm3Message1033(f Rtcm3Frame) (msg Rtcm3Message1033) {
     msg.ReceiverFirmwareVersion = r.String(int(r.Uint8(8)))
     msg.ReceiverSerialNumber = r.String(int(r.Uint8(8)))
     return msg
+}
+
+func (msg Rtcm3Message1033) Serialize() []byte {
+    data := make([]byte, 3)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, msg.MessageNumber)
+    w.PutUint16(12, msg.ReferenceStationId)
+    w.Flush()
+    data = append(data, uint8(len(msg.AntennaDescriptor)))
+    data = append(data, []byte(msg.AntennaDescriptor)...)
+    data = append(data, msg.AntennaSetupId, uint8(len(msg.AntennaSerialNumber)))
+    data = append(data, []byte(msg.AntennaSerialNumber)...)
+    data = append(data, uint8(len(msg.ReceiverTypeDescriptor)))
+    data = append(data, []byte(msg.ReceiverTypeDescriptor)...)
+    data = append(data, uint8(len(msg.ReceiverFirmwareVersion)))
+    data = append(data, []byte(msg.ReceiverFirmwareVersion)...)
+    data = append(data, uint8(len(msg.ReceiverSerialNumber)))
+    data = append(data, []byte(msg.ReceiverSerialNumber)...)
+    return data
 }

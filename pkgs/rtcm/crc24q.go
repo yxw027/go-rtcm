@@ -26,11 +26,11 @@ var crc24q = [256]int{
     0x69ae1b, 0xefe2e0, 0x709df7, 0xf6d10c, 0xfa48fa, 0x7c0401, 0x42fa2f, 0xc4b6d4, 0xc82f22, 0x4e63d9, 0xd11cce,
     0x575035, 0x5bc9c3, 0xdd8538}
 
-func Crc24q(data []byte) (crc int) {
-    crc = 0
+func Crc24q(data []byte) uint32 {
+    crc := 0
     for _, value := range data {
         crc = (crc << 8) ^ crc24q[uint8(value) ^ uint8(crc >> 16)]
     }
 
-    return (crc & 0x00ffffff)
+    return uint32(crc & 0x00ffffff)
 }
