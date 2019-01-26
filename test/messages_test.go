@@ -11,21 +11,6 @@ import (
     "./data"
 )
 
-func readFile(name string) (payload []byte){
-    file, fileerr := os.Open(name)
-    defer file.Close()
-    if fileerr != nil {
-        log.Fatal(fileerr)
-    }
-    fileinfo, staterr := file.Stat()
-    if staterr != nil {
-        log.Fatal(staterr)
-    }
-    buffer := make([]byte, fileinfo.Size())
-    file.Read(buffer)
-    return buffer
-}
-
 func readPayload(msgNumber uint) (payload []byte){
     r, _ := os.Open("data/" + fmt.Sprint(msgNumber) + "_frame.bin")
     br := bufio.NewReader(r)
