@@ -1,11 +1,11 @@
 package data
 
 import ( 
-    "../../pkgs/rtcm"
+    "../../pkgs/rtcm3"
 )
 
-var Message1004 = rtcm.Rtcm3Message1004 {
-    Rtcm3GpsObservationHeader: rtcm.Rtcm3GpsObservationHeader {
+var Message1004 = rtcm3.Message1004 {
+    GpsObservationHeader: rtcm3.GpsObservationHeader {
         MessageNumber: 0x3ec,
         ReferenceStationId: 0x0,
         Epoch: 0x1a6055a8,
@@ -14,8 +14,8 @@ var Message1004 = rtcm.Rtcm3Message1004 {
         SmoothingIndicator: false,
         SmoothingInterval: 0x0,
     },
-    SatelliteData: [] rtcm.Rtcm31004SatelliteData {
-        rtcm.Rtcm31004SatelliteData {
+    SatelliteData: [] rtcm3.SatelliteData1004 {
+        rtcm3.SatelliteData1004 {
             SatelliteId: 0x5,
             L1CodeIndicator: false,
             L1Pseudorange: 0x519499,
@@ -28,7 +28,7 @@ var Message1004 = rtcm.Rtcm3Message1004 {
             L2PhaseRange: 23820,
             L2LockTimeIndicator: 0x7f,
             L2Cnr: 0xa7,
-        }, rtcm.Rtcm31004SatelliteData {
+        }, rtcm3.SatelliteData1004 {
             SatelliteId: 0x1d,
             L1CodeIndicator: false,
             L1Pseudorange: 0xc6dc3,
@@ -41,7 +41,7 @@ var Message1004 = rtcm.Rtcm3Message1004 {
             L2PhaseRange: 14924,
             L2LockTimeIndicator: 0x7f,
             L2Cnr: 0xb2,
-        }, rtcm.Rtcm31004SatelliteData {
+        }, rtcm3.SatelliteData1004 {
             SatelliteId: 0x19,
             L1CodeIndicator: false,
             L1Pseudorange: 0x9ddb6a,
@@ -54,7 +54,7 @@ var Message1004 = rtcm.Rtcm3Message1004 {
             L2PhaseRange: 8712,
             L2LockTimeIndicator: 0x7f,
             L2Cnr: 0xae,
-        }, rtcm.Rtcm31004SatelliteData {
+        }, rtcm3.SatelliteData1004 {
             SatelliteId: 0xf,
             L1CodeIndicator: false,
             L1Pseudorange: 0x33b764,
@@ -67,7 +67,7 @@ var Message1004 = rtcm.Rtcm3Message1004 {
             L2PhaseRange: 15291,
             L2LockTimeIndicator: 0x7f,
             L2Cnr: 0x4e,
-        }, rtcm.Rtcm31004SatelliteData {
+        }, rtcm3.SatelliteData1004 {
             SatelliteId: 0x1f,
             L1CodeIndicator: false,
             L1Pseudorange: 0xcfc3fe,
@@ -80,7 +80,7 @@ var Message1004 = rtcm.Rtcm3Message1004 {
             L2PhaseRange: -5636,
             L2LockTimeIndicator: 0x7f,
             L2Cnr: 0x52,
-        }, rtcm.Rtcm31004SatelliteData {
+        }, rtcm3.SatelliteData1004 {
             SatelliteId: 0x2,
             L1CodeIndicator: false,
             L1Pseudorange: 0xa2b015,
@@ -93,7 +93,7 @@ var Message1004 = rtcm.Rtcm3Message1004 {
             L2PhaseRange: -5690,
             L2LockTimeIndicator: 0x7f,
             L2Cnr: 0x66,
-        }, rtcm.Rtcm31004SatelliteData {
+        }, rtcm3.SatelliteData1004 {
             SatelliteId: 0x15,
             L1CodeIndicator: false,
             L1Pseudorange: 0xb8073e,
@@ -106,7 +106,7 @@ var Message1004 = rtcm.Rtcm3Message1004 {
             L2PhaseRange: 14895,
             L2LockTimeIndicator: 0x7f,
             L2Cnr: 0x70,
-        }, rtcm.Rtcm31004SatelliteData {
+        }, rtcm3.SatelliteData1004 {
             SatelliteId: 0xd,
             L1CodeIndicator: false,
             L1Pseudorange: 0xb8ebef,
@@ -119,7 +119,7 @@ var Message1004 = rtcm.Rtcm3Message1004 {
             L2PhaseRange: 9306,
             L2LockTimeIndicator: 0x5c,
             L2Cnr: 0x2a,
-        }, rtcm.Rtcm31004SatelliteData {
+        }, rtcm3.SatelliteData1004 {
             SatelliteId: 0x14,
             L1CodeIndicator: false,
             L1Pseudorange: 0x8dc086,
@@ -132,7 +132,7 @@ var Message1004 = rtcm.Rtcm3Message1004 {
             L2PhaseRange: 6795,
             L2LockTimeIndicator: 0x16,
             L2Cnr: 0x29,
-        }, rtcm.Rtcm31004SatelliteData {
+        }, rtcm3.SatelliteData1004 {
             SatelliteId: 0xc,
             L1CodeIndicator: false,
             L1Pseudorange: 0x8cf347,

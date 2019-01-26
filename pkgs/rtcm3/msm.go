@@ -1,4 +1,4 @@
-package rtcm
+package rtcm3
 
 import (
     "github.com/bamiaux/iobit"
@@ -7,7 +7,7 @@ import (
     "time"
 )
 
-type Rtcm3MsmHeader struct {
+type MsmHeader struct {
     MessageNumber uint16
     ReferenceStationId uint16
     Epoch uint32
@@ -23,8 +23,8 @@ type Rtcm3MsmHeader struct {
     CellMask uint64
 }
 
-func NewRtcm3MsmHeader(r *iobit.Reader) (header Rtcm3MsmHeader) {
-    header = Rtcm3MsmHeader{
+func NewMsmHeader(r *iobit.Reader) (header MsmHeader) {
+    header = MsmHeader{
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
         Epoch: r.Uint32(30),
@@ -44,7 +44,7 @@ func NewRtcm3MsmHeader(r *iobit.Reader) (header Rtcm3MsmHeader) {
     return header
 }
 
-func SerializeRtcm3MsmHeader(w *iobit.Writer, header Rtcm3MsmHeader) {
+func SerializeMsmHeader(w *iobit.Writer, header MsmHeader) {
     w.PutUint16(12, header.MessageNumber)
     w.PutUint16(12, header.ReferenceStationId)
     w.PutUint32(30, header.Epoch)
@@ -61,14 +61,14 @@ func SerializeRtcm3MsmHeader(w *iobit.Writer, header Rtcm3MsmHeader) {
     return
 }
 
-type Rtcm3SatelliteDataMsm57 struct {
+type SatelliteDataMsm57 struct {
     RangeMilliseconds []uint8
     Extended []uint8
     Ranges []uint16
     PhaseRangeRates []int16
 }
 
-func NewRtcm3SatelliteDataMsm57(r *iobit.Reader, nsat int) (satData Rtcm3SatelliteDataMsm57) {
+func NewSatelliteDataMsm57(r *iobit.Reader, nsat int) (satData SatelliteDataMsm57) {
     for i := 0; i < nsat; i++ {
         satData.RangeMilliseconds = append(satData.RangeMilliseconds, r.Uint8(8))
     }
@@ -84,7 +84,7 @@ func NewRtcm3SatelliteDataMsm57(r *iobit.Reader, nsat int) (satData Rtcm3Satelli
     return satData
 }
 
-func SerializeRtcm3SatelliteDataMsm57(w *iobit.Writer, satelliteData Rtcm3SatelliteDataMsm57) {
+func SerializeSatelliteDataMsm57(w *iobit.Writer, satelliteData SatelliteDataMsm57) {
     for _, rangeMillis := range satelliteData.RangeMilliseconds {
         w.PutUint8(8, rangeMillis)
     }
@@ -99,7 +99,7 @@ func SerializeRtcm3SatelliteDataMsm57(w *iobit.Writer, satelliteData Rtcm3Satell
     }
 }
 
-type Rtcm3SignalDataMsm7 struct {
+type SignalDataMsm7 struct {
     Pseudoranges []int32
     PhaseRanges []int32
     PhaseRangeLocks []uint16
@@ -108,7 +108,7 @@ type Rtcm3SignalDataMsm7 struct {
     PhaseRangeRates []int16
 }
 
-func NewRtcm3SignalDataMsm7(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm7) {
+func NewSignalDataMsm7(r *iobit.Reader, ncell int) (sigData SignalDataMsm7) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int32(20))
     }
@@ -130,27 +130,27 @@ func NewRtcm3SignalDataMsm7(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
     return sigData
 }
 
-type Rtcm3MessageMsm7 struct {
-    Header Rtcm3MsmHeader
-    SatelliteData Rtcm3SatelliteDataMsm57
-    SignalData Rtcm3SignalDataMsm7
+type MessageMsm7 struct {
+    Header MsmHeader
+    SatelliteData SatelliteDataMsm57
+    SignalData SignalDataMsm7
 }
 
-func (msg Rtcm3MessageMsm7) Number() uint16 {
+func (msg MessageMsm7) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewRtcm3MessageMsm7(payload []byte) Rtcm3MessageMsm7 {
+func NewMessageMsm7(payload []byte) MessageMsm7 {
     r := iobit.NewReader(payload)
-    msmHeader := NewRtcm3MsmHeader(&r)
-    return Rtcm3MessageMsm7{
+    msmHeader := NewMsmHeader(&r)
+    return MessageMsm7{
         Header: msmHeader,
-        SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm7(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: NewSatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewSignalDataMsm7(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
-func (msg Rtcm3MessageMsm7) Serialize() (data []byte) {
+func (msg MessageMsm7) Serialize() (data []byte) {
     satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
     sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
     cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
@@ -159,8 +159,8 @@ func (msg Rtcm3MessageMsm7) Serialize() (data []byte) {
     data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
     w := iobit.NewWriter(data)
 
-    SerializeRtcm3MsmHeader(&w, msg.Header)
-    SerializeRtcm3SatelliteDataMsm57(&w, msg.SatelliteData)
+    SerializeMsmHeader(&w, msg.Header)
+    SerializeSatelliteDataMsm57(&w, msg.SatelliteData)
 
     for _, pseudorange := range msg.SignalData.Pseudoranges {
         w.PutInt32(20, pseudorange)
@@ -186,12 +186,12 @@ func (msg Rtcm3MessageMsm7) Serialize() (data []byte) {
     return data
 }
 
-type Rtcm3SatelliteDataMsm46 struct {
+type SatelliteDataMsm46 struct {
     RangeMilliseconds []uint8
     Ranges []uint16
 }
 
-func NewRtcm3SatelliteDataMsm46(r *iobit.Reader, nsat int) (satData Rtcm3SatelliteDataMsm46) {
+func NewSatelliteDataMsm46(r *iobit.Reader, nsat int) (satData SatelliteDataMsm46) {
     for i := 0; i < nsat; i++ {
         satData.RangeMilliseconds = append(satData.RangeMilliseconds, r.Uint8(8))
     }
@@ -201,7 +201,7 @@ func NewRtcm3SatelliteDataMsm46(r *iobit.Reader, nsat int) (satData Rtcm3Satelli
     return satData
 }
 
-func SerializeRtcm3SatelliteDataMsm46(w *iobit.Writer, satelliteData Rtcm3SatelliteDataMsm46) {
+func SerializeSatelliteDataMsm46(w *iobit.Writer, satelliteData SatelliteDataMsm46) {
     for _, rangeMillis := range satelliteData.RangeMilliseconds {
         w.PutUint8(8, rangeMillis)
     }
@@ -210,7 +210,7 @@ func SerializeRtcm3SatelliteDataMsm46(w *iobit.Writer, satelliteData Rtcm3Satell
     }
 }
 
-type Rtcm3SignalDataMsm6 struct {
+type SignalDataMsm6 struct {
     Pseudoranges []int32
     PhaseRanges []int32
     PhaseRangeLocks []uint16
@@ -218,7 +218,7 @@ type Rtcm3SignalDataMsm6 struct {
     Cnrs []uint16
 }
 
-func NewRtcm3SignalDataMsm6(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm6) {
+func NewSignalDataMsm6(r *iobit.Reader, ncell int) (sigData SignalDataMsm6) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int32(20))
     }
@@ -237,27 +237,27 @@ func NewRtcm3SignalDataMsm6(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
     return sigData
 }
 
-type Rtcm3MessageMsm6 struct {
-    Header Rtcm3MsmHeader
-    SatelliteData Rtcm3SatelliteDataMsm46
-    SignalData Rtcm3SignalDataMsm6
+type MessageMsm6 struct {
+    Header MsmHeader
+    SatelliteData SatelliteDataMsm46
+    SignalData SignalDataMsm6
 }
 
-func (msg Rtcm3MessageMsm6) Number() uint16 {
+func (msg MessageMsm6) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewRtcm3MessageMsm6(payload []byte) Rtcm3MessageMsm6 {
+func NewMessageMsm6(payload []byte) MessageMsm6 {
     r := iobit.NewReader(payload)
-    msmHeader := NewRtcm3MsmHeader(&r)
-    return Rtcm3MessageMsm6{
+    msmHeader := NewMsmHeader(&r)
+    return MessageMsm6{
         Header: msmHeader,
-        SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm6(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: NewSatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewSignalDataMsm6(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
-func (msg Rtcm3MessageMsm6) Serialize() (data []byte) {
+func (msg MessageMsm6) Serialize() (data []byte) {
     satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
     sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
     cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
@@ -266,8 +266,8 @@ func (msg Rtcm3MessageMsm6) Serialize() (data []byte) {
     data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
     w := iobit.NewWriter(data)
 
-    SerializeRtcm3MsmHeader(&w, msg.Header)
-    SerializeRtcm3SatelliteDataMsm46(&w, msg.SatelliteData)
+    SerializeMsmHeader(&w, msg.Header)
+    SerializeSatelliteDataMsm46(&w, msg.SatelliteData)
 
     for _, pseudorange := range msg.SignalData.Pseudoranges {
         w.PutInt32(20, pseudorange)
@@ -290,7 +290,7 @@ func (msg Rtcm3MessageMsm6) Serialize() (data []byte) {
     return data
 }
 
-type Rtcm3SignalDataMsm5 struct {
+type SignalDataMsm5 struct {
     Pseudoranges []int16
     PhaseRanges []int32
     PhaseRangeLocks []uint8
@@ -299,7 +299,7 @@ type Rtcm3SignalDataMsm5 struct {
     PhaseRangeRates []int16
 }
 
-func NewRtcm3SignalDataMsm5(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm5) {
+func NewSignalDataMsm5(r *iobit.Reader, ncell int) (sigData SignalDataMsm5) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -321,27 +321,27 @@ func NewRtcm3SignalDataMsm5(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
     return sigData
 }
 
-type Rtcm3MessageMsm5 struct {
-    Header Rtcm3MsmHeader
-    SatelliteData Rtcm3SatelliteDataMsm57
-    SignalData Rtcm3SignalDataMsm5
+type MessageMsm5 struct {
+    Header MsmHeader
+    SatelliteData SatelliteDataMsm57
+    SignalData SignalDataMsm5
 }
 
-func (msg Rtcm3MessageMsm5) Number() uint16 {
+func (msg MessageMsm5) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewRtcm3MessageMsm5(data []byte) Rtcm3MessageMsm5 {
+func NewMessageMsm5(data []byte) MessageMsm5 {
     r := iobit.NewReader(data)
-    msmHeader := NewRtcm3MsmHeader(&r)
-    return Rtcm3MessageMsm5{
+    msmHeader := NewMsmHeader(&r)
+    return MessageMsm5{
         Header: msmHeader,
-        SatelliteData: NewRtcm3SatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm5(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: NewSatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewSignalDataMsm5(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
-func (msg Rtcm3MessageMsm5) Serialize() (data []byte) {
+func (msg MessageMsm5) Serialize() (data []byte) {
     satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
     sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
     cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
@@ -350,8 +350,8 @@ func (msg Rtcm3MessageMsm5) Serialize() (data []byte) {
     data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
     w := iobit.NewWriter(data)
 
-    SerializeRtcm3MsmHeader(&w, msg.Header)
-    SerializeRtcm3SatelliteDataMsm57(&w, msg.SatelliteData)
+    SerializeMsmHeader(&w, msg.Header)
+    SerializeSatelliteDataMsm57(&w, msg.SatelliteData)
 
     for _, pseudorange := range msg.SignalData.Pseudoranges {
         w.PutInt16(15, pseudorange)
@@ -377,7 +377,7 @@ func (msg Rtcm3MessageMsm5) Serialize() (data []byte) {
     return data
 }
 
-type Rtcm3SignalDataMsm4 struct {
+type SignalDataMsm4 struct {
     Pseudoranges []int16
     PhaseRanges []int32
     PhaseRangeLocks []uint8
@@ -385,7 +385,7 @@ type Rtcm3SignalDataMsm4 struct {
     Cnrs []uint8
 }
 
-func NewRtcm3SignalDataMsm4(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm4) {
+func NewSignalDataMsm4(r *iobit.Reader, ncell int) (sigData SignalDataMsm4) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -404,27 +404,27 @@ func NewRtcm3SignalDataMsm4(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
     return sigData
 }
 
-type Rtcm3MessageMsm4 struct {
-    Header Rtcm3MsmHeader
-    SatelliteData Rtcm3SatelliteDataMsm46
-    SignalData Rtcm3SignalDataMsm4
+type MessageMsm4 struct {
+    Header MsmHeader
+    SatelliteData SatelliteDataMsm46
+    SignalData SignalDataMsm4
 }
 
-func (msg Rtcm3MessageMsm4) Number() uint16 {
+func (msg MessageMsm4) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewRtcm3MessageMsm4(data []byte) Rtcm3MessageMsm4 {
+func NewMessageMsm4(data []byte) MessageMsm4 {
     r := iobit.NewReader(data)
-    msmHeader := NewRtcm3MsmHeader(&r)
-    return Rtcm3MessageMsm4{
+    msmHeader := NewMsmHeader(&r)
+    return MessageMsm4{
         Header: msmHeader,
-        SatelliteData: NewRtcm3SatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm4(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: NewSatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewSignalDataMsm4(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
-func (msg Rtcm3MessageMsm4) Serialize() (data []byte) {
+func (msg MessageMsm4) Serialize() (data []byte) {
     satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
     sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
     cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
@@ -433,8 +433,8 @@ func (msg Rtcm3MessageMsm4) Serialize() (data []byte) {
     data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
     w := iobit.NewWriter(data)
 
-    SerializeRtcm3MsmHeader(&w, msg.Header)
-    SerializeRtcm3SatelliteDataMsm46(&w, msg.SatelliteData)
+    SerializeMsmHeader(&w, msg.Header)
+    SerializeSatelliteDataMsm46(&w, msg.SatelliteData)
 
     for _, pseudorange := range msg.SignalData.Pseudoranges {
         w.PutInt16(15, pseudorange)
@@ -457,25 +457,25 @@ func (msg Rtcm3MessageMsm4) Serialize() (data []byte) {
     return data
 }
 
-type Rtcm3SatelliteDataMsm123 struct {
+type SatelliteDataMsm123 struct {
     Ranges []uint16
 }
 
-func NewRtcm3SatelliteDataMsm123(r *iobit.Reader, nsat int) (satData Rtcm3SatelliteDataMsm123) {
+func NewSatelliteDataMsm123(r *iobit.Reader, nsat int) (satData SatelliteDataMsm123) {
     for i := 0; i < nsat; i++ {
         satData.Ranges = append(satData.Ranges, r.Uint16(10))
     }
     return satData
 }
 
-type Rtcm3SignalDataMsm3 struct {
+type SignalDataMsm3 struct {
     Pseudoranges []int16
     PhaseRanges []int32
     PhaseRangeLocks []uint8
     HalfCycles []bool
 }
 
-func NewRtcm3SignalDataMsm3(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm3) {
+func NewSignalDataMsm3(r *iobit.Reader, ncell int) (sigData SignalDataMsm3) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -491,27 +491,27 @@ func NewRtcm3SignalDataMsm3(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
     return sigData
 }
 
-type Rtcm3MessageMsm3 struct {
-    Header Rtcm3MsmHeader
-    SatelliteData Rtcm3SatelliteDataMsm123
-    SignalData Rtcm3SignalDataMsm3
+type MessageMsm3 struct {
+    Header MsmHeader
+    SatelliteData SatelliteDataMsm123
+    SignalData SignalDataMsm3
 }
 
-func (msg Rtcm3MessageMsm3) Number() uint16 {
+func (msg MessageMsm3) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewRtcm3MessageMsm3(data []byte) Rtcm3MessageMsm3 {
+func NewMessageMsm3(data []byte) MessageMsm3 {
     r := iobit.NewReader(data)
-    msmHeader := NewRtcm3MsmHeader(&r)
-    return Rtcm3MessageMsm3{
+    msmHeader := NewMsmHeader(&r)
+    return MessageMsm3{
         Header: msmHeader,
-        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm3(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: NewSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewSignalDataMsm3(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
-func (msg Rtcm3MessageMsm3) Serialize() (data []byte) {
+func (msg MessageMsm3) Serialize() (data []byte) {
     satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
     sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
     cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
@@ -520,7 +520,7 @@ func (msg Rtcm3MessageMsm3) Serialize() (data []byte) {
     data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
     w := iobit.NewWriter(data)
 
-    SerializeRtcm3MsmHeader(&w, msg.Header)
+    SerializeMsmHeader(&w, msg.Header)
 
     for _, ranges := range msg.SatelliteData.Ranges {
         w.PutUint16(10, ranges)
@@ -543,13 +543,13 @@ func (msg Rtcm3MessageMsm3) Serialize() (data []byte) {
     return data
 }
 
-type Rtcm3SignalDataMsm2 struct {
+type SignalDataMsm2 struct {
     PhaseRanges []int32
     PhaseRangeLocks []uint8
     HalfCycles []bool
 }
 
-func NewRtcm3SignalDataMsm2(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm2) {
+func NewSignalDataMsm2(r *iobit.Reader, ncell int) (sigData SignalDataMsm2) {
     for i := 0; i < ncell; i++ {
         sigData.PhaseRanges = append(sigData.PhaseRanges, r.Int32(22))
     }
@@ -562,27 +562,27 @@ func NewRtcm3SignalDataMsm2(r *iobit.Reader, ncell int) (sigData Rtcm3SignalData
     return sigData
 }
 
-type Rtcm3MessageMsm2 struct {
-    Header Rtcm3MsmHeader
-    SatelliteData Rtcm3SatelliteDataMsm123
-    SignalData Rtcm3SignalDataMsm2
+type MessageMsm2 struct {
+    Header MsmHeader
+    SatelliteData SatelliteDataMsm123
+    SignalData SignalDataMsm2
 }
 
-func (msg Rtcm3MessageMsm2) Number() uint16 {
+func (msg MessageMsm2) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewRtcm3MessageMsm2(data []byte) Rtcm3MessageMsm2 {
+func NewMessageMsm2(data []byte) MessageMsm2 {
     r := iobit.NewReader(data)
-    msmHeader := NewRtcm3MsmHeader(&r)
-    return Rtcm3MessageMsm2{
+    msmHeader := NewMsmHeader(&r)
+    return MessageMsm2{
         Header: msmHeader,
-        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm2(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: NewSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewSignalDataMsm2(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
-func (msg Rtcm3MessageMsm2) Serialize() (data []byte) {
+func (msg MessageMsm2) Serialize() (data []byte) {
     satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
     sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
     cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
@@ -591,7 +591,7 @@ func (msg Rtcm3MessageMsm2) Serialize() (data []byte) {
     data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
     w := iobit.NewWriter(data)
 
-    SerializeRtcm3MsmHeader(&w, msg.Header)
+    SerializeMsmHeader(&w, msg.Header)
 
     for _, ranges := range msg.SatelliteData.Ranges {
         w.PutUint16(10, ranges)
@@ -611,38 +611,38 @@ func (msg Rtcm3MessageMsm2) Serialize() (data []byte) {
     return data
 }
 
-type Rtcm3SignalDataMsm1 struct {
+type SignalDataMsm1 struct {
     Pseudoranges []int16
 }
 
-func NewRtcm3SignalDataMsm1(r *iobit.Reader, ncell int) (sigData Rtcm3SignalDataMsm1) {
+func NewSignalDataMsm1(r *iobit.Reader, ncell int) (sigData SignalDataMsm1) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
     return sigData
 }
 
-type Rtcm3MessageMsm1 struct {
-    Header Rtcm3MsmHeader
-    SatelliteData Rtcm3SatelliteDataMsm123
-    SignalData Rtcm3SignalDataMsm1
+type MessageMsm1 struct {
+    Header MsmHeader
+    SatelliteData SatelliteDataMsm123
+    SignalData SignalDataMsm1
 }
 
-func (msg Rtcm3MessageMsm1) Number() uint16 {
+func (msg MessageMsm1) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewRtcm3MessageMsm1(data []byte) Rtcm3MessageMsm1 {
+func NewMessageMsm1(data []byte) MessageMsm1 {
     r := iobit.NewReader(data)
-    msmHeader := NewRtcm3MsmHeader(&r)
-    return Rtcm3MessageMsm1{
+    msmHeader := NewMsmHeader(&r)
+    return MessageMsm1{
         Header: msmHeader,
-        SatelliteData: NewRtcm3SatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewRtcm3SignalDataMsm1(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: NewSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: NewSignalDataMsm1(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
-func (msg Rtcm3MessageMsm1) Serialize() (data []byte) {
+func (msg MessageMsm1) Serialize() (data []byte) {
     satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
     sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
     cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
@@ -651,7 +651,7 @@ func (msg Rtcm3MessageMsm1) Serialize() (data []byte) {
     data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
     w := iobit.NewWriter(data)
 
-    SerializeRtcm3MsmHeader(&w, msg.Header)
+    SerializeMsmHeader(&w, msg.Header)
 
     for _, ranges := range msg.SatelliteData.Ranges {
         w.PutUint16(10, ranges)
@@ -665,590 +665,590 @@ func (msg Rtcm3MessageMsm1) Serialize() (data []byte) {
     return data
 }
 
-type Rtcm3Message1071 struct {
-    Rtcm3MessageMsm1
+type Message1071 struct {
+    MessageMsm1
 }
 
-func NewRtcm3Message1071(data []byte) Rtcm3Message1071 {
-    return Rtcm3Message1071{
-        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+func NewMessage1071(data []byte) Message1071 {
+    return Message1071{
+        MessageMsm1: NewMessageMsm1(data),
     }
 }
 
-func (msg Rtcm3Message1071) Time() time.Time {
+func (msg Message1071) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1072 struct {
-    Rtcm3MessageMsm2
+type Message1072 struct {
+    MessageMsm2
 }
 
-func NewRtcm3Message1072(data []byte) Rtcm3Message1072 {
-    return Rtcm3Message1072{
-        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+func NewMessage1072(data []byte) Message1072 {
+    return Message1072{
+        MessageMsm2: NewMessageMsm2(data),
     }
 }
 
-func (msg Rtcm3Message1072) Time() time.Time {
+func (msg Message1072) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1073 struct {
-    Rtcm3MessageMsm3
+type Message1073 struct {
+    MessageMsm3
 }
 
-func NewRtcm3Message1073(data []byte) Rtcm3Message1073 {
-    return Rtcm3Message1073{
-        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+func NewMessage1073(data []byte) Message1073 {
+    return Message1073{
+        MessageMsm3: NewMessageMsm3(data),
     }
 }
 
-func (msg Rtcm3Message1073) Time() time.Time {
+func (msg Message1073) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1074 struct {
-    Rtcm3MessageMsm4
+type Message1074 struct {
+    MessageMsm4
 }
 
-func NewRtcm3Message1074(data []byte) Rtcm3Message1074 {
-    return Rtcm3Message1074{
-        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+func NewMessage1074(data []byte) Message1074 {
+    return Message1074{
+        MessageMsm4: NewMessageMsm4(data),
     }
 }
 
-func (msg Rtcm3Message1074) Time() time.Time {
+func (msg Message1074) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1075 struct {
-    Rtcm3MessageMsm5
+type Message1075 struct {
+    MessageMsm5
 }
 
-func NewRtcm3Message1075(data []byte) Rtcm3Message1075 {
-    return Rtcm3Message1075{
-        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+func NewMessage1075(data []byte) Message1075 {
+    return Message1075{
+        MessageMsm5: NewMessageMsm5(data),
     }
 }
 
-func (msg Rtcm3Message1075) Time() time.Time {
+func (msg Message1075) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1076 struct {
-    Rtcm3MessageMsm6
+type Message1076 struct {
+    MessageMsm6
 }
 
-func NewRtcm3Message1076(data []byte) Rtcm3Message1076 {
-    return Rtcm3Message1076{
-        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+func NewMessage1076(data []byte) Message1076 {
+    return Message1076{
+        MessageMsm6: NewMessageMsm6(data),
     }
 }
 
-func (msg Rtcm3Message1076) Time() time.Time {
+func (msg Message1076) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1077 struct {
-    Rtcm3MessageMsm7
+type Message1077 struct {
+    MessageMsm7
 }
 
-func NewRtcm3Message1077(data []byte) Rtcm3Message1077 {
-    return Rtcm3Message1077{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
+func NewMessage1077(data []byte) Message1077 {
+    return Message1077{
+        MessageMsm7: NewMessageMsm7(data),
     }
 }
 
-func (msg Rtcm3Message1077) Time() time.Time {
+func (msg Message1077) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1081 struct {
-    Rtcm3MessageMsm1
+type Message1081 struct {
+    MessageMsm1
 }
 
-func NewRtcm3Message1081(data []byte) Rtcm3Message1081 {
-    return Rtcm3Message1081{
-        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+func NewMessage1081(data []byte) Message1081 {
+    return Message1081{
+        MessageMsm1: NewMessageMsm1(data),
     }
 }
 
-func (msg Rtcm3Message1081) Time() time.Time {
+func (msg Message1081) Time() time.Time {
     return GlonassTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1082 struct {
-    Rtcm3MessageMsm2
+type Message1082 struct {
+    MessageMsm2
 }
 
-func NewRtcm3Message1082(data []byte) Rtcm3Message1082 {
-    return Rtcm3Message1082{
-        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+func NewMessage1082(data []byte) Message1082 {
+    return Message1082{
+        MessageMsm2: NewMessageMsm2(data),
     }
 }
 
-func (msg Rtcm3Message1082) Time() time.Time {
+func (msg Message1082) Time() time.Time {
     return GlonassTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1083 struct {
-    Rtcm3MessageMsm3
+type Message1083 struct {
+    MessageMsm3
 }
 
-func NewRtcm3Message1083(data []byte) Rtcm3Message1083 {
-    return Rtcm3Message1083{
-        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+func NewMessage1083(data []byte) Message1083 {
+    return Message1083{
+        MessageMsm3: NewMessageMsm3(data),
     }
 }
 
-func (msg Rtcm3Message1083) Time() time.Time {
+func (msg Message1083) Time() time.Time {
     return GlonassTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1084 struct {
-    Rtcm3MessageMsm4
+type Message1084 struct {
+    MessageMsm4
 }
 
-func NewRtcm3Message1084(data []byte) Rtcm3Message1084 {
-    return Rtcm3Message1084{
-        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+func NewMessage1084(data []byte) Message1084 {
+    return Message1084{
+        MessageMsm4: NewMessageMsm4(data),
     }
 }
 
-func (msg Rtcm3Message1084) Time() time.Time {
+func (msg Message1084) Time() time.Time {
     return GlonassTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1085 struct {
-    Rtcm3MessageMsm5
+type Message1085 struct {
+    MessageMsm5
 }
 
-func NewRtcm3Message1085(data []byte) Rtcm3Message1085 {
-    return Rtcm3Message1085{
-        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+func NewMessage1085(data []byte) Message1085 {
+    return Message1085{
+        MessageMsm5: NewMessageMsm5(data),
     }
 }
 
-func (msg Rtcm3Message1085) Time() time.Time {
+func (msg Message1085) Time() time.Time {
     return GlonassTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1086 struct {
-    Rtcm3MessageMsm6
+type Message1086 struct {
+    MessageMsm6
 }
 
-func NewRtcm3Message1086(data []byte) Rtcm3Message1086 {
-    return Rtcm3Message1086{
-        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+func NewMessage1086(data []byte) Message1086 {
+    return Message1086{
+        MessageMsm6: NewMessageMsm6(data),
     }
 }
 
-func (msg Rtcm3Message1086) Time() time.Time {
+func (msg Message1086) Time() time.Time {
     return GlonassTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1087 struct {
-    Rtcm3MessageMsm7
+type Message1087 struct {
+    MessageMsm7
 }
 
-func NewRtcm3Message1087(data []byte) Rtcm3Message1087 {
-    return Rtcm3Message1087{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
+func NewMessage1087(data []byte) Message1087 {
+    return Message1087{
+        MessageMsm7: NewMessageMsm7(data),
     }
 }
 
-func (msg Rtcm3Message1087) Time() time.Time {
+func (msg Message1087) Time() time.Time {
     return GlonassTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1091 struct {
-    Rtcm3MessageMsm1
+type Message1091 struct {
+    MessageMsm1
 }
 
-func NewRtcm3Message1091(data []byte) Rtcm3Message1091 {
-    return Rtcm3Message1091{
-        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+func NewMessage1091(data []byte) Message1091 {
+    return Message1091{
+        MessageMsm1: NewMessageMsm1(data),
     }
 }
 
-func (msg Rtcm3Message1091) Time() time.Time {
+func (msg Message1091) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1092 struct {
-    Rtcm3MessageMsm2
+type Message1092 struct {
+    MessageMsm2
 }
 
-func NewRtcm3Message1092(data []byte) Rtcm3Message1092 {
-    return Rtcm3Message1092{
-        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+func NewMessage1092(data []byte) Message1092 {
+    return Message1092{
+        MessageMsm2: NewMessageMsm2(data),
     }
 }
 
-func (msg Rtcm3Message1092) Time() time.Time {
+func (msg Message1092) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1093 struct {
-    Rtcm3MessageMsm3
+type Message1093 struct {
+    MessageMsm3
 }
 
-func NewRtcm3Message1093(data []byte) Rtcm3Message1093 {
-    return Rtcm3Message1093{
-        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+func NewMessage1093(data []byte) Message1093 {
+    return Message1093{
+        MessageMsm3: NewMessageMsm3(data),
     }
 }
 
-func (msg Rtcm3Message1093) Time() time.Time {
+func (msg Message1093) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1094 struct {
-    Rtcm3MessageMsm4
+type Message1094 struct {
+    MessageMsm4
 }
 
-func NewRtcm3Message1094(data []byte) Rtcm3Message1094 {
-    return Rtcm3Message1094{
-        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+func NewMessage1094(data []byte) Message1094 {
+    return Message1094{
+        MessageMsm4: NewMessageMsm4(data),
     }
 }
 
-func (msg Rtcm3Message1094) Time() time.Time {
+func (msg Message1094) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1095 struct {
-    Rtcm3MessageMsm5
+type Message1095 struct {
+    MessageMsm5
 }
 
-func NewRtcm3Message1095(data []byte) Rtcm3Message1095 {
-    return Rtcm3Message1095{
-        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+func NewMessage1095(data []byte) Message1095 {
+    return Message1095{
+        MessageMsm5: NewMessageMsm5(data),
     }
 }
 
-func (msg Rtcm3Message1095) Time() time.Time {
+func (msg Message1095) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1096 struct {
-    Rtcm3MessageMsm6
+type Message1096 struct {
+    MessageMsm6
 }
 
-func NewRtcm3Message1096(data []byte) Rtcm3Message1096 {
-    return Rtcm3Message1096{
-        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+func NewMessage1096(data []byte) Message1096 {
+    return Message1096{
+        MessageMsm6: NewMessageMsm6(data),
     }
 }
 
-func (msg Rtcm3Message1096) Time() time.Time {
+func (msg Message1096) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1097 struct {
-    Rtcm3MessageMsm7
+type Message1097 struct {
+    MessageMsm7
 }
 
-func NewRtcm3Message1097(data []byte) Rtcm3Message1097 {
-    return Rtcm3Message1097{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
+func NewMessage1097(data []byte) Message1097 {
+    return Message1097{
+        MessageMsm7: NewMessageMsm7(data),
     }
 }
 
-func (msg Rtcm3Message1097) Time() time.Time {
+func (msg Message1097) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1101 struct {
-    Rtcm3MessageMsm1
+type Message1101 struct {
+    MessageMsm1
 }
 
-func NewRtcm3Message1101(data []byte) Rtcm3Message1101 {
-    return Rtcm3Message1101{
-        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+func NewMessage1101(data []byte) Message1101 {
+    return Message1101{
+        MessageMsm1: NewMessageMsm1(data),
     }
 }
 
-func (msg Rtcm3Message1101) Time() time.Time {
+func (msg Message1101) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1102 struct {
-    Rtcm3MessageMsm2
+type Message1102 struct {
+    MessageMsm2
 }
 
-func NewRtcm3Message1102(data []byte) Rtcm3Message1102 {
-    return Rtcm3Message1102{
-        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+func NewMessage1102(data []byte) Message1102 {
+    return Message1102{
+        MessageMsm2: NewMessageMsm2(data),
     }
 }
 
-func (msg Rtcm3Message1102) Time() time.Time {
+func (msg Message1102) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1103 struct {
-    Rtcm3MessageMsm3
+type Message1103 struct {
+    MessageMsm3
 }
 
-func NewRtcm3Message1103(data []byte) Rtcm3Message1103 {
-    return Rtcm3Message1103{
-        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+func NewMessage1103(data []byte) Message1103 {
+    return Message1103{
+        MessageMsm3: NewMessageMsm3(data),
     }
 }
 
-func (msg Rtcm3Message1103) Time() time.Time {
+func (msg Message1103) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1104 struct {
-    Rtcm3MessageMsm4
+type Message1104 struct {
+    MessageMsm4
 }
 
-func NewRtcm3Message1104(data []byte) Rtcm3Message1104 {
-    return Rtcm3Message1104{
-        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+func NewMessage1104(data []byte) Message1104 {
+    return Message1104{
+        MessageMsm4: NewMessageMsm4(data),
     }
 }
 
-func (msg Rtcm3Message1104) Time() time.Time {
+func (msg Message1104) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1105 struct {
-    Rtcm3MessageMsm5
+type Message1105 struct {
+    MessageMsm5
 }
 
-func NewRtcm3Message1105(data []byte) Rtcm3Message1105 {
-    return Rtcm3Message1105{
-        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+func NewMessage1105(data []byte) Message1105 {
+    return Message1105{
+        MessageMsm5: NewMessageMsm5(data),
     }
 }
 
-func (msg Rtcm3Message1105) Time() time.Time {
+func (msg Message1105) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1106 struct {
-    Rtcm3MessageMsm6
+type Message1106 struct {
+    MessageMsm6
 }
 
-func NewRtcm3Message1106(data []byte) Rtcm3Message1106 {
-    return Rtcm3Message1106{
-        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+func NewMessage1106(data []byte) Message1106 {
+    return Message1106{
+        MessageMsm6: NewMessageMsm6(data),
     }
 }
 
-func (msg Rtcm3Message1106) Time() time.Time {
+func (msg Message1106) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1107 struct {
-    Rtcm3MessageMsm7
+type Message1107 struct {
+    MessageMsm7
 }
 
-func NewRtcm3Message1107(data []byte) Rtcm3Message1107 {
-    return Rtcm3Message1107{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
+func NewMessage1107(data []byte) Message1107 {
+    return Message1107{
+        MessageMsm7: NewMessageMsm7(data),
     }
 }
 
-func (msg Rtcm3Message1107) Time() time.Time {
+func (msg Message1107) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1111 struct {
-    Rtcm3MessageMsm1
+type Message1111 struct {
+    MessageMsm1
 }
 
-func NewRtcm3Message1111(data []byte) Rtcm3Message1111 {
-    return Rtcm3Message1111{
-        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+func NewMessage1111(data []byte) Message1111 {
+    return Message1111{
+        MessageMsm1: NewMessageMsm1(data),
     }
 }
 
-func (msg Rtcm3Message1111) Time() time.Time {
+func (msg Message1111) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1112 struct {
-    Rtcm3MessageMsm2
+type Message1112 struct {
+    MessageMsm2
 }
 
-func NewRtcm3Message1112(data []byte) Rtcm3Message1112 {
-    return Rtcm3Message1112{
-        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+func NewMessage1112(data []byte) Message1112 {
+    return Message1112{
+        MessageMsm2: NewMessageMsm2(data),
     }
 }
 
-func (msg Rtcm3Message1112) Time() time.Time {
+func (msg Message1112) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1113 struct {
-    Rtcm3MessageMsm3
+type Message1113 struct {
+    MessageMsm3
 }
 
-func NewRtcm3Message1113(data []byte) Rtcm3Message1113 {
-    return Rtcm3Message1113{
-        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+func NewMessage1113(data []byte) Message1113 {
+    return Message1113{
+        MessageMsm3: NewMessageMsm3(data),
     }
 }
 
-func (msg Rtcm3Message1113) Time() time.Time {
+func (msg Message1113) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1114 struct {
-    Rtcm3MessageMsm4
+type Message1114 struct {
+    MessageMsm4
 }
 
-func NewRtcm3Message1114(data []byte) Rtcm3Message1114 {
-    return Rtcm3Message1114{
-        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+func NewMessage1114(data []byte) Message1114 {
+    return Message1114{
+        MessageMsm4: NewMessageMsm4(data),
     }
 }
 
-func (msg Rtcm3Message1114) Time() time.Time {
+func (msg Message1114) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1115 struct {
-    Rtcm3MessageMsm5
+type Message1115 struct {
+    MessageMsm5
 }
 
-func NewRtcm3Message1115(data []byte) Rtcm3Message1115 {
-    return Rtcm3Message1115{
-        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+func NewMessage1115(data []byte) Message1115 {
+    return Message1115{
+        MessageMsm5: NewMessageMsm5(data),
     }
 }
 
-func (msg Rtcm3Message1115) Time() time.Time {
+func (msg Message1115) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1116 struct {
-    Rtcm3MessageMsm6
+type Message1116 struct {
+    MessageMsm6
 }
 
-func NewRtcm3Message1116(data []byte) Rtcm3Message1116 {
-    return Rtcm3Message1116{
-        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+func NewMessage1116(data []byte) Message1116 {
+    return Message1116{
+        MessageMsm6: NewMessageMsm6(data),
     }
 }
 
-func (msg Rtcm3Message1116) Time() time.Time {
+func (msg Message1116) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1117 struct {
-    Rtcm3MessageMsm7
+type Message1117 struct {
+    MessageMsm7
 }
 
-func NewRtcm3Message1117(data []byte) Rtcm3Message1117 {
-    return Rtcm3Message1117{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
+func NewMessage1117(data []byte) Message1117 {
+    return Message1117{
+        MessageMsm7: NewMessageMsm7(data),
     }
 }
 
-func (msg Rtcm3Message1117) Time() time.Time {
+func (msg Message1117) Time() time.Time {
     return GpsTime(msg.Header.Epoch)
 }
 
-type Rtcm3Message1121 struct {
-    Rtcm3MessageMsm1
+type Message1121 struct {
+    MessageMsm1
 }
 
-func NewRtcm3Message1121(data []byte) Rtcm3Message1121 {
-    return Rtcm3Message1121{
-        Rtcm3MessageMsm1: NewRtcm3MessageMsm1(data),
+func NewMessage1121(data []byte) Message1121 {
+    return Message1121{
+        MessageMsm1: NewMessageMsm1(data),
     }
 }
 
-func (msg Rtcm3Message1121) Time() time.Time {
+func (msg Message1121) Time() time.Time {
     return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
-type Rtcm3Message1122 struct {
-    Rtcm3MessageMsm2
+type Message1122 struct {
+    MessageMsm2
 }
 
-func NewRtcm3Message1122(data []byte) Rtcm3Message1122 {
-    return Rtcm3Message1122{
-        Rtcm3MessageMsm2: NewRtcm3MessageMsm2(data),
+func NewMessage1122(data []byte) Message1122 {
+    return Message1122{
+        MessageMsm2: NewMessageMsm2(data),
     }
 }
 
-func (msg Rtcm3Message1122) Time() time.Time {
+func (msg Message1122) Time() time.Time {
     return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
-type Rtcm3Message1123 struct {
-    Rtcm3MessageMsm3
+type Message1123 struct {
+    MessageMsm3
 }
 
-func NewRtcm3Message1123(data []byte) Rtcm3Message1123 {
-    return Rtcm3Message1123{
-        Rtcm3MessageMsm3: NewRtcm3MessageMsm3(data),
+func NewMessage1123(data []byte) Message1123 {
+    return Message1123{
+        MessageMsm3: NewMessageMsm3(data),
     }
 }
 
-func (msg Rtcm3Message1123) Time() time.Time {
+func (msg Message1123) Time() time.Time {
     return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
-type Rtcm3Message1124 struct {
-    Rtcm3MessageMsm4
+type Message1124 struct {
+    MessageMsm4
 }
 
-func NewRtcm3Message1124(data []byte) Rtcm3Message1124 {
-    return Rtcm3Message1124{
-        Rtcm3MessageMsm4: NewRtcm3MessageMsm4(data),
+func NewMessage1124(data []byte) Message1124 {
+    return Message1124{
+        MessageMsm4: NewMessageMsm4(data),
     }
 }
 
-func (msg Rtcm3Message1124) Time() time.Time {
+func (msg Message1124) Time() time.Time {
     return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
-type Rtcm3Message1125 struct {
-    Rtcm3MessageMsm5
+type Message1125 struct {
+    MessageMsm5
 }
 
-func NewRtcm3Message1125(data []byte) Rtcm3Message1125 {
-    return Rtcm3Message1125{
-        Rtcm3MessageMsm5: NewRtcm3MessageMsm5(data),
+func NewMessage1125(data []byte) Message1125 {
+    return Message1125{
+        MessageMsm5: NewMessageMsm5(data),
     }
 }
 
-func (msg Rtcm3Message1125) Time() time.Time {
+func (msg Message1125) Time() time.Time {
     return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
-type Rtcm3Message1126 struct {
-    Rtcm3MessageMsm6
+type Message1126 struct {
+    MessageMsm6
 }
 
-func NewRtcm3Message1126(data []byte) Rtcm3Message1126 {
-    return Rtcm3Message1126{
-        Rtcm3MessageMsm6: NewRtcm3MessageMsm6(data),
+func NewMessage1126(data []byte) Message1126 {
+    return Message1126{
+        MessageMsm6: NewMessageMsm6(data),
     }
 }
 
-func (msg Rtcm3Message1126) Time() time.Time {
+func (msg Message1126) Time() time.Time {
     return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
-type Rtcm3Message1127 struct {
-    Rtcm3MessageMsm7
+type Message1127 struct {
+    MessageMsm7
 }
 
-func NewRtcm3Message1127(data []byte) Rtcm3Message1127 {
-    return Rtcm3Message1127{
-        Rtcm3MessageMsm7: NewRtcm3MessageMsm7(data),
+func NewMessage1127(data []byte) Message1127 {
+    return Message1127{
+        MessageMsm7: NewMessageMsm7(data),
     }
 }
 
-func (msg Rtcm3Message1127) Time() time.Time {
+func (msg Message1127) Time() time.Time {
     return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }

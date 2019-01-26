@@ -1,12 +1,12 @@
 package data
 
 import ( 
-    "../../pkgs/rtcm"
+    "../../pkgs/rtcm3"
 )
 
-var Message1117 = rtcm.Rtcm3Message1117 {
-    Rtcm3MessageMsm7: rtcm.Rtcm3MessageMsm7 {
-        Header: rtcm.Rtcm3MsmHeader {
+var Message1117 = rtcm3.Message1117 {
+    MessageMsm7: rtcm3.MessageMsm7 {
+        Header: rtcm3.MsmHeader {
             MessageNumber: 0x45d,
             ReferenceStationId: 0x0,
             Epoch: 0x1aa722a8,
@@ -21,7 +21,7 @@ var Message1117 = rtcm.Rtcm3Message1117 {
             SignalMask: 0x40010000,
             CellMask: 0xff,
         },
-        SatelliteData: rtcm.Rtcm3SatelliteDataMsm57 {
+        SatelliteData: rtcm3.SatelliteDataMsm57 {
             RangeMilliseconds: [] uint8 {
                 0x82, 0x8e, 0x6f, 0x7c,
             },
@@ -35,7 +35,7 @@ var Message1117 = rtcm.Rtcm3Message1117 {
                 -414, 351, 165, 0,
             },
         },
-        SignalData: rtcm.Rtcm3SignalDataMsm7 {
+        SignalData: rtcm3.SignalDataMsm7 {
             Pseudoranges: [] int32 {
                 153492, 153671, 75365, 80088, -16298, -15702, -65871, -64718,
             },

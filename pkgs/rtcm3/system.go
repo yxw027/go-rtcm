@@ -1,33 +1,33 @@
-package rtcm
+package rtcm3
 
 import (
     "github.com/bamiaux/iobit"
     "math"
 )
 
-type Rtcm3MessageAnnouncement struct {
+type MessageAnnouncement struct {
     Id uint16
     SyncFlag bool
     TransmissionInterval uint16
 }
 
-type Rtcm3Message1013 struct {
+type Message1013 struct {
     MessageNumber uint16
     ReferenceStationId uint16
     Mjd uint16
     SecondsOfDay uint32
     MessageCount uint8
     LeapSeconds uint8
-    Messages []Rtcm3MessageAnnouncement
+    Messages []MessageAnnouncement
 }
 
-func (msg Rtcm3Message1013) Number() uint16 {
+func (msg Message1013) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewRtcm3Message1013(data []byte) (msg Rtcm3Message1013) {
+func NewMessage1013(data []byte) (msg Message1013) {
     r := iobit.NewReader(data)
-    msg = Rtcm3Message1013{
+    msg = Message1013{
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
         Mjd: r.Uint16(16),
@@ -36,7 +36,7 @@ func NewRtcm3Message1013(data []byte) (msg Rtcm3Message1013) {
         LeapSeconds: r.Uint8(8),
     }
     for i := 0; i < int(msg.MessageCount); i++ {
-        msg.Messages = append(msg.Messages, Rtcm3MessageAnnouncement{
+        msg.Messages = append(msg.Messages, MessageAnnouncement{
             Id: r.Uint16(12),
             SyncFlag: r.Bit(),
             TransmissionInterval: r.Uint16(16),
@@ -45,7 +45,7 @@ func NewRtcm3Message1013(data []byte) (msg Rtcm3Message1013) {
     return msg
 }
 
-func (msg Rtcm3Message1013) Serialize() []byte {
+func (msg Message1013) Serialize() []byte {
     data := make([]byte, int(math.Ceil(float64(70 + (29 * int(msg.MessageCount))) / 8)))
     w := iobit.NewWriter(data)
     w.PutUint16(12, msg.MessageNumber)
@@ -64,7 +64,7 @@ func (msg Rtcm3Message1013) Serialize() []byte {
     return data
 }
 
-type Rtcm3Message1029 struct {
+type Message1029 struct {
     MessageNumber uint16
     ReferenceStationId uint16
     Mjd uint16
@@ -74,13 +74,13 @@ type Rtcm3Message1029 struct {
     CodeUnits string
 }
 
-func (msg Rtcm3Message1029) Number() uint16 {
+func (msg Message1029) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewRtcm3Message1029(data []byte) (msg Rtcm3Message1029) {
+func NewMessage1029(data []byte) (msg Message1029) {
     r := iobit.NewReader(data)
-    msg = Rtcm3Message1029{
+    msg = Message1029{
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
         Mjd: r.Uint16(16),
@@ -92,7 +92,7 @@ func NewRtcm3Message1029(data []byte) (msg Rtcm3Message1029) {
     return msg
 }
 
-func (msg Rtcm3Message1029) Serialize() []byte {
+func (msg Message1029) Serialize() []byte {
     data := make([]byte, 9)
     w := iobit.NewWriter(data)
     w.PutUint16(12, msg.MessageNumber)
