@@ -15,8 +15,8 @@ func readFile(name string) (payload []byte){
     file, fileerr := os.Open(name)
     defer file.Close()
     if fileerr != nil {
-		log.Fatal(fileerr)
-	}
+        log.Fatal(fileerr)
+    }
     fileinfo, staterr := file.Stat()
     if staterr != nil {
         log.Fatal(staterr)
