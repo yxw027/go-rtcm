@@ -68,7 +68,7 @@ type SatelliteDataMsm57 struct {
     PhaseRangeRates []int16
 }
 
-func NewSatelliteDataMsm57(r *iobit.Reader, nsat int) (satData SatelliteDataMsm57) {
+func DeserializeSatelliteDataMsm57(r *iobit.Reader, nsat int) (satData SatelliteDataMsm57) {
     for i := 0; i < nsat; i++ {
         satData.RangeMilliseconds = append(satData.RangeMilliseconds, r.Uint8(8))
     }
@@ -108,7 +108,7 @@ type SignalDataMsm7 struct {
     PhaseRangeRates []int16
 }
 
-func NewSignalDataMsm7(r *iobit.Reader, ncell int) (sigData SignalDataMsm7) {
+func DeserializeSignalDataMsm7(r *iobit.Reader, ncell int) (sigData SignalDataMsm7) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int32(20))
     }
@@ -140,13 +140,13 @@ func (msg MessageMsm7) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewMessageMsm7(payload []byte) MessageMsm7 {
+func DeserializeMessageMsm7(payload []byte) MessageMsm7 {
     r := iobit.NewReader(payload)
     msmHeader := NewMsmHeader(&r)
     return MessageMsm7{
         Header: msmHeader,
-        SatelliteData: NewSatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewSignalDataMsm7(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: DeserializeSatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: DeserializeSignalDataMsm7(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
@@ -191,7 +191,7 @@ type SatelliteDataMsm46 struct {
     Ranges []uint16
 }
 
-func NewSatelliteDataMsm46(r *iobit.Reader, nsat int) (satData SatelliteDataMsm46) {
+func DeserializeSatelliteDataMsm46(r *iobit.Reader, nsat int) (satData SatelliteDataMsm46) {
     for i := 0; i < nsat; i++ {
         satData.RangeMilliseconds = append(satData.RangeMilliseconds, r.Uint8(8))
     }
@@ -218,7 +218,7 @@ type SignalDataMsm6 struct {
     Cnrs []uint16
 }
 
-func NewSignalDataMsm6(r *iobit.Reader, ncell int) (sigData SignalDataMsm6) {
+func DeserializeSignalDataMsm6(r *iobit.Reader, ncell int) (sigData SignalDataMsm6) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int32(20))
     }
@@ -247,13 +247,13 @@ func (msg MessageMsm6) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewMessageMsm6(payload []byte) MessageMsm6 {
+func DeserializeMessageMsm6(payload []byte) MessageMsm6 {
     r := iobit.NewReader(payload)
     msmHeader := NewMsmHeader(&r)
     return MessageMsm6{
         Header: msmHeader,
-        SatelliteData: NewSatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewSignalDataMsm6(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: DeserializeSatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: DeserializeSignalDataMsm6(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
@@ -299,7 +299,7 @@ type SignalDataMsm5 struct {
     PhaseRangeRates []int16
 }
 
-func NewSignalDataMsm5(r *iobit.Reader, ncell int) (sigData SignalDataMsm5) {
+func DeserializeSignalDataMsm5(r *iobit.Reader, ncell int) (sigData SignalDataMsm5) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -331,13 +331,13 @@ func (msg MessageMsm5) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewMessageMsm5(data []byte) MessageMsm5 {
+func DeserializeMessageMsm5(data []byte) MessageMsm5 {
     r := iobit.NewReader(data)
     msmHeader := NewMsmHeader(&r)
     return MessageMsm5{
         Header: msmHeader,
-        SatelliteData: NewSatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewSignalDataMsm5(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: DeserializeSatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: DeserializeSignalDataMsm5(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
@@ -385,7 +385,7 @@ type SignalDataMsm4 struct {
     Cnrs []uint8
 }
 
-func NewSignalDataMsm4(r *iobit.Reader, ncell int) (sigData SignalDataMsm4) {
+func DeserializeSignalDataMsm4(r *iobit.Reader, ncell int) (sigData SignalDataMsm4) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -414,13 +414,13 @@ func (msg MessageMsm4) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewMessageMsm4(data []byte) MessageMsm4 {
+func DeserializeMessageMsm4(data []byte) MessageMsm4 {
     r := iobit.NewReader(data)
     msmHeader := NewMsmHeader(&r)
     return MessageMsm4{
         Header: msmHeader,
-        SatelliteData: NewSatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewSignalDataMsm4(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: DeserializeSatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: DeserializeSignalDataMsm4(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
@@ -461,7 +461,7 @@ type SatelliteDataMsm123 struct {
     Ranges []uint16
 }
 
-func NewSatelliteDataMsm123(r *iobit.Reader, nsat int) (satData SatelliteDataMsm123) {
+func DeserializeSatelliteDataMsm123(r *iobit.Reader, nsat int) (satData SatelliteDataMsm123) {
     for i := 0; i < nsat; i++ {
         satData.Ranges = append(satData.Ranges, r.Uint16(10))
     }
@@ -475,7 +475,7 @@ type SignalDataMsm3 struct {
     HalfCycles []bool
 }
 
-func NewSignalDataMsm3(r *iobit.Reader, ncell int) (sigData SignalDataMsm3) {
+func DeserializeSignalDataMsm3(r *iobit.Reader, ncell int) (sigData SignalDataMsm3) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -501,13 +501,13 @@ func (msg MessageMsm3) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewMessageMsm3(data []byte) MessageMsm3 {
+func DeserializeMessageMsm3(data []byte) MessageMsm3 {
     r := iobit.NewReader(data)
     msmHeader := NewMsmHeader(&r)
     return MessageMsm3{
         Header: msmHeader,
-        SatelliteData: NewSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewSignalDataMsm3(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: DeserializeSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: DeserializeSignalDataMsm3(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
@@ -549,7 +549,7 @@ type SignalDataMsm2 struct {
     HalfCycles []bool
 }
 
-func NewSignalDataMsm2(r *iobit.Reader, ncell int) (sigData SignalDataMsm2) {
+func DeserializeSignalDataMsm2(r *iobit.Reader, ncell int) (sigData SignalDataMsm2) {
     for i := 0; i < ncell; i++ {
         sigData.PhaseRanges = append(sigData.PhaseRanges, r.Int32(22))
     }
@@ -572,13 +572,13 @@ func (msg MessageMsm2) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewMessageMsm2(data []byte) MessageMsm2 {
+func DeserializeMessageMsm2(data []byte) MessageMsm2 {
     r := iobit.NewReader(data)
     msmHeader := NewMsmHeader(&r)
     return MessageMsm2{
         Header: msmHeader,
-        SatelliteData: NewSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewSignalDataMsm2(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: DeserializeSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: DeserializeSignalDataMsm2(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
@@ -615,7 +615,7 @@ type SignalDataMsm1 struct {
     Pseudoranges []int16
 }
 
-func NewSignalDataMsm1(r *iobit.Reader, ncell int) (sigData SignalDataMsm1) {
+func DeserializeSignalDataMsm1(r *iobit.Reader, ncell int) (sigData SignalDataMsm1) {
     for i := 0; i < ncell; i++ {
         sigData.Pseudoranges = append(sigData.Pseudoranges, r.Int16(15))
     }
@@ -632,13 +632,13 @@ func (msg MessageMsm1) Number() uint16 {
     return msg.Header.MessageNumber
 }
 
-func NewMessageMsm1(data []byte) MessageMsm1 {
+func DeserializeMessageMsm1(data []byte) MessageMsm1 {
     r := iobit.NewReader(data)
     msmHeader := NewMsmHeader(&r)
     return MessageMsm1{
         Header: msmHeader,
-        SatelliteData: NewSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-        SignalData: NewSignalDataMsm1(&r, bits.OnesCount(uint(msmHeader.CellMask))),
+        SatelliteData: DeserializeSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
+        SignalData: DeserializeSignalDataMsm1(&r, bits.OnesCount(uint(msmHeader.CellMask))),
     }
 }
 
@@ -669,9 +669,9 @@ type Message1071 struct {
     MessageMsm1
 }
 
-func NewMessage1071(data []byte) Message1071 {
+func DeserializeMessage1071(data []byte) Message1071 {
     return Message1071{
-        MessageMsm1: NewMessageMsm1(data),
+        MessageMsm1: DeserializeMessageMsm1(data),
     }
 }
 
@@ -683,9 +683,9 @@ type Message1072 struct {
     MessageMsm2
 }
 
-func NewMessage1072(data []byte) Message1072 {
+func DeserializeMessage1072(data []byte) Message1072 {
     return Message1072{
-        MessageMsm2: NewMessageMsm2(data),
+        MessageMsm2: DeserializeMessageMsm2(data),
     }
 }
 
@@ -697,9 +697,9 @@ type Message1073 struct {
     MessageMsm3
 }
 
-func NewMessage1073(data []byte) Message1073 {
+func DeserializeMessage1073(data []byte) Message1073 {
     return Message1073{
-        MessageMsm3: NewMessageMsm3(data),
+        MessageMsm3: DeserializeMessageMsm3(data),
     }
 }
 
@@ -711,9 +711,9 @@ type Message1074 struct {
     MessageMsm4
 }
 
-func NewMessage1074(data []byte) Message1074 {
+func DeserializeMessage1074(data []byte) Message1074 {
     return Message1074{
-        MessageMsm4: NewMessageMsm4(data),
+        MessageMsm4: DeserializeMessageMsm4(data),
     }
 }
 
@@ -725,9 +725,9 @@ type Message1075 struct {
     MessageMsm5
 }
 
-func NewMessage1075(data []byte) Message1075 {
+func DeserializeMessage1075(data []byte) Message1075 {
     return Message1075{
-        MessageMsm5: NewMessageMsm5(data),
+        MessageMsm5: DeserializeMessageMsm5(data),
     }
 }
 
@@ -739,9 +739,9 @@ type Message1076 struct {
     MessageMsm6
 }
 
-func NewMessage1076(data []byte) Message1076 {
+func DeserializeMessage1076(data []byte) Message1076 {
     return Message1076{
-        MessageMsm6: NewMessageMsm6(data),
+        MessageMsm6: DeserializeMessageMsm6(data),
     }
 }
 
@@ -753,9 +753,9 @@ type Message1077 struct {
     MessageMsm7
 }
 
-func NewMessage1077(data []byte) Message1077 {
+func DeserializeMessage1077(data []byte) Message1077 {
     return Message1077{
-        MessageMsm7: NewMessageMsm7(data),
+        MessageMsm7: DeserializeMessageMsm7(data),
     }
 }
 
@@ -767,9 +767,9 @@ type Message1081 struct {
     MessageMsm1
 }
 
-func NewMessage1081(data []byte) Message1081 {
+func DeserializeMessage1081(data []byte) Message1081 {
     return Message1081{
-        MessageMsm1: NewMessageMsm1(data),
+        MessageMsm1: DeserializeMessageMsm1(data),
     }
 }
 
@@ -781,9 +781,9 @@ type Message1082 struct {
     MessageMsm2
 }
 
-func NewMessage1082(data []byte) Message1082 {
+func DeserializeMessage1082(data []byte) Message1082 {
     return Message1082{
-        MessageMsm2: NewMessageMsm2(data),
+        MessageMsm2: DeserializeMessageMsm2(data),
     }
 }
 
@@ -795,9 +795,9 @@ type Message1083 struct {
     MessageMsm3
 }
 
-func NewMessage1083(data []byte) Message1083 {
+func DeserializeMessage1083(data []byte) Message1083 {
     return Message1083{
-        MessageMsm3: NewMessageMsm3(data),
+        MessageMsm3: DeserializeMessageMsm3(data),
     }
 }
 
@@ -809,9 +809,9 @@ type Message1084 struct {
     MessageMsm4
 }
 
-func NewMessage1084(data []byte) Message1084 {
+func DeserializeMessage1084(data []byte) Message1084 {
     return Message1084{
-        MessageMsm4: NewMessageMsm4(data),
+        MessageMsm4: DeserializeMessageMsm4(data),
     }
 }
 
@@ -823,9 +823,9 @@ type Message1085 struct {
     MessageMsm5
 }
 
-func NewMessage1085(data []byte) Message1085 {
+func DeserializeMessage1085(data []byte) Message1085 {
     return Message1085{
-        MessageMsm5: NewMessageMsm5(data),
+        MessageMsm5: DeserializeMessageMsm5(data),
     }
 }
 
@@ -837,9 +837,9 @@ type Message1086 struct {
     MessageMsm6
 }
 
-func NewMessage1086(data []byte) Message1086 {
+func DeserializeMessage1086(data []byte) Message1086 {
     return Message1086{
-        MessageMsm6: NewMessageMsm6(data),
+        MessageMsm6: DeserializeMessageMsm6(data),
     }
 }
 
@@ -851,9 +851,9 @@ type Message1087 struct {
     MessageMsm7
 }
 
-func NewMessage1087(data []byte) Message1087 {
+func DeserializeMessage1087(data []byte) Message1087 {
     return Message1087{
-        MessageMsm7: NewMessageMsm7(data),
+        MessageMsm7: DeserializeMessageMsm7(data),
     }
 }
 
@@ -865,9 +865,9 @@ type Message1091 struct {
     MessageMsm1
 }
 
-func NewMessage1091(data []byte) Message1091 {
+func DeserializeMessage1091(data []byte) Message1091 {
     return Message1091{
-        MessageMsm1: NewMessageMsm1(data),
+        MessageMsm1: DeserializeMessageMsm1(data),
     }
 }
 
@@ -879,9 +879,9 @@ type Message1092 struct {
     MessageMsm2
 }
 
-func NewMessage1092(data []byte) Message1092 {
+func DeserializeMessage1092(data []byte) Message1092 {
     return Message1092{
-        MessageMsm2: NewMessageMsm2(data),
+        MessageMsm2: DeserializeMessageMsm2(data),
     }
 }
 
@@ -893,9 +893,9 @@ type Message1093 struct {
     MessageMsm3
 }
 
-func NewMessage1093(data []byte) Message1093 {
+func DeserializeMessage1093(data []byte) Message1093 {
     return Message1093{
-        MessageMsm3: NewMessageMsm3(data),
+        MessageMsm3: DeserializeMessageMsm3(data),
     }
 }
 
@@ -907,9 +907,9 @@ type Message1094 struct {
     MessageMsm4
 }
 
-func NewMessage1094(data []byte) Message1094 {
+func DeserializeMessage1094(data []byte) Message1094 {
     return Message1094{
-        MessageMsm4: NewMessageMsm4(data),
+        MessageMsm4: DeserializeMessageMsm4(data),
     }
 }
 
@@ -921,9 +921,9 @@ type Message1095 struct {
     MessageMsm5
 }
 
-func NewMessage1095(data []byte) Message1095 {
+func DeserializeMessage1095(data []byte) Message1095 {
     return Message1095{
-        MessageMsm5: NewMessageMsm5(data),
+        MessageMsm5: DeserializeMessageMsm5(data),
     }
 }
 
@@ -935,9 +935,9 @@ type Message1096 struct {
     MessageMsm6
 }
 
-func NewMessage1096(data []byte) Message1096 {
+func DeserializeMessage1096(data []byte) Message1096 {
     return Message1096{
-        MessageMsm6: NewMessageMsm6(data),
+        MessageMsm6: DeserializeMessageMsm6(data),
     }
 }
 
@@ -949,9 +949,9 @@ type Message1097 struct {
     MessageMsm7
 }
 
-func NewMessage1097(data []byte) Message1097 {
+func DeserializeMessage1097(data []byte) Message1097 {
     return Message1097{
-        MessageMsm7: NewMessageMsm7(data),
+        MessageMsm7: DeserializeMessageMsm7(data),
     }
 }
 
@@ -963,9 +963,9 @@ type Message1101 struct {
     MessageMsm1
 }
 
-func NewMessage1101(data []byte) Message1101 {
+func DeserializeMessage1101(data []byte) Message1101 {
     return Message1101{
-        MessageMsm1: NewMessageMsm1(data),
+        MessageMsm1: DeserializeMessageMsm1(data),
     }
 }
 
@@ -977,9 +977,9 @@ type Message1102 struct {
     MessageMsm2
 }
 
-func NewMessage1102(data []byte) Message1102 {
+func DeserializeMessage1102(data []byte) Message1102 {
     return Message1102{
-        MessageMsm2: NewMessageMsm2(data),
+        MessageMsm2: DeserializeMessageMsm2(data),
     }
 }
 
@@ -991,9 +991,9 @@ type Message1103 struct {
     MessageMsm3
 }
 
-func NewMessage1103(data []byte) Message1103 {
+func DeserializeMessage1103(data []byte) Message1103 {
     return Message1103{
-        MessageMsm3: NewMessageMsm3(data),
+        MessageMsm3: DeserializeMessageMsm3(data),
     }
 }
 
@@ -1005,9 +1005,9 @@ type Message1104 struct {
     MessageMsm4
 }
 
-func NewMessage1104(data []byte) Message1104 {
+func DeserializeMessage1104(data []byte) Message1104 {
     return Message1104{
-        MessageMsm4: NewMessageMsm4(data),
+        MessageMsm4: DeserializeMessageMsm4(data),
     }
 }
 
@@ -1019,9 +1019,9 @@ type Message1105 struct {
     MessageMsm5
 }
 
-func NewMessage1105(data []byte) Message1105 {
+func DeserializeMessage1105(data []byte) Message1105 {
     return Message1105{
-        MessageMsm5: NewMessageMsm5(data),
+        MessageMsm5: DeserializeMessageMsm5(data),
     }
 }
 
@@ -1033,9 +1033,9 @@ type Message1106 struct {
     MessageMsm6
 }
 
-func NewMessage1106(data []byte) Message1106 {
+func DeserializeMessage1106(data []byte) Message1106 {
     return Message1106{
-        MessageMsm6: NewMessageMsm6(data),
+        MessageMsm6: DeserializeMessageMsm6(data),
     }
 }
 
@@ -1047,9 +1047,9 @@ type Message1107 struct {
     MessageMsm7
 }
 
-func NewMessage1107(data []byte) Message1107 {
+func DeserializeMessage1107(data []byte) Message1107 {
     return Message1107{
-        MessageMsm7: NewMessageMsm7(data),
+        MessageMsm7: DeserializeMessageMsm7(data),
     }
 }
 
@@ -1061,9 +1061,9 @@ type Message1111 struct {
     MessageMsm1
 }
 
-func NewMessage1111(data []byte) Message1111 {
+func DeserializeMessage1111(data []byte) Message1111 {
     return Message1111{
-        MessageMsm1: NewMessageMsm1(data),
+        MessageMsm1: DeserializeMessageMsm1(data),
     }
 }
 
@@ -1075,9 +1075,9 @@ type Message1112 struct {
     MessageMsm2
 }
 
-func NewMessage1112(data []byte) Message1112 {
+func DeserializeMessage1112(data []byte) Message1112 {
     return Message1112{
-        MessageMsm2: NewMessageMsm2(data),
+        MessageMsm2: DeserializeMessageMsm2(data),
     }
 }
 
@@ -1089,9 +1089,9 @@ type Message1113 struct {
     MessageMsm3
 }
 
-func NewMessage1113(data []byte) Message1113 {
+func DeserializeMessage1113(data []byte) Message1113 {
     return Message1113{
-        MessageMsm3: NewMessageMsm3(data),
+        MessageMsm3: DeserializeMessageMsm3(data),
     }
 }
 
@@ -1103,9 +1103,9 @@ type Message1114 struct {
     MessageMsm4
 }
 
-func NewMessage1114(data []byte) Message1114 {
+func DeserializeMessage1114(data []byte) Message1114 {
     return Message1114{
-        MessageMsm4: NewMessageMsm4(data),
+        MessageMsm4: DeserializeMessageMsm4(data),
     }
 }
 
@@ -1117,9 +1117,9 @@ type Message1115 struct {
     MessageMsm5
 }
 
-func NewMessage1115(data []byte) Message1115 {
+func DeserializeMessage1115(data []byte) Message1115 {
     return Message1115{
-        MessageMsm5: NewMessageMsm5(data),
+        MessageMsm5: DeserializeMessageMsm5(data),
     }
 }
 
@@ -1131,9 +1131,9 @@ type Message1116 struct {
     MessageMsm6
 }
 
-func NewMessage1116(data []byte) Message1116 {
+func DeserializeMessage1116(data []byte) Message1116 {
     return Message1116{
-        MessageMsm6: NewMessageMsm6(data),
+        MessageMsm6: DeserializeMessageMsm6(data),
     }
 }
 
@@ -1145,9 +1145,9 @@ type Message1117 struct {
     MessageMsm7
 }
 
-func NewMessage1117(data []byte) Message1117 {
+func DeserializeMessage1117(data []byte) Message1117 {
     return Message1117{
-        MessageMsm7: NewMessageMsm7(data),
+        MessageMsm7: DeserializeMessageMsm7(data),
     }
 }
 
@@ -1159,9 +1159,9 @@ type Message1121 struct {
     MessageMsm1
 }
 
-func NewMessage1121(data []byte) Message1121 {
+func DeserializeMessage1121(data []byte) Message1121 {
     return Message1121{
-        MessageMsm1: NewMessageMsm1(data),
+        MessageMsm1: DeserializeMessageMsm1(data),
     }
 }
 
@@ -1173,9 +1173,9 @@ type Message1122 struct {
     MessageMsm2
 }
 
-func NewMessage1122(data []byte) Message1122 {
+func DeserializeMessage1122(data []byte) Message1122 {
     return Message1122{
-        MessageMsm2: NewMessageMsm2(data),
+        MessageMsm2: DeserializeMessageMsm2(data),
     }
 }
 
@@ -1187,9 +1187,9 @@ type Message1123 struct {
     MessageMsm3
 }
 
-func NewMessage1123(data []byte) Message1123 {
+func DeserializeMessage1123(data []byte) Message1123 {
     return Message1123{
-        MessageMsm3: NewMessageMsm3(data),
+        MessageMsm3: DeserializeMessageMsm3(data),
     }
 }
 
@@ -1201,9 +1201,9 @@ type Message1124 struct {
     MessageMsm4
 }
 
-func NewMessage1124(data []byte) Message1124 {
+func DeserializeMessage1124(data []byte) Message1124 {
     return Message1124{
-        MessageMsm4: NewMessageMsm4(data),
+        MessageMsm4: DeserializeMessageMsm4(data),
     }
 }
 
@@ -1215,9 +1215,9 @@ type Message1125 struct {
     MessageMsm5
 }
 
-func NewMessage1125(data []byte) Message1125 {
+func DeserializeMessage1125(data []byte) Message1125 {
     return Message1125{
-        MessageMsm5: NewMessageMsm5(data),
+        MessageMsm5: DeserializeMessageMsm5(data),
     }
 }
 
@@ -1229,9 +1229,9 @@ type Message1126 struct {
     MessageMsm6
 }
 
-func NewMessage1126(data []byte) Message1126 {
+func DeserializeMessage1126(data []byte) Message1126 {
     return Message1126{
-        MessageMsm6: NewMessageMsm6(data),
+        MessageMsm6: DeserializeMessageMsm6(data),
     }
 }
 
@@ -1243,9 +1243,9 @@ type Message1127 struct {
     MessageMsm7
 }
 
-func NewMessage1127(data []byte) Message1127 {
+func DeserializeMessage1127(data []byte) Message1127 {
     return Message1127{
-        MessageMsm7: NewMessageMsm7(data),
+        MessageMsm7: DeserializeMessageMsm7(data),
     }
 }
 

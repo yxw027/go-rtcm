@@ -63,7 +63,7 @@ type Message1005 struct {
     AntennaReferencePoint
 }
 
-func NewMessage1005(data []byte) Message1005 {
+func DeserializeMessage1005(data []byte) Message1005 {
     r := iobit.NewReader(data)
     return Message1005{
         AntennaReferencePoint: NewAntennaReferencePoint(&r),
@@ -84,7 +84,7 @@ type Message1006 struct {
     AntennaHeight uint16
 }
 
-func NewMessage1006(data []byte) Message1006 {
+func DeserializeMessage1006(data []byte) Message1006 {
     r := iobit.NewReader(data)
     return Message1006{
         AntennaReferencePoint: NewAntennaReferencePoint(&r),
@@ -129,7 +129,7 @@ type Message1007 struct {
     AntennaDescriptor
 }
 
-func NewMessage1007(data []byte) Message1007 {
+func DeserializeMessage1007(data []byte) Message1007 {
     r := iobit.NewReader(data)
     return Message1007{
         AntennaDescriptor: NewAntennaDescriptor(&r),
@@ -153,7 +153,7 @@ type Message1008 struct {
     SerialNumber string
 }
 
-func NewMessage1008(data []byte) (msg Message1008) {
+func DeserializeMessage1008(data []byte) (msg Message1008) {
     r := iobit.NewReader(data)
     msg = Message1008{
         AntennaDescriptor: NewAntennaDescriptor(&r),
@@ -190,7 +190,7 @@ func (msg Message1033) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewMessage1033(data []byte) (msg Message1033) {
+func DeserializeMessage1033(data []byte) (msg Message1033) {
     r := iobit.NewReader(data)
     msg = Message1033{
         MessageNumber: r.Uint16(12),
