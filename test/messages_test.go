@@ -72,7 +72,7 @@ func TestMessage1004(t *testing.T) {
 func TestMessage1117(t *testing.T) {
     payload := readPayload(1117)
     msg := data.Message1117
-    
+
     if !cmp.Equal(msg.Serialize(), payload) {
         t.Errorf("Serialization not equal to binary")
     }

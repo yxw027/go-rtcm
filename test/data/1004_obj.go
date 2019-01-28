@@ -1,6 +1,6 @@
 package data
 
-import ( 
+import (
     "../../pkgs/rtcm3"
 )
 
@@ -14,7 +14,7 @@ var Message1004 = rtcm3.Message1004 {
         SmoothingIndicator: false,
         SmoothingInterval: 0x0,
     },
-    SatelliteData: [] rtcm3.SatelliteData1004 {
+    SatelliteData: []rtcm3.SatelliteData1004 {
         rtcm3.SatelliteData1004 {
             SatelliteId: 0x5,
             L1CodeIndicator: false,
