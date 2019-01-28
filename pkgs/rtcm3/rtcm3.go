@@ -40,7 +40,6 @@ func DeserializeMessage(payload []byte) (msg Message) {
         case 1031: return DeserializeMessage1031(payload)
         case 1032: return DeserializeMessage1032(payload)
         case 1033: return DeserializeMessage1033(payload)
-        case 1230: return DeserializeMessage1230(payload)
         case 1071: return DeserializeMessage1071(payload)
         case 1072: return DeserializeMessage1072(payload)
         case 1073: return DeserializeMessage1073(payload)
@@ -83,6 +82,7 @@ func DeserializeMessage(payload []byte) (msg Message) {
         case 1125: return DeserializeMessage1125(payload)
         case 1126: return DeserializeMessage1126(payload)
         case 1127: return DeserializeMessage1127(payload)
+        case 1230: return DeserializeMessage1230(payload)
         default:
             return MessageUnknown{payload}
     }
@@ -109,7 +109,7 @@ type Observable interface {
 
 var FramePreamble byte = 0xD3
 
-type Frame struct { // Contains Serialized Message - Should not be used as Message
+type Frame struct { // Contains Serialized Message
     Preamble uint8
     Reserved uint8
     Length uint16
