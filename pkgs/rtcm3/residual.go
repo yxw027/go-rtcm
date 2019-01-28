@@ -1,10 +1,10 @@
-package rtcm
+package rtcm3
 
 import (
     "github.com/bamiaux/iobit"
 )
 
-type Rtcm3ResidualSatelliteData struct {
+type ResidualSatelliteData struct {
     SatelliteId uint8
     Soc uint8
     Sod uint16
@@ -13,9 +13,9 @@ type Rtcm3ResidualSatelliteData struct {
     SId uint16
 }
 
-func NewRtcm3ResidualSatelliteData(r *iobit.Reader, nsat int) (satData []Rtcm3ResidualSatelliteData) {
+func NewResidualSatelliteData(r *iobit.Reader, nsat int) (satData []ResidualSatelliteData) {
     for i := 0; i < nsat; i++ {
-        satData = append(satData, Rtcm3ResidualSatelliteData{
+        satData = append(satData, ResidualSatelliteData{
             SatelliteId: r.Uint8(6),
             Soc: r.Uint8(8),
             Sod: r.Uint16(9),
@@ -27,68 +27,68 @@ func NewRtcm3ResidualSatelliteData(r *iobit.Reader, nsat int) (satData []Rtcm3Re
     return satData
 }
 
-type Rtcm3Message1030 struct {
+type Message1030 struct {
     MessageNumber uint16
     Epoch uint32
     ReferenceStationId uint16
     NRefs uint8
     Satellites uint8
-    SatelliteData []Rtcm3ResidualSatelliteData
+    SatelliteData []ResidualSatelliteData
 }
 
-func (msg Rtcm3Message1030) Number() uint16 {
+func (msg Message1030) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewRtcm3Message1030(data []byte) (msg Rtcm3Message1030) {
+func DeserializeMessage1030(data []byte) (msg Message1030) {
     r := iobit.NewReader(data)
-    msg = Rtcm3Message1030{
+    msg = Message1030{
         MessageNumber: r.Uint16(12),
         Epoch: r.Uint32(20),
         ReferenceStationId: r.Uint16(12),
         NRefs: r.Uint8(7),
         Satellites: r.Uint8(5),
     }
-    msg.SatelliteData = NewRtcm3ResidualSatelliteData(&r, int(msg.Satellites))
+    msg.SatelliteData = NewResidualSatelliteData(&r, int(msg.Satellites))
     return msg
 }
 
-func (msg Rtcm3Message1030) Serialize() (data []byte) {
+func (msg Message1030) Serialize() (data []byte) {
     return data
 }
 
 // Need to implement a Time method for GLONASS Residuals Epoch Time - DF225
-type Rtcm3Message1031 struct {
+type Message1031 struct {
     MessageNumber uint16
     Epoch uint32
     ReferenceStationId uint16
     NRefs uint8
     Satellites uint8
-    SatelliteData []Rtcm3ResidualSatelliteData
+    SatelliteData []ResidualSatelliteData
 }
 
-func (msg Rtcm3Message1031) Number() uint16 {
+func (msg Message1031) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewRtcm3Message1031(data []byte) (msg Rtcm3Message1031) {
+func DeserializeMessage1031(data []byte) (msg Message1031) {
     r := iobit.NewReader(data)
-    msg = Rtcm3Message1031{
+    msg = Message1031{
         MessageNumber: r.Uint16(12),
         Epoch: r.Uint32(17),
         ReferenceStationId: r.Uint16(12),
         NRefs: r.Uint8(7),
         Satellites: r.Uint8(5),
     }
-    msg.SatelliteData = NewRtcm3ResidualSatelliteData(&r, int(msg.Satellites))
+    msg.SatelliteData = NewResidualSatelliteData(&r, int(msg.Satellites))
     return msg
 }
 
-func (msg Rtcm3Message1031) Serialize() (data []byte) {
+func (msg Message1031) Serialize() (data []byte) {
     return data
 }
 
-type Rtcm3Message1032 struct {
+type Message1032 struct {
     MessageNumber uint16
     NonPhysicalReferenceStationId uint16
     PhysicalReferenceStationId uint16
@@ -98,13 +98,13 @@ type Rtcm3Message1032 struct {
     ArpEcefZ int64
 }
 
-func (msg Rtcm3Message1032) Number() uint16 {
+func (msg Message1032) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewRtcm3Message1032(data []byte) Rtcm3Message1032 {
+func DeserializeMessage1032(data []byte) Message1032 {
     r := iobit.NewReader(data)
-    return Rtcm3Message1032{
+    return Message1032{
         MessageNumber: r.Uint16(12),
         NonPhysicalReferenceStationId: r.Uint16(12),
         PhysicalReferenceStationId: r.Uint16(12),
@@ -115,6 +115,6 @@ func NewRtcm3Message1032(data []byte) Rtcm3Message1032 {
     }
 }
 
-func (msg Rtcm3Message1032) Serialize() (data []byte) {
+func (msg Message1032) Serialize() (data []byte) {
     return data
 }

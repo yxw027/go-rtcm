@@ -1,4 +1,4 @@
-package rtcm
+package rtcm3
 
 import (
     "github.com/bamiaux/iobit"
@@ -13,7 +13,7 @@ func GpsTime(e uint32) time.Time {
     return sow.Add(-(18 * time.Second)).Add(tow)
 }
 
-type Rtcm3GpsObservationHeader struct {
+type GpsObservationHeader struct {
     MessageNumber uint16
     ReferenceStationId uint16
     Epoch uint32
@@ -23,12 +23,12 @@ type Rtcm3GpsObservationHeader struct {
     SmoothingInterval uint8
 }
 
-func (obsHeader Rtcm3GpsObservationHeader) Number() uint16 {
+func (obsHeader GpsObservationHeader) Number() uint16 {
     return obsHeader.MessageNumber
 }
 
-func NewRtcm3GpsObservationHeader(r *iobit.Reader) (header Rtcm3GpsObservationHeader) {
-    return Rtcm3GpsObservationHeader{
+func NewGpsObservationHeader(r *iobit.Reader) (header GpsObservationHeader) {
+    return GpsObservationHeader{
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
         Epoch: r.Uint32(30),
@@ -39,7 +39,7 @@ func NewRtcm3GpsObservationHeader(r *iobit.Reader) (header Rtcm3GpsObservationHe
     }
 }
 
-func SerializeRtcm3GpsObservationHeader(h Rtcm3GpsObservationHeader) []byte {
+func SerializeGpsObservationHeader(h GpsObservationHeader) []byte {
     data := make([]byte, 8) // 64 bit header
     w := iobit.NewWriter(data)
     w.PutUint16(12, h.MessageNumber)
@@ -53,7 +53,7 @@ func SerializeRtcm3GpsObservationHeader(h Rtcm3GpsObservationHeader) []byte {
     return data
 }
 
-type Rtcm31001SatelliteData struct {
+type SatelliteData1001 struct {
     SatelliteId uint8
     L1CodeIndicator bool
     L1Pseudorange uint32
@@ -61,9 +61,9 @@ type Rtcm31001SatelliteData struct {
     L1LockTimeIndicator uint8
 }
 
-func NewRtcm31001SatelliteData(r *iobit.Reader, numSats int) (satData []Rtcm31001SatelliteData) {
+func DeserializeSatelliteData1001(r *iobit.Reader, numSats int) (satData []SatelliteData1001) {
     for i := 0; i < numSats; i++ {
-        satData = append(satData, Rtcm31001SatelliteData{
+        satData = append(satData, SatelliteData1001{
             SatelliteId: r.Uint8(6),
             L1CodeIndicator: r.Bit(),
             L1Pseudorange: r.Uint32(24),
@@ -74,22 +74,22 @@ func NewRtcm31001SatelliteData(r *iobit.Reader, numSats int) (satData []Rtcm3100
     return satData
 }
 
-type Rtcm3Message1001 struct {
-    Rtcm3GpsObservationHeader
-    SatelliteData []Rtcm31001SatelliteData
+type Message1001 struct {
+    GpsObservationHeader
+    SatelliteData []SatelliteData1001
 }
 
-func NewRtcm3Message1001(data []byte) Rtcm3Message1001 {
+func DeserializeMessage1001(data []byte) Message1001 {
     r := iobit.NewReader(data)
-    obsHeader := NewRtcm3GpsObservationHeader(&r)
-    return Rtcm3Message1001{
-        Rtcm3GpsObservationHeader: obsHeader,
-        SatelliteData: NewRtcm31001SatelliteData(&r, int(obsHeader.SignalsProcessed)),
+    obsHeader := NewGpsObservationHeader(&r)
+    return Message1001{
+        GpsObservationHeader: obsHeader,
+        SatelliteData: DeserializeSatelliteData1001(&r, int(obsHeader.SignalsProcessed)),
     }
 }
 
-func (msg Rtcm3Message1001) Serialize() []byte {
-    headerData := SerializeRtcm3GpsObservationHeader(msg.Rtcm3GpsObservationHeader)
+func (msg Message1001) Serialize() []byte {
+    headerData := SerializeGpsObservationHeader(msg.GpsObservationHeader)
     satData := make([]byte, int(math.Ceil((58 * float64(msg.SignalsProcessed)) / 8)))
     w := iobit.NewWriter(satData)
     for _, s := range msg.SatelliteData {
@@ -104,11 +104,11 @@ func (msg Rtcm3Message1001) Serialize() []byte {
     return append(headerData, satData...)
 }
 
-func (msg Rtcm3Message1001) Time() time.Time {
+func (msg Message1001) Time() time.Time {
     return GpsTime(msg.Epoch)
 }
 
-type Rtcm31002SatelliteData struct {
+type SatelliteData1002 struct {
     SatelliteId uint8
     L1CodeIndicator bool
     L1Pseudorange uint32
@@ -118,9 +118,9 @@ type Rtcm31002SatelliteData struct {
     L1Cnr uint8
 }
 
-func NewRtcm31002SatelliteData(r *iobit.Reader, numSats int) (satData []Rtcm31002SatelliteData) {
+func DeserializeSatelliteData1002(r *iobit.Reader, numSats int) (satData []SatelliteData1002) {
     for i := 0; i < numSats; i++ {
-        satData = append(satData, Rtcm31002SatelliteData{
+        satData = append(satData, SatelliteData1002{
             SatelliteId: r.Uint8(6),
             L1CodeIndicator: r.Bit(),
             L1Pseudorange: r.Uint32(24),
@@ -133,22 +133,22 @@ func NewRtcm31002SatelliteData(r *iobit.Reader, numSats int) (satData []Rtcm3100
     return satData
 }
 
-type Rtcm3Message1002 struct {
-    Rtcm3GpsObservationHeader
-    SatelliteData []Rtcm31002SatelliteData
+type Message1002 struct {
+    GpsObservationHeader
+    SatelliteData []SatelliteData1002
 }
 
-func NewRtcm3Message1002(data []byte) Rtcm3Message1002 {
+func DeserializeMessage1002(data []byte) Message1002 {
     r := iobit.NewReader(data)
-    obsHeader := NewRtcm3GpsObservationHeader(&r)
-    return Rtcm3Message1002{
-        Rtcm3GpsObservationHeader: obsHeader,
-        SatelliteData: NewRtcm31002SatelliteData(&r, int(obsHeader.SignalsProcessed)),
+    obsHeader := NewGpsObservationHeader(&r)
+    return Message1002{
+        GpsObservationHeader: obsHeader,
+        SatelliteData: DeserializeSatelliteData1002(&r, int(obsHeader.SignalsProcessed)),
     }
 }
 
-func (msg Rtcm3Message1002) Serialize() []byte {
-    headerData := SerializeRtcm3GpsObservationHeader(msg.Rtcm3GpsObservationHeader)
+func (msg Message1002) Serialize() []byte {
+    headerData := SerializeGpsObservationHeader(msg.GpsObservationHeader)
     satData := make([]byte, int(math.Ceil((74 * float64(msg.SignalsProcessed)) / 8)))
     w := iobit.NewWriter(satData)
     for _, s := range msg.SatelliteData {
@@ -165,12 +165,12 @@ func (msg Rtcm3Message1002) Serialize() []byte {
     return append(headerData, satData...)
 }
 
-func (msg Rtcm3Message1002) Time() time.Time {
+func (msg Message1002) Time() time.Time {
     return GpsTime(msg.Epoch)
 }
 
 
-type Rtcm31003SatelliteData struct {
+type SatelliteData1003 struct {
     SatelliteId uint8
     L1CodeIndicator bool
     L1Pseudorange uint32
@@ -182,9 +182,9 @@ type Rtcm31003SatelliteData struct {
     L2LockTimeIndicator uint8
 }
 
-func NewRtcm31003SatelliteData(r *iobit.Reader, numSats int) (satData []Rtcm31003SatelliteData) {
+func DeserializeSatelliteData1003(r *iobit.Reader, numSats int) (satData []SatelliteData1003) {
     for i := 0; i < numSats; i++ {
-        satData = append(satData, Rtcm31003SatelliteData{
+        satData = append(satData, SatelliteData1003{
             SatelliteId: r.Uint8(6),
             L1CodeIndicator: r.Bit(),
             L1Pseudorange: r.Uint32(24),
@@ -199,22 +199,22 @@ func NewRtcm31003SatelliteData(r *iobit.Reader, numSats int) (satData []Rtcm3100
     return satData
 }
 
-type Rtcm3Message1003 struct {
-    Rtcm3GpsObservationHeader
-    SatelliteData []Rtcm31003SatelliteData
+type Message1003 struct {
+    GpsObservationHeader
+    SatelliteData []SatelliteData1003
 }
 
-func NewRtcm3Message1003(data []byte) Rtcm3Message1003 {
+func DeserializeMessage1003(data []byte) Message1003 {
     r := iobit.NewReader(data)
-    obsHeader := NewRtcm3GpsObservationHeader(&r)
-    return Rtcm3Message1003{
-        Rtcm3GpsObservationHeader: obsHeader,
-        SatelliteData: NewRtcm31003SatelliteData(&r, int(obsHeader.SignalsProcessed)),
+    obsHeader := NewGpsObservationHeader(&r)
+    return Message1003{
+        GpsObservationHeader: obsHeader,
+        SatelliteData: DeserializeSatelliteData1003(&r, int(obsHeader.SignalsProcessed)),
     }
 }
 
-func (msg Rtcm3Message1003) Serialize() []byte {
-    headerData := SerializeRtcm3GpsObservationHeader(msg.Rtcm3GpsObservationHeader)
+func (msg Message1003) Serialize() []byte {
+    headerData := SerializeGpsObservationHeader(msg.GpsObservationHeader)
     satData := make([]byte, int(math.Ceil((101 * float64(msg.SignalsProcessed)) / 8)))
     w := iobit.NewWriter(satData)
     for _, s := range msg.SatelliteData {
@@ -233,12 +233,12 @@ func (msg Rtcm3Message1003) Serialize() []byte {
     return append(headerData, satData...)
 }
 
-func (msg Rtcm3Message1003) Time() time.Time {
+func (msg Message1003) Time() time.Time {
     return GpsTime(msg.Epoch)
 }
 
 
-type Rtcm31004SatelliteData struct {
+type SatelliteData1004 struct {
     SatelliteId uint8
     L1CodeIndicator bool
     L1Pseudorange uint32
@@ -253,9 +253,9 @@ type Rtcm31004SatelliteData struct {
     L2Cnr uint8
 }
 
-func NewRtcm31004SatelliteData(r *iobit.Reader, numSats int) (satData []Rtcm31004SatelliteData) {
+func DeserializeSatelliteData1004(r *iobit.Reader, numSats int) (satData []SatelliteData1004) {
     for i := 0; i < numSats; i++ {
-        satData = append(satData, Rtcm31004SatelliteData{
+        satData = append(satData, SatelliteData1004{
             SatelliteId: r.Uint8(6),
             L1CodeIndicator: r.Bit(),
             L1Pseudorange: r.Uint32(24),
@@ -273,22 +273,22 @@ func NewRtcm31004SatelliteData(r *iobit.Reader, numSats int) (satData []Rtcm3100
     return satData
 }
 
-type Rtcm3Message1004 struct {
-    Rtcm3GpsObservationHeader
-    SatelliteData []Rtcm31004SatelliteData
+type Message1004 struct {
+    GpsObservationHeader
+    SatelliteData []SatelliteData1004
 }
 
-func NewRtcm3Message1004(data []byte) Rtcm3Message1004 {
+func DeserializeMessage1004(data []byte) Message1004 {
     r := iobit.NewReader(data)
-    obsHeader := NewRtcm3GpsObservationHeader(&r)
-    return Rtcm3Message1004{
-        Rtcm3GpsObservationHeader: obsHeader,
-        SatelliteData: NewRtcm31004SatelliteData(&r, int(obsHeader.SignalsProcessed)),
+    obsHeader := NewGpsObservationHeader(&r)
+    return Message1004{
+        GpsObservationHeader: obsHeader,
+        SatelliteData: DeserializeSatelliteData1004(&r, int(obsHeader.SignalsProcessed)),
     }
 }
 
-func (msg Rtcm3Message1004) Serialize() []byte {
-    headerData := SerializeRtcm3GpsObservationHeader(msg.Rtcm3GpsObservationHeader)
+func (msg Message1004) Serialize() []byte {
+    headerData := SerializeGpsObservationHeader(msg.GpsObservationHeader)
     satData := make([]byte, int(math.Ceil((125 * float64(msg.SignalsProcessed)) / 8)))
     w := iobit.NewWriter(satData)
     for _, s := range msg.SatelliteData {
@@ -310,12 +310,12 @@ func (msg Rtcm3Message1004) Serialize() []byte {
     return append(headerData, satData...)
 }
 
-func (msg Rtcm3Message1004) Time() time.Time {
+func (msg Message1004) Time() time.Time {
     return GpsTime(msg.Epoch)
 }
 
 
-type Rtcm3Message1019 struct {
+type Message1019 struct {
     MessageNumber uint16
     SatelliteId uint8
     GpsWeekNumber uint16
@@ -349,13 +349,13 @@ type Rtcm3Message1019 struct {
     FitInterval bool
 }
 
-func (msg Rtcm3Message1019) Number() uint16 {
+func (msg Message1019) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewRtcm3Message1019(data []byte) Rtcm3Message1019 {
+func DeserializeMessage1019(data []byte) Message1019 {
     r := iobit.NewReader(data)
-    return Rtcm3Message1019{
+    return Message1019{
         MessageNumber: r.Uint16(12),
         SatelliteId: r.Uint8(6),
         GpsWeekNumber: r.Uint16(10),
@@ -390,7 +390,7 @@ func NewRtcm3Message1019(data []byte) Rtcm3Message1019 {
     }
 }
 
-func (msg Rtcm3Message1019) Serialize() []byte {
+func (msg Message1019) Serialize() []byte {
     data := make([]byte, 61)
     w := iobit.NewWriter(data)
     w.PutUint16(12, msg.MessageNumber)

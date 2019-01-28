@@ -1,4 +1,4 @@
-package rtcm
+package rtcm3
 
 import (
     "github.com/bamiaux/iobit"

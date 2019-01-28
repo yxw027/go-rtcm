@@ -1,4 +1,4 @@
-package rtcm
+package rtcm3
 
 import (
     "github.com/bamiaux/iobit"
@@ -59,18 +59,18 @@ func NewAntennaReferencePoint(r *iobit.Reader) AntennaReferencePoint {
     }
 }
 
-type Rtcm3Message1005 struct {
+type Message1005 struct {
     AntennaReferencePoint
 }
 
-func NewRtcm3Message1005(data []byte) Rtcm3Message1005 {
+func DeserializeMessage1005(data []byte) Message1005 {
     r := iobit.NewReader(data)
-    return Rtcm3Message1005{
+    return Message1005{
         AntennaReferencePoint: NewAntennaReferencePoint(&r),
     }
 }
 
-func (msg Rtcm3Message1005) Serialize() []byte {
+func (msg Message1005) Serialize() []byte {
     data := make([]byte, 19)
     w := iobit.NewWriter(data)
     SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
@@ -79,20 +79,20 @@ func (msg Rtcm3Message1005) Serialize() []byte {
     return data
 }
 
-type Rtcm3Message1006 struct {
+type Message1006 struct {
     AntennaReferencePoint
     AntennaHeight uint16
 }
 
-func NewRtcm3Message1006(data []byte) Rtcm3Message1006 {
+func DeserializeMessage1006(data []byte) Message1006 {
     r := iobit.NewReader(data)
-    return Rtcm3Message1006{
+    return Message1006{
         AntennaReferencePoint: NewAntennaReferencePoint(&r),
         AntennaHeight: r.Uint16(16),
     }
 }
 
-func (msg Rtcm3Message1006) Serialize() []byte {
+func (msg Message1006) Serialize() []byte {
     data := make([]byte, 21)
     w := iobit.NewWriter(data)
     SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
@@ -125,18 +125,18 @@ func NewAntennaDescriptor(r *iobit.Reader) (desc AntennaDescriptor) {
     return desc
 }
 
-type Rtcm3Message1007 struct {
+type Message1007 struct {
     AntennaDescriptor
 }
 
-func NewRtcm3Message1007(data []byte) Rtcm3Message1007 {
+func DeserializeMessage1007(data []byte) Message1007 {
     r := iobit.NewReader(data)
-    return Rtcm3Message1007{
+    return Message1007{
         AntennaDescriptor: NewAntennaDescriptor(&r),
     }
 }
 
-func (msg Rtcm3Message1007) Serialize() []byte {
+func (msg Message1007) Serialize() []byte {
     data := make([]byte, 4)
     w := iobit.NewWriter(data)
     w.PutUint16(12, msg.MessageNumber)
@@ -147,15 +147,15 @@ func (msg Rtcm3Message1007) Serialize() []byte {
     return append(data, msg.SetupId)
 }
 
-type Rtcm3Message1008 struct {
+type Message1008 struct {
     AntennaDescriptor
     SerialNumberLength uint8
     SerialNumber string
 }
 
-func NewRtcm3Message1008(data []byte) (msg Rtcm3Message1008) {
+func DeserializeMessage1008(data []byte) (msg Message1008) {
     r := iobit.NewReader(data)
-    msg = Rtcm3Message1008{
+    msg = Message1008{
         AntennaDescriptor: NewAntennaDescriptor(&r),
         SerialNumberLength: r.Uint8(8),
     }
@@ -163,7 +163,7 @@ func NewRtcm3Message1008(data []byte) (msg Rtcm3Message1008) {
     return msg
 }
 
-func (msg Rtcm3Message1008) Serialize() []byte {
+func (msg Message1008) Serialize() []byte {
     data := make([]byte, 4)
     w := iobit.NewWriter(data)
     w.PutUint16(12, msg.MessageNumber)
@@ -175,7 +175,7 @@ func (msg Rtcm3Message1008) Serialize() []byte {
     return append(data, []byte(msg.SerialNumber)...)
 }
 
-type Rtcm3Message1033 struct {
+type Message1033 struct {
     MessageNumber uint16
     ReferenceStationId uint16
     AntennaDescriptor string
@@ -186,13 +186,13 @@ type Rtcm3Message1033 struct {
     ReceiverSerialNumber string
 }
 
-func (msg Rtcm3Message1033) Number() uint16 {
+func (msg Message1033) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewRtcm3Message1033(data []byte) (msg Rtcm3Message1033) {
+func DeserializeMessage1033(data []byte) (msg Message1033) {
     r := iobit.NewReader(data)
-    msg = Rtcm3Message1033{
+    msg = Message1033{
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
     }
@@ -205,7 +205,7 @@ func NewRtcm3Message1033(data []byte) (msg Rtcm3Message1033) {
     return msg
 }
 
-func (msg Rtcm3Message1033) Serialize() []byte {
+func (msg Message1033) Serialize() []byte {
     data := make([]byte, 3)
     w := iobit.NewWriter(data)
     w.PutUint16(12, msg.MessageNumber)
