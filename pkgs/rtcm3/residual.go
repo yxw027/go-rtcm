@@ -40,7 +40,7 @@ func (msg Message1030) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewMessage1030(data []byte) (msg Message1030) {
+func DeserializeMessage1030(data []byte) (msg Message1030) {
     r := iobit.NewReader(data)
     msg = Message1030{
         MessageNumber: r.Uint16(12),
@@ -71,7 +71,7 @@ func (msg Message1031) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewMessage1031(data []byte) (msg Message1031) {
+func DeserializeMessage1031(data []byte) (msg Message1031) {
     r := iobit.NewReader(data)
     msg = Message1031{
         MessageNumber: r.Uint16(12),
@@ -102,7 +102,7 @@ func (msg Message1032) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewMessage1032(data []byte) Message1032 {
+func DeserializeMessage1032(data []byte) Message1032 {
     r := iobit.NewReader(data)
     return Message1032{
         MessageNumber: r.Uint16(12),

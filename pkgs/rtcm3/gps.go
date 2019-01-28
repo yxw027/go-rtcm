@@ -61,7 +61,7 @@ type SatelliteData1001 struct {
     L1LockTimeIndicator uint8
 }
 
-func NewSatelliteData1001(r *iobit.Reader, numSats int) (satData []SatelliteData1001) {
+func DeserializeSatelliteData1001(r *iobit.Reader, numSats int) (satData []SatelliteData1001) {
     for i := 0; i < numSats; i++ {
         satData = append(satData, SatelliteData1001{
             SatelliteId: r.Uint8(6),
@@ -79,12 +79,12 @@ type Message1001 struct {
     SatelliteData []SatelliteData1001
 }
 
-func NewMessage1001(data []byte) Message1001 {
+func DeserializeMessage1001(data []byte) Message1001 {
     r := iobit.NewReader(data)
     obsHeader := NewGpsObservationHeader(&r)
     return Message1001{
         GpsObservationHeader: obsHeader,
-        SatelliteData: NewSatelliteData1001(&r, int(obsHeader.SignalsProcessed)),
+        SatelliteData: DeserializeSatelliteData1001(&r, int(obsHeader.SignalsProcessed)),
     }
 }
 
@@ -118,7 +118,7 @@ type SatelliteData1002 struct {
     L1Cnr uint8
 }
 
-func NewSatelliteData1002(r *iobit.Reader, numSats int) (satData []SatelliteData1002) {
+func DeserializeSatelliteData1002(r *iobit.Reader, numSats int) (satData []SatelliteData1002) {
     for i := 0; i < numSats; i++ {
         satData = append(satData, SatelliteData1002{
             SatelliteId: r.Uint8(6),
@@ -138,12 +138,12 @@ type Message1002 struct {
     SatelliteData []SatelliteData1002
 }
 
-func NewMessage1002(data []byte) Message1002 {
+func DeserializeMessage1002(data []byte) Message1002 {
     r := iobit.NewReader(data)
     obsHeader := NewGpsObservationHeader(&r)
     return Message1002{
         GpsObservationHeader: obsHeader,
-        SatelliteData: NewSatelliteData1002(&r, int(obsHeader.SignalsProcessed)),
+        SatelliteData: DeserializeSatelliteData1002(&r, int(obsHeader.SignalsProcessed)),
     }
 }
 
@@ -182,7 +182,7 @@ type SatelliteData1003 struct {
     L2LockTimeIndicator uint8
 }
 
-func NewSatelliteData1003(r *iobit.Reader, numSats int) (satData []SatelliteData1003) {
+func DeserializeSatelliteData1003(r *iobit.Reader, numSats int) (satData []SatelliteData1003) {
     for i := 0; i < numSats; i++ {
         satData = append(satData, SatelliteData1003{
             SatelliteId: r.Uint8(6),
@@ -204,12 +204,12 @@ type Message1003 struct {
     SatelliteData []SatelliteData1003
 }
 
-func NewMessage1003(data []byte) Message1003 {
+func DeserializeMessage1003(data []byte) Message1003 {
     r := iobit.NewReader(data)
     obsHeader := NewGpsObservationHeader(&r)
     return Message1003{
         GpsObservationHeader: obsHeader,
-        SatelliteData: NewSatelliteData1003(&r, int(obsHeader.SignalsProcessed)),
+        SatelliteData: DeserializeSatelliteData1003(&r, int(obsHeader.SignalsProcessed)),
     }
 }
 
@@ -253,7 +253,7 @@ type SatelliteData1004 struct {
     L2Cnr uint8
 }
 
-func NewSatelliteData1004(r *iobit.Reader, numSats int) (satData []SatelliteData1004) {
+func DeserializeSatelliteData1004(r *iobit.Reader, numSats int) (satData []SatelliteData1004) {
     for i := 0; i < numSats; i++ {
         satData = append(satData, SatelliteData1004{
             SatelliteId: r.Uint8(6),
@@ -278,12 +278,12 @@ type Message1004 struct {
     SatelliteData []SatelliteData1004
 }
 
-func NewMessage1004(data []byte) Message1004 {
+func DeserializeMessage1004(data []byte) Message1004 {
     r := iobit.NewReader(data)
     obsHeader := NewGpsObservationHeader(&r)
     return Message1004{
         GpsObservationHeader: obsHeader,
-        SatelliteData: NewSatelliteData1004(&r, int(obsHeader.SignalsProcessed)),
+        SatelliteData: DeserializeSatelliteData1004(&r, int(obsHeader.SignalsProcessed)),
     }
 }
 
@@ -353,7 +353,7 @@ func (msg Message1019) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewMessage1019(data []byte) Message1019 {
+func DeserializeMessage1019(data []byte) Message1019 {
     r := iobit.NewReader(data)
     return Message1019{
         MessageNumber: r.Uint16(12),

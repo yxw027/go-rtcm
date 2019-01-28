@@ -71,7 +71,7 @@ type SignalData1009 struct {
     L1LockTimeIndicator uint8
 }
 
-func NewSignalData1009(r *iobit.Reader, numSig int) (sigData []SignalData1009) {
+func DeserializeSignalData1009(r *iobit.Reader, numSig int) (sigData []SignalData1009) {
     for i := 0; i < numSig; i++ {
         sigData = append(sigData, SignalData1009{
             SatelliteId: r.Uint8(6),
@@ -90,12 +90,12 @@ type Message1009 struct {
     SignalData []SignalData1009
 }
 
-func NewMessage1009(data []byte) (msg Message1009) {
+func DeserializeMessage1009(data []byte) (msg Message1009) {
     r := iobit.NewReader(data)
     msg = Message1009{
         GlonassObservationHeader: NewGlonassObservationHeader(&r),
     }
-    msg.SignalData = NewSignalData1009(&r, int(msg.SignalCount))
+    msg.SignalData = DeserializeSignalData1009(&r, int(msg.SignalCount))
     return msg
 }
 
@@ -127,7 +127,7 @@ type SignalData1010 struct {
     L1Cnr uint8
 }
 
-func NewSignalData1010(r *iobit.Reader, numSig int) (sigData []SignalData1010) {
+func DeserializeSignalData1010(r *iobit.Reader, numSig int) (sigData []SignalData1010) {
     for i := 0; i < numSig; i++ {
         sigData = append(sigData, SignalData1010{
             SatelliteId: r.Uint8(6),
@@ -148,12 +148,12 @@ type Message1010 struct {
     SignalData []SignalData1010
 }
 
-func NewMessage1010(data []byte) (msg Message1010) {
+func DeserializeMessage1010(data []byte) (msg Message1010) {
     r := iobit.NewReader(data)
     msg = Message1010{
         GlonassObservationHeader: NewGlonassObservationHeader(&r),
     }
-    msg.SignalData = NewSignalData1010(&r, int(msg.SignalCount))
+    msg.SignalData = DeserializeSignalData1010(&r, int(msg.SignalCount))
     return msg
 }
 
@@ -190,7 +190,7 @@ type SignalData1011 struct {
     L2LockTimeIndicator uint8
 }
 
-func NewSignalData1011(r *iobit.Reader, numSig int) (sigData []SignalData1011) {
+func DeserializeSignalData1011(r *iobit.Reader, numSig int) (sigData []SignalData1011) {
     for i := 0; i < numSig; i++ {
         sigData = append(sigData, SignalData1011{
             SatelliteId: r.Uint8(6),
@@ -213,12 +213,12 @@ type Message1011 struct {
     SignalData []SignalData1011
 }
 
-func NewMessage1011(data []byte) (msg Message1011) {
+func DeserializeMessage1011(data []byte) (msg Message1011) {
     r := iobit.NewReader(data)
     msg = Message1011{
         GlonassObservationHeader: NewGlonassObservationHeader(&r),
     }
-    msg.SignalData = NewSignalData1011(&r, int(msg.SignalCount))
+    msg.SignalData = DeserializeSignalData1011(&r, int(msg.SignalCount))
     return msg
 }
 
@@ -260,7 +260,7 @@ type SignalData1012 struct {
     L2Cnr uint8
 }
 
-func NewSignalData1012(r *iobit.Reader, numSig int) (sigData []SignalData1012) {
+func DeserializeSignalData1012(r *iobit.Reader, numSig int) (sigData []SignalData1012) {
     for i := 0; i < numSig; i++ {
         sigData = append(sigData, SignalData1012{
             SatelliteId: r.Uint8(6),
@@ -286,12 +286,12 @@ type Message1012 struct {
     SignalData []SignalData1012
 }
 
-func NewMessage1012(data []byte) (msg Message1012) {
+func DeserializeMessage1012(data []byte) (msg Message1012) {
     r := iobit.NewReader(data)
     msg = Message1012{
         GlonassObservationHeader: NewGlonassObservationHeader(&r),
     }
-    msg.SignalData = NewSignalData1012(&r, int(msg.SignalCount))
+    msg.SignalData = DeserializeSignalData1012(&r, int(msg.SignalCount))
     return msg
 }
 
@@ -363,7 +363,7 @@ func (msg Message1020) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewMessage1020(data []byte) Message1020 {
+func DeserializeMessage1020(data []byte) Message1020 {
     r := iobit.NewReader(data)
     return Message1020{
         MessageNumber: r.Uint16(12),
@@ -466,7 +466,7 @@ func (msg Message1230) Number() uint16 {
     return msg.MessageNumber
 }
 
-func NewMessage1230(data []byte) (msg Message1230) {
+func DeserializeMessage1230(data []byte) (msg Message1230) {
     r := iobit.NewReader(data)
     msg = Message1230{
         MessageNumber: r.Uint16(12),
