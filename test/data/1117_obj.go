@@ -1,7 +1,7 @@
 package data
 
 import (
-    "../../pkgs/rtcm3"
+    "github.com/geoscienceaustralia/go-rtcm/pkgs/rtcm3"
 )
 
 var Message1117 = rtcm3.Message1117 {

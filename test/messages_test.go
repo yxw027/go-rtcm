@@ -2,12 +2,12 @@ package rtcm3_test
 
 import (
     "testing"
-    "../pkgs/rtcm3"
+    "github.com/geoscienceaustralia/go-rtcm/pkgs/rtcm3"
     "github.com/google/go-cmp/cmp"
     "os"
     "bufio"
     "fmt"
-    "./data"
+    "github.com/geoscienceaustralia/go-rtcm/test/data"
 )
 
 func readPayload(msgNumber uint) (payload []byte){
