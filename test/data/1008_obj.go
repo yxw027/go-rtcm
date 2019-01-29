@@ -5,13 +5,11 @@ import (
 )
 
 var Message1008 = rtcm3.Message1008 {
-    AntennaDescriptor: rtcm3.AntennaDescriptor {
+    MessageAntennaDescriptor: rtcm3.MessageAntennaDescriptor {
         MessageNumber: 0x3f0,
         ReferenceStationId: 0x0,
-        DescriptorLength: 0x0,
-        Descriptor: "",
-        SetupId: 0x0,
+        AntennaDescriptor: "",
+        AntennaSetupId: 0x0,
     },
-    SerialNumberLength: 0x7,
     SerialNumber: "Unknown",
 }
