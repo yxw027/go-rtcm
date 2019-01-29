@@ -2,6 +2,7 @@ package rtcm3
 
 import (
     "github.com/bamiaux/iobit"
+    "encoding/binary"
 )
 
 type AntennaReferencePoint struct {
@@ -24,7 +25,9 @@ func (arp AntennaReferencePoint) Number() uint16 {
     return arp.MessageNumber
 }
 
-func SerializeAntennaReferencePoint(w *iobit.Writer, arp AntennaReferencePoint) {
+func SerializeAntennaReferencePoint(arp AntennaReferencePoint) []byte {
+    data := make([]byte, 19)
+    w := iobit.NewWriter(data)
     w.PutUint16(12, arp.MessageNumber)
     w.PutUint16(12, arp.ReferenceStationId)
     w.PutUint8(6, arp.ItrfRealizationYear)
@@ -38,10 +41,12 @@ func SerializeAntennaReferencePoint(w *iobit.Writer, arp AntennaReferencePoint) 
     w.PutInt64(38, arp.ReferencePointY)
     w.PutUint8(2, arp.QuarterCycleIndicator)
     w.PutInt64(38, arp.ReferencePointZ)
-    return
+    w.Flush()
+    return data
 }
 
-func NewAntennaReferencePoint(r *iobit.Reader) AntennaReferencePoint {
+func DeserializeAntennaReferencePoint(data []byte) AntennaReferencePoint {
+    r := iobit.NewReader(data)
     return AntennaReferencePoint{
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
@@ -64,19 +69,13 @@ type Message1005 struct {
 }
 
 func DeserializeMessage1005(data []byte) Message1005 {
-    r := iobit.NewReader(data)
     return Message1005{
-        AntennaReferencePoint: NewAntennaReferencePoint(&r),
+        AntennaReferencePoint: DeserializeAntennaReferencePoint(data),
     }
 }
 
-func (msg Message1005) Serialize() []byte {
-    data := make([]byte, 19)
-    w := iobit.NewWriter(data)
-    SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
-    w.PutUint8(uint(w.Bits()), 0)
-    w.Flush()
-    return data
+func (msg Message1005) Serialize() (data []byte) {
+    return SerializeAntennaReferencePoint(msg.AntennaReferencePoint)
 }
 
 type Message1006 struct {
@@ -84,102 +83,90 @@ type Message1006 struct {
     AntennaHeight uint16
 }
 
-func DeserializeMessage1006(data []byte) Message1006 {
-    r := iobit.NewReader(data)
-    return Message1006{
-        AntennaReferencePoint: NewAntennaReferencePoint(&r),
-        AntennaHeight: r.Uint16(16),
+func DeserializeMessage1006(data []byte) (msg Message1006) {
+    msg = Message1006{
+        AntennaReferencePoint: DeserializeAntennaReferencePoint(data),
     }
+    msg.AntennaHeight = binary.BigEndian.Uint16(data[len(data)-2:])
+    return msg
 }
 
-func (msg Message1006) Serialize() []byte {
-    data := make([]byte, 21)
-    w := iobit.NewWriter(data)
-    SerializeAntennaReferencePoint(&w, msg.AntennaReferencePoint)
-    w.PutUint16(16, msg.AntennaHeight)
-    w.PutUint8(uint(w.Bits()), 0)
-    w.Flush()
-    return data
+func (msg Message1006) Serialize() (data []byte) {
+    data = SerializeAntennaReferencePoint(msg.AntennaReferencePoint)
+    height := make([]byte, 2)
+    binary.BigEndian.PutUint16(height, msg.AntennaHeight)
+    return append(data, height...)
 }
 
-type AntennaDescriptor struct {
+type MessageAntennaDescriptor struct {
     MessageNumber uint16
     ReferenceStationId uint16
-    DescriptorLength uint8
-    Descriptor string
-    SetupId uint8
+    AntennaDescriptor string
+    AntennaSetupId uint8
 }
 
-func (ad AntennaDescriptor) Number() uint16 {
+func (ad MessageAntennaDescriptor) Number() uint16 {
     return ad.MessageNumber
 }
 
-func NewAntennaDescriptor(r *iobit.Reader) (desc AntennaDescriptor) {
-    desc = AntennaDescriptor{
+func DeserializeAntennaDescriptor(r *iobit.Reader) (desc MessageAntennaDescriptor) {
+    desc = MessageAntennaDescriptor{
         MessageNumber: r.Uint16(12),
         ReferenceStationId: r.Uint16(12),
-        DescriptorLength: r.Uint8(8),
     }
-    desc.Descriptor = r.String(8 * int(desc.DescriptorLength))
-    desc.SetupId = r.Uint8(8)
+    desc.AntennaDescriptor = r.String(int(r.Uint8(8)))
+    desc.AntennaSetupId = r.Uint8(8)
     return desc
 }
 
+func SerializeAntennaDescriptor(desc MessageAntennaDescriptor) []byte {
+    data := make([]byte, 4)
+    w := iobit.NewWriter(data)
+    w.PutUint16(12, desc.MessageNumber)
+    w.PutUint16(12, desc.ReferenceStationId)
+    w.PutUint8(8, uint8(len(desc.AntennaDescriptor)))
+    w.Flush()
+    data = append(data, []byte(desc.AntennaDescriptor)...)
+    return append(data, desc.AntennaSetupId)
+}
+
 type Message1007 struct {
-    AntennaDescriptor
+    MessageAntennaDescriptor
 }
 
 func DeserializeMessage1007(data []byte) Message1007 {
     r := iobit.NewReader(data)
     return Message1007{
-        AntennaDescriptor: NewAntennaDescriptor(&r),
+        MessageAntennaDescriptor: DeserializeAntennaDescriptor(&r),
     }
 }
 
 func (msg Message1007) Serialize() []byte {
-    data := make([]byte, 4)
-    w := iobit.NewWriter(data)
-    w.PutUint16(12, msg.MessageNumber)
-    w.PutUint16(12, msg.ReferenceStationId)
-    w.PutUint8(8, msg.DescriptorLength)
-    w.Flush()
-    data = append(data, []byte(msg.Descriptor)...)
-    return append(data, msg.SetupId)
+    return SerializeAntennaDescriptor(msg.MessageAntennaDescriptor)
 }
 
 type Message1008 struct {
-    AntennaDescriptor
-    SerialNumberLength uint8
+    MessageAntennaDescriptor
     SerialNumber string
 }
 
 func DeserializeMessage1008(data []byte) (msg Message1008) {
     r := iobit.NewReader(data)
     msg = Message1008{
-        AntennaDescriptor: NewAntennaDescriptor(&r),
-        SerialNumberLength: r.Uint8(8),
+        MessageAntennaDescriptor: DeserializeAntennaDescriptor(&r),
     }
-    msg.SerialNumber = r.String(8 * int(msg.SerialNumberLength))
+    msg.SerialNumber = r.String(int(r.Uint8(8)))
     return msg
 }
 
 func (msg Message1008) Serialize() []byte {
-    data := make([]byte, 4)
-    w := iobit.NewWriter(data)
-    w.PutUint16(12, msg.MessageNumber)
-    w.PutUint16(12, msg.ReferenceStationId)
-    w.PutUint8(8, msg.DescriptorLength)
-    w.Flush()
-    data = append(data, []byte(msg.Descriptor)...)
-    data = append(data, msg.SetupId, msg.SerialNumberLength)
+    data := SerializeAntennaDescriptor(msg.MessageAntennaDescriptor)
+    data = append(data, uint8(len(msg.SerialNumber)))
     return append(data, []byte(msg.SerialNumber)...)
 }
 
 type Message1033 struct {
-    MessageNumber uint16
-    ReferenceStationId uint16
-    AntennaDescriptor string
-    AntennaSetupId uint8
+    MessageAntennaDescriptor
     AntennaSerialNumber string
     ReceiverTypeDescriptor string
     ReceiverFirmwareVersion string
@@ -193,11 +180,8 @@ func (msg Message1033) Number() uint16 {
 func DeserializeMessage1033(data []byte) (msg Message1033) {
     r := iobit.NewReader(data)
     msg = Message1033{
-        MessageNumber: r.Uint16(12),
-        ReferenceStationId: r.Uint16(12),
+        MessageAntennaDescriptor: DeserializeAntennaDescriptor(&r),
     }
-    msg.AntennaDescriptor = r.String(int(r.Uint8(8)))
-    msg.AntennaSetupId = r.Uint8(8)
     msg.AntennaSerialNumber = r.String(int(r.Uint8(8)))
     msg.ReceiverTypeDescriptor = r.String(int(r.Uint8(8)))
     msg.ReceiverFirmwareVersion = r.String(int(r.Uint8(8)))
@@ -206,14 +190,8 @@ func DeserializeMessage1033(data []byte) (msg Message1033) {
 }
 
 func (msg Message1033) Serialize() []byte {
-    data := make([]byte, 3)
-    w := iobit.NewWriter(data)
-    w.PutUint16(12, msg.MessageNumber)
-    w.PutUint16(12, msg.ReferenceStationId)
-    w.Flush()
-    data = append(data, uint8(len(msg.AntennaDescriptor)))
-    data = append(data, []byte(msg.AntennaDescriptor)...)
-    data = append(data, msg.AntennaSetupId, uint8(len(msg.AntennaSerialNumber)))
+    data := SerializeAntennaDescriptor(msg.MessageAntennaDescriptor)
+    data = append(data, uint8(len(msg.AntennaSerialNumber)))
     data = append(data, []byte(msg.AntennaSerialNumber)...)
     data = append(data, uint8(len(msg.ReceiverTypeDescriptor)))
     data = append(data, []byte(msg.ReceiverTypeDescriptor)...)
