@@ -77,9 +77,9 @@ func TestMessage1117(t *testing.T) {
         t.Errorf("Serialization not equal to binary")
     }
 
-    deserialized_msg := rtcm3.DeserializeMessage1117(msg.Serialize())
+    deserializedMsg := rtcm3.DeserializeMessage1117(msg.Serialize())
 
-    if !cmp.Equal(msg, deserialized_msg) {
+    if !cmp.Equal(msg, deserializedMsg) {
         t.Errorf("Serialization->Deserialization not equal")
     }
 }

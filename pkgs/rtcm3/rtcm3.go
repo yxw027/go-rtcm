@@ -7,8 +7,6 @@ import (
     "errors"
     "github.com/bamiaux/iobit"
     "time"
-//    "os"
-//    "fmt"
 )
 
 type Message interface {
@@ -109,7 +107,7 @@ type Observable interface {
 
 var FramePreamble byte = 0xD3
 
-type Frame struct { // Contains Serialized Message
+type Frame struct {
     Preamble uint8
     Reserved uint8
     Length uint16
@@ -117,8 +115,7 @@ type Frame struct { // Contains Serialized Message
     Crc uint32
 }
 
-// Encapsulate Message in Frame
-func NewFrame(msg Message) (frame Frame) {
+func EncapsulateMessage(msg Message) (frame Frame) {
     data := msg.Serialize()
     frame = Frame{
         Preamble: FramePreamble,
@@ -172,12 +169,6 @@ func DeserializeFrame(reader *bufio.Reader) (frame Frame, err error) {
     if Crc24q(data[:len(data)-3]) != frame.Crc {
         return frame, errors.New("CRC Failed")
     }
-
-//    msg := DeserializeMessage(frame.Payload)
-    //fmt.Println(DeserializeMessage(frame.Payload))
-//    file, err := os.Create(fmt.Sprint(msg.Number()) + "_frame.bin")
-//    defer file.Close()
-//    file.Write(data[0:len(data)])
 
     reader.Discard(len(data) - 1)
     return frame, nil
