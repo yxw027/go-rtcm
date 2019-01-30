@@ -7,7 +7,7 @@ import (
     "os"
     "bufio"
     "fmt"
-    "github.com/geoscienceaustralia/go-rtcm/test/data"
+    "github.com/geoscienceaustralia/go-rtcm/pkgs/rtcm3/data"
 )
 
 func readPayload(msgNumber uint) (payload []byte){
