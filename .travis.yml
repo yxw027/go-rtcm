@@ -4,6 +4,8 @@ go:
   - tip
 before_install:
   - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
 script:
   - cd pkgs/rtcm3
-  - $GOPATH/bin/goveralls -service=travis-ci
+  - go test -v -covermode=count -coverprofile=coverage.out
+  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci
