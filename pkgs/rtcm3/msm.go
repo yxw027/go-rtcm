@@ -346,7 +346,7 @@ func (msg MessageMsm5) Serialize() (data []byte) {
     sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
     cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
 
-    msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (65 * cellMaskBits)
+    msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (63 * cellMaskBits)
     data = make([]byte, int(math.Ceil(float64(msgBits) / 8)))
     w := iobit.NewWriter(data)
 
