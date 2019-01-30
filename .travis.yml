@@ -3,6 +3,7 @@ sudo: false
 go:
   - tip
 before_install:
+  - mv ${TRAVIS_HOME}/gopath/src/github.com/GeoscienceAustralia ${TRAVIS_HOME}/gopath/src/github.com/geoscienceaustralia
   - go get github.com/mattn/goveralls
   - go get golang.org/x/tools/cmd/cover
 script:
