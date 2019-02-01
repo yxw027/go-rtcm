@@ -728,3 +728,108 @@ func TestMessage1117(t *testing.T) {
         t.Errorf("Serialization->Deserialization not equal")
     }
 }
+
+func TestMessage1121(t *testing.T) {
+    payload := readPayload(1121)
+    msg := data.Message1121
+
+    if !cmp.Equal(msg.Serialize(), payload) {
+        t.Errorf("Serialization not equal to binary")
+    }
+
+    deserializedMsg := rtcm3.DeserializeMessage(msg.Serialize())
+
+    if !cmp.Equal(msg, deserializedMsg) {
+        t.Errorf("Serialization->Deserialization not equal")
+    }
+}
+
+func TestMessage1122(t *testing.T) {
+    payload := readPayload(1122)
+    msg := data.Message1122
+
+    if !cmp.Equal(msg.Serialize(), payload) {
+        t.Errorf("Serialization not equal to binary")
+    }
+
+    deserializedMsg := rtcm3.DeserializeMessage(msg.Serialize())
+
+    if !cmp.Equal(msg, deserializedMsg) {
+        t.Errorf("Serialization->Deserialization not equal")
+    }
+}
+
+func TestMessage1123(t *testing.T) {
+    payload := readPayload(1123)
+    msg := data.Message1123
+
+    if !cmp.Equal(msg.Serialize(), payload) {
+        t.Errorf("Serialization not equal to binary")
+    }
+
+    deserializedMsg := rtcm3.DeserializeMessage(msg.Serialize())
+
+    if !cmp.Equal(msg, deserializedMsg) {
+        t.Errorf("Serialization->Deserialization not equal")
+    }
+}
+
+func TestMessage1124(t *testing.T) {
+    payload := readPayload(1124)
+    msg := data.Message1124
+
+    if !cmp.Equal(msg.Serialize(), payload) {
+        t.Errorf("Serialization not equal to binary")
+    }
+
+    deserializedMsg := rtcm3.DeserializeMessage(msg.Serialize())
+
+    if !cmp.Equal(msg, deserializedMsg) {
+        t.Errorf("Serialization->Deserialization not equal")
+    }
+}
+
+func TestMessage1125(t *testing.T) {
+    payload := readPayload(1125)
+    msg := data.Message1125
+
+    if !cmp.Equal(msg.Serialize(), payload) {
+        t.Errorf("Serialization not equal to binary")
+    }
+
+    deserializedMsg := rtcm3.DeserializeMessage(msg.Serialize())
+
+    if !cmp.Equal(msg, deserializedMsg) {
+        t.Errorf("Serialization->Deserialization not equal")
+    }
+}
+
+func TestMessage1126(t *testing.T) {
+    payload := readPayload(1126)
+    msg := data.Message1126
+
+    if !cmp.Equal(msg.Serialize(), payload) {
+        t.Errorf("Serialization not equal to binary")
+    }
+
+    deserializedMsg := rtcm3.DeserializeMessage(msg.Serialize())
+
+    if !cmp.Equal(msg, deserializedMsg) {
+        t.Errorf("Serialization->Deserialization not equal")
+    }
+}
+
+func TestMessage1127(t *testing.T) {
+    payload := readPayload(1127)
+    msg := data.Message1127
+
+    if !cmp.Equal(msg.Serialize(), payload) {
+        t.Errorf("Serialization not equal to binary")
+    }
+
+    deserializedMsg := rtcm3.DeserializeMessage(msg.Serialize())
+
+    if !cmp.Equal(msg, deserializedMsg) {
+        t.Errorf("Serialization->Deserialization not equal")
+    }
+}
