@@ -6,20 +6,18 @@ import (
     "math"
 )
 
-func GlonassTime(e uint32) time.Time {
-    now := time.Now().UTC()
-    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+func GlonassTime(e uint32, week time.Time) time.Time {
     dow := int((e >> 27) & 0x7)
     tod := time.Duration(e & 0x7FFFFFF) * time.Millisecond
-    return sow.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))
+    return week.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))
 }
 
-func GlonassTimeShort(e uint32, now time.Time) time.Time {
+func GlonassTimeShort(e uint32, day time.Time) time.Time {
     hours := e / 3600000
     moduloGlonassHours := ((int(hours) - 3 % 24) + 24) % 24
-    rest := int(e) - (int(hours) * 3600000)
-    tod := time.Duration(rest + (moduloGlonassHours * 3600000)) * time.Millisecond
-    dow := now.Truncate(time.Hour * 24)
+    millisecondsLeft := int(e) - (int(hours) * 3600000)
+    tod := time.Duration(millisecondsLeft + (moduloGlonassHours * 3600000)) * time.Millisecond
+    dow := day.Truncate(time.Hour * 24)
     return dow.Add(tod)
 }
 

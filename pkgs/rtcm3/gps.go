@@ -6,11 +6,9 @@ import (
     "math"
 )
 
-func GpsTime(e uint32) time.Time {
-    now := time.Now().UTC()
-    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+func GpsTime(e uint32, week time.Time) time.Time {
     tow := time.Duration(e) * time.Millisecond
-    return sow.Add(-(18 * time.Second)).Add(tow)
+    return week.Add(-(18 * time.Second)).Add(tow)
 }
 
 type GpsObservationHeader struct {
@@ -105,7 +103,9 @@ func (msg Message1001) Serialize() []byte {
 }
 
 func (msg Message1001) Time() time.Time {
-    return GpsTime(msg.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Epoch, sow)
 }
 
 type SatelliteData1002 struct {
@@ -166,7 +166,9 @@ func (msg Message1002) Serialize() []byte {
 }
 
 func (msg Message1002) Time() time.Time {
-    return GpsTime(msg.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Epoch, sow)
 }
 
 
@@ -234,7 +236,9 @@ func (msg Message1003) Serialize() []byte {
 }
 
 func (msg Message1003) Time() time.Time {
-    return GpsTime(msg.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Epoch, sow)
 }
 
 
@@ -311,7 +315,9 @@ func (msg Message1004) Serialize() []byte {
 }
 
 func (msg Message1004) Time() time.Time {
-    return GpsTime(msg.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Epoch, sow)
 }
 
 

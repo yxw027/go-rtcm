@@ -676,7 +676,9 @@ func DeserializeMessage1071(data []byte) Message1071 {
 }
 
 func (msg Message1071) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1072 struct {
@@ -690,7 +692,9 @@ func DeserializeMessage1072(data []byte) Message1072 {
 }
 
 func (msg Message1072) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1073 struct {
@@ -704,7 +708,9 @@ func DeserializeMessage1073(data []byte) Message1073 {
 }
 
 func (msg Message1073) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1074 struct {
@@ -718,7 +724,9 @@ func DeserializeMessage1074(data []byte) Message1074 {
 }
 
 func (msg Message1074) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1075 struct {
@@ -732,7 +740,9 @@ func DeserializeMessage1075(data []byte) Message1075 {
 }
 
 func (msg Message1075) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1076 struct {
@@ -746,7 +756,9 @@ func DeserializeMessage1076(data []byte) Message1076 {
 }
 
 func (msg Message1076) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1077 struct {
@@ -760,7 +772,9 @@ func DeserializeMessage1077(data []byte) Message1077 {
 }
 
 func (msg Message1077) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1081 struct {
@@ -774,7 +788,9 @@ func DeserializeMessage1081(data []byte) Message1081 {
 }
 
 func (msg Message1081) Time() time.Time {
-    return GlonassTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GlonassTime(msg.Header.Epoch, sow)
 }
 
 type Message1082 struct {
@@ -788,7 +804,9 @@ func DeserializeMessage1082(data []byte) Message1082 {
 }
 
 func (msg Message1082) Time() time.Time {
-    return GlonassTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GlonassTime(msg.Header.Epoch, sow)
 }
 
 type Message1083 struct {
@@ -802,7 +820,9 @@ func DeserializeMessage1083(data []byte) Message1083 {
 }
 
 func (msg Message1083) Time() time.Time {
-    return GlonassTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GlonassTime(msg.Header.Epoch, sow)
 }
 
 type Message1084 struct {
@@ -816,7 +836,9 @@ func DeserializeMessage1084(data []byte) Message1084 {
 }
 
 func (msg Message1084) Time() time.Time {
-    return GlonassTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GlonassTime(msg.Header.Epoch, sow)
 }
 
 type Message1085 struct {
@@ -830,7 +852,9 @@ func DeserializeMessage1085(data []byte) Message1085 {
 }
 
 func (msg Message1085) Time() time.Time {
-    return GlonassTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GlonassTime(msg.Header.Epoch, sow)
 }
 
 type Message1086 struct {
@@ -844,7 +868,9 @@ func DeserializeMessage1086(data []byte) Message1086 {
 }
 
 func (msg Message1086) Time() time.Time {
-    return GlonassTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GlonassTime(msg.Header.Epoch, sow)
 }
 
 type Message1087 struct {
@@ -858,7 +884,9 @@ func DeserializeMessage1087(data []byte) Message1087 {
 }
 
 func (msg Message1087) Time() time.Time {
-    return GlonassTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GlonassTime(msg.Header.Epoch, sow)
 }
 
 type Message1091 struct {
@@ -872,7 +900,9 @@ func DeserializeMessage1091(data []byte) Message1091 {
 }
 
 func (msg Message1091) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1092 struct {
@@ -886,7 +916,9 @@ func DeserializeMessage1092(data []byte) Message1092 {
 }
 
 func (msg Message1092) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1093 struct {
@@ -900,7 +932,9 @@ func DeserializeMessage1093(data []byte) Message1093 {
 }
 
 func (msg Message1093) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1094 struct {
@@ -914,7 +948,9 @@ func DeserializeMessage1094(data []byte) Message1094 {
 }
 
 func (msg Message1094) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1095 struct {
@@ -928,7 +964,9 @@ func DeserializeMessage1095(data []byte) Message1095 {
 }
 
 func (msg Message1095) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1096 struct {
@@ -942,7 +980,9 @@ func DeserializeMessage1096(data []byte) Message1096 {
 }
 
 func (msg Message1096) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1097 struct {
@@ -956,7 +996,9 @@ func DeserializeMessage1097(data []byte) Message1097 {
 }
 
 func (msg Message1097) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1101 struct {
@@ -970,7 +1012,9 @@ func DeserializeMessage1101(data []byte) Message1101 {
 }
 
 func (msg Message1101) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1102 struct {
@@ -984,7 +1028,9 @@ func DeserializeMessage1102(data []byte) Message1102 {
 }
 
 func (msg Message1102) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1103 struct {
@@ -998,7 +1044,9 @@ func DeserializeMessage1103(data []byte) Message1103 {
 }
 
 func (msg Message1103) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1104 struct {
@@ -1012,7 +1060,9 @@ func DeserializeMessage1104(data []byte) Message1104 {
 }
 
 func (msg Message1104) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1105 struct {
@@ -1026,7 +1076,9 @@ func DeserializeMessage1105(data []byte) Message1105 {
 }
 
 func (msg Message1105) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1106 struct {
@@ -1040,7 +1092,9 @@ func DeserializeMessage1106(data []byte) Message1106 {
 }
 
 func (msg Message1106) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1107 struct {
@@ -1054,7 +1108,9 @@ func DeserializeMessage1107(data []byte) Message1107 {
 }
 
 func (msg Message1107) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1111 struct {
@@ -1068,7 +1124,9 @@ func DeserializeMessage1111(data []byte) Message1111 {
 }
 
 func (msg Message1111) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1112 struct {
@@ -1082,7 +1140,9 @@ func DeserializeMessage1112(data []byte) Message1112 {
 }
 
 func (msg Message1112) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1113 struct {
@@ -1096,7 +1156,9 @@ func DeserializeMessage1113(data []byte) Message1113 {
 }
 
 func (msg Message1113) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1114 struct {
@@ -1110,7 +1172,9 @@ func DeserializeMessage1114(data []byte) Message1114 {
 }
 
 func (msg Message1114) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1115 struct {
@@ -1124,7 +1188,9 @@ func DeserializeMessage1115(data []byte) Message1115 {
 }
 
 func (msg Message1115) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1116 struct {
@@ -1138,7 +1204,9 @@ func DeserializeMessage1116(data []byte) Message1116 {
 }
 
 func (msg Message1116) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1117 struct {
@@ -1152,7 +1220,9 @@ func DeserializeMessage1117(data []byte) Message1117 {
 }
 
 func (msg Message1117) Time() time.Time {
-    return GpsTime(msg.Header.Epoch)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow)
 }
 
 type Message1121 struct {
@@ -1166,7 +1236,9 @@ func DeserializeMessage1121(data []byte) Message1121 {
 }
 
 func (msg Message1121) Time() time.Time {
-    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow).Add(14 * time.Second)
 }
 
 type Message1122 struct {
@@ -1180,7 +1252,9 @@ func DeserializeMessage1122(data []byte) Message1122 {
 }
 
 func (msg Message1122) Time() time.Time {
-    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow).Add(14 * time.Second)
 }
 
 type Message1123 struct {
@@ -1194,7 +1268,9 @@ func DeserializeMessage1123(data []byte) Message1123 {
 }
 
 func (msg Message1123) Time() time.Time {
-    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow).Add(14 * time.Second)
 }
 
 type Message1124 struct {
@@ -1208,7 +1284,9 @@ func DeserializeMessage1124(data []byte) Message1124 {
 }
 
 func (msg Message1124) Time() time.Time {
-    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow).Add(14 * time.Second)
 }
 
 type Message1125 struct {
@@ -1222,7 +1300,9 @@ func DeserializeMessage1125(data []byte) Message1125 {
 }
 
 func (msg Message1125) Time() time.Time {
-    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow).Add(14 * time.Second)
 }
 
 type Message1126 struct {
@@ -1236,7 +1316,9 @@ func DeserializeMessage1126(data []byte) Message1126 {
 }
 
 func (msg Message1126) Time() time.Time {
-    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow).Add(14 * time.Second)
 }
 
 type Message1127 struct {
@@ -1250,5 +1332,7 @@ func DeserializeMessage1127(data []byte) Message1127 {
 }
 
 func (msg Message1127) Time() time.Time {
-    return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
+    now := time.Now().UTC()
+    sow := now.Truncate(time.Hour * 24).AddDate(0, 0, -int(now.Weekday()))
+    return GpsTime(msg.Header.Epoch, sow).Add(14 * time.Second)
 }
