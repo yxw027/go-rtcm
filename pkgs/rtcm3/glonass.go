@@ -14,11 +14,13 @@ func GlonassTime(e uint32) time.Time {
     return sow.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))
 }
 
-func GlonassTimeShort(e uint32) time.Time {
-    now := time.Now().UTC()
+func GlonassTimeShort(e uint32, now time.Time) time.Time {
+    hours := e / 3600000
+    moduloGlonassHours := ((int(hours) - 3 % 24) + 24) % 24
+    rest := int(e) - (int(hours) * 3600000)
+    tod := time.Duration(rest + (moduloGlonassHours * 3600000)) * time.Millisecond
     dow := now.Truncate(time.Hour * 24)
-    tod := time.Duration(e) * time.Millisecond
-    return dow.Add(tod).Add(-(3 * time.Hour))
+    return dow.Add(tod)
 }
 
 type GlonassObservationHeader struct {
@@ -36,7 +38,7 @@ func (obsHeader GlonassObservationHeader) Number() uint16 {
 }
 
 func (h GlonassObservationHeader) Time() time.Time {
-    return GlonassTimeShort(h.Epoch)
+    return GlonassTimeShort(h.Epoch, time.Now().UTC())
 }
 
 func NewGlonassObservationHeader(r *iobit.Reader) GlonassObservationHeader {
