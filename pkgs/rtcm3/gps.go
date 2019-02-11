@@ -6,9 +6,9 @@ import (
     "math"
 )
 
-func GpsTime(e uint32, week time.Time) time.Time {
-    tow := time.Duration(e) * time.Millisecond
-    return week.Add(-(18 * time.Second)).Add(tow)
+func GpsTime(epoch uint32, week time.Time) time.Time {
+    tow := time.Duration(epoch) * time.Millisecond
+    return week.Add(-(18 * time.Second)).Add(tow) //TODO: Better handling leap second
 }
 
 type GpsObservationHeader struct {

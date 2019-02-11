@@ -6,10 +6,11 @@ import (
     "math"
 )
 
-func GlonassTime(e uint32, week time.Time) time.Time {
-    dow := int((e >> 27) & 0x7)
-    tod := time.Duration(e & 0x7FFFFFF) * time.Millisecond
-    return week.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))
+func GlonassTime(epoch uint32, week time.Time) time.Time {
+    sow := week.Truncate(time.Hour * 24).AddDate(0, 0, -int(week.Weekday()))
+    dow := int((epoch >> 27) & 0x7)
+    tod := time.Duration(epoch & 0x7FFFFFF) * time.Millisecond
+    return sow.AddDate(0, 0, dow).Add(tod).Add(-(3 * time.Hour))
 }
 
 func GlonassTimeShort(e uint32, day time.Time) time.Time {
