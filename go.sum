@@ -1,0 +1,8 @@
+github.com/bamiaux/iobit v0.0.0-20170418073505-498159a04883 h1:XNtOMwxmV2PI/vuTHDZnFzGIFNUh8MK73q7+Kna7AXs=
+github.com/bamiaux/iobit v0.0.0-20170418073505-498159a04883/go.mod h1:9IjZnSQGh45J46HHS45pxuMJ6WFTtSXbaX0FoHDvxh8=
+github.com/benburkert/http v0.0.0-20140610191404-7b1c7d0a482c h1:YuvoJany/EHKyXIEMIjXhUk0SmixfzrShM6SQ7iXrLE=
+github.com/benburkert/http v0.0.0-20140610191404-7b1c7d0a482c/go.mod h1:+Yvt6P282G+eLLgc8ZWjdO/UUlmxiF4X4OSVFeRxuVE=
+github.com/google/go-cmp v0.2.0 h1:+dTQ8DZQJz0Mb/HjFlkptS1FeQ4cWSnN941F8aEG4SQ=
+github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
+github.com/umeat/go-ntrip v0.0.0-20190218042343-e07f06f966af h1:iWwnvnWvzh3eK1kZ7Ml2ltpymSXyU4vPW3RjVGkjIjE=
+github.com/umeat/go-ntrip v0.0.0-20190218042343-e07f06f966af/go.mod h1:7BDbFLDmcEBvB1A9rpLps/QVXz2MSHYaDv0BMrQwIG8=
