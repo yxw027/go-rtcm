@@ -14,7 +14,7 @@ func TestMessageUnknown(t *testing.T) {
     messageInvalidNumber := data.Message1001
     messageInvalidNumber.GpsObservationHeader.MessageNumber = 1018  // doesn't exist, as far as I know
 
-    unknownMessage := rtcm3.DeserializeMessage(messageInvalidNumber.Serialize())    
+    unknownMessage := rtcm3.DeserializeMessage(messageInvalidNumber.Serialize())
 
     if unknownMessage.Number() != 1018 {
        t.Errorf("MessageUnknown message number incorrect")
