@@ -3,8 +3,21 @@ package rtcm3
 import (
 	"github.com/bamiaux/iobit"
 	"math"
+	"math/rand"
 	"time"
 )
+
+func RandBits(n uint) int {
+	return rand.Intn(int(math.Pow(2, float64(n))))
+}
+
+func RandBool() bool {
+	return rand.Intn(2) == 0
+}
+
+func RandBitsInt(n uint) int {
+	return rand.Intn(int(math.Pow(2, float64(n)))) - int(math.Pow(2, float64(n))/2)
+}
 
 func GpsTime(e uint32) time.Time {
 	now := time.Now().UTC()
@@ -306,6 +319,47 @@ func (msg Message1004) Serialize() []byte {
 	w.PutUint8(uint(w.Bits()), 0)
 	w.Flush()
 	return append(headerData, satData...)
+}
+
+func GenerateMessage1004() (message Message1004) {
+	rand.Seed(time.Now().UTC().UnixNano())
+	smoothingIndicator := RandBool()
+	var smoothingInterval int
+	if smoothingIndicator {
+		smoothingInterval = RandBits(3)
+	}
+
+	totalSignals := rand.Intn(14)
+	satelliteData := make([]SatelliteData1004, totalSignals)
+	for i := 0; i < totalSignals; i++ {
+		satelliteData[i] = SatelliteData1004{
+			SatelliteId:             uint8(RandBits(6)),
+			L1CodeIndicator:         RandBool(),
+			L1Pseudorange:           uint32(RandBits(24)),
+			L1PhaseRange:            int32(RandBitsInt(20)),
+			L1LockTimeIndicator:     uint8(RandBits(7)),
+			L1PseudorangeAmbiguity:  uint8(RandBits(8)),
+			L1Cnr:                   uint8(RandBits(8)),
+			L2CodeIndicator:         uint8(RandBits(2)),
+			L2PseudorangeDifference: int16(RandBitsInt(14)),
+			L2PhaseRange:            int32(RandBitsInt(20)),
+			L2LockTimeIndicator:     uint8(RandBits(7)),
+			L2Cnr:                   uint8(RandBits(8)),
+		}
+	}
+
+	return Message1004{
+		GpsObservationHeader: GpsObservationHeader{
+			MessageNumber:      1004,
+			ReferenceStationId: uint16(RandBits(12)),
+			Epoch:              uint32(RandBits(30)),
+			SynchronousGnss:    RandBool(),
+			SignalsProcessed:   uint8(totalSignals),
+			SmoothingIndicator: smoothingIndicator,
+			SmoothingInterval:  uint8(smoothingInterval),
+		},
+		SatelliteData: satelliteData,
+	}
 }
 
 func (msg Message1004) Time() time.Time {
