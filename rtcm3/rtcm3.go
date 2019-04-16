@@ -11,7 +11,7 @@ import (
 
 type Message interface {
 	Serialize() []byte
-	Number() uint16
+	Number() int
 }
 
 func DeserializeMessage(payload []byte) (msg Message) {
@@ -157,8 +157,8 @@ func (msg MessageUnknown) Serialize() []byte {
 	return msg.Payload
 }
 
-func (msg MessageUnknown) Number() (msgNumber uint16) {
-	return binary.BigEndian.Uint16(msg.Payload[0:4]) >> 4
+func (msg MessageUnknown) Number() (msgNumber int) {
+	return int(binary.BigEndian.Uint16(msg.Payload[0:4]) >> 4)
 }
 
 type Observable interface {

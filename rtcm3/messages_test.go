@@ -48,7 +48,7 @@ func TestSerializeDeserialize(t *testing.T) {
 			t.Errorf("Serialization->Deserialization not equal")
 		}
 
-		if !cmp.Equal(deserializedMessage.Number(), uint16(number)) {
+		if !cmp.Equal(deserializedMessage.Number(), number) {
 			t.Errorf("MessageNumber incorrect")
 		}
 	}

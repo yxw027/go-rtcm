@@ -33,8 +33,8 @@ type GlonassObservationHeader struct {
 	SmoothingInterval  uint8
 }
 
-func (obsHeader GlonassObservationHeader) Number() uint16 {
-	return obsHeader.MessageNumber
+func (obsHeader GlonassObservationHeader) Number() int {
+	return int(obsHeader.MessageNumber)
 }
 
 func (h GlonassObservationHeader) Time() time.Time {
@@ -364,8 +364,8 @@ type Message1020 struct {
 	Reserved                  uint8
 }
 
-func (msg Message1020) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1020) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1020(data []byte) Message1020 {
@@ -468,8 +468,8 @@ type Message1230 struct {
 	L2PCodePhaseBias   int16
 }
 
-func (msg Message1230) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1230) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1230(data []byte) (msg Message1230) {

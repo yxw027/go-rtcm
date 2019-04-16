@@ -23,8 +23,8 @@ type GpsObservationHeader struct {
 	SmoothingInterval  uint8
 }
 
-func (obsHeader GpsObservationHeader) Number() uint16 {
-	return obsHeader.MessageNumber
+func (obsHeader GpsObservationHeader) Number() int {
+	return int(obsHeader.MessageNumber)
 }
 
 func NewGpsObservationHeader(r *iobit.Reader) (header GpsObservationHeader) {
@@ -351,8 +351,8 @@ type Message1019 struct {
 	FitInterval   bool
 }
 
-func (msg Message1019) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1019) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1019(data []byte) Message1019 {
