@@ -21,8 +21,8 @@ type AntennaReferencePoint struct {
 	ReferencePointZ           int64
 }
 
-func (arp AntennaReferencePoint) Number() uint16 {
-	return arp.MessageNumber
+func (arp AntennaReferencePoint) Number() int {
+	return int(arp.MessageNumber)
 }
 
 func SerializeAntennaReferencePoint(arp AntennaReferencePoint) []byte {
@@ -107,8 +107,8 @@ type MessageAntennaDescriptor struct {
 	AntennaSetupId     uint8
 }
 
-func (ad MessageAntennaDescriptor) Number() uint16 {
-	return ad.MessageNumber
+func (ad MessageAntennaDescriptor) Number() int {
+	return int(ad.MessageNumber)
 }
 
 func DeserializeAntennaDescriptor(r *iobit.Reader) (desc MessageAntennaDescriptor) {
@@ -178,8 +178,8 @@ type Message1033 struct {
 	ReceiverSerialNumber    string
 }
 
-func (msg Message1033) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1033) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1033(data []byte) (msg Message1033) {

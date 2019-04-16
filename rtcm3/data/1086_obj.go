@@ -6,7 +6,7 @@ import (
 
 var Message1086 = rtcm3.Message1086{
 	MessageMsm6: rtcm3.MessageMsm6{
-		Header: rtcm3.MsmHeader{
+		MsmHeader: rtcm3.MsmHeader{
 			MessageNumber:          0x43e,
 			ReferenceStationId:     0x0,
 			Epoch:                  0x29450ed8,

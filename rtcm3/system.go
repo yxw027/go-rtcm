@@ -22,8 +22,8 @@ type Message1013 struct {
 	Messages           []MessageAnnouncement
 }
 
-func (msg Message1013) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1013) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1013(data []byte) (msg Message1013) {
@@ -76,8 +76,8 @@ type Message1029 struct {
 	CodeUnits          string
 }
 
-func (msg Message1029) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1029) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1029(data []byte) (msg Message1029) {

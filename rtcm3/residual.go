@@ -37,8 +37,8 @@ type Message1030 struct {
 	SatelliteData      []ResidualSatelliteData
 }
 
-func (msg Message1030) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1030) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1030(data []byte) (msg Message1030) {
@@ -69,8 +69,8 @@ type Message1031 struct {
 	SatelliteData      []ResidualSatelliteData
 }
 
-func (msg Message1031) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1031) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1031(data []byte) (msg Message1031) {
@@ -101,8 +101,8 @@ type Message1032 struct {
 	ArpEcefZ                      int64
 }
 
-func (msg Message1032) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1032) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1032(data []byte) Message1032 {
