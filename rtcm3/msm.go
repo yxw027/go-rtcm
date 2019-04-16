@@ -23,7 +23,11 @@ type MsmHeader struct {
 	CellMask               uint64
 }
 
-func NewMsmHeader(r *iobit.Reader) (header MsmHeader) {
+func (header MsmHeader) Number() uint16 {
+	return header.MessageNumber
+}
+
+func DeserializeMsmHeader(r *iobit.Reader) (header MsmHeader) {
 	header = MsmHeader{
 		MessageNumber:          r.Uint16(12),
 		ReferenceStationId:     r.Uint16(12),
@@ -131,35 +135,28 @@ func DeserializeSignalDataMsm7(r *iobit.Reader, ncell int) (sigData SignalDataMs
 }
 
 type MessageMsm7 struct {
-	Header        MsmHeader
+	MsmHeader
 	SatelliteData SatelliteDataMsm57
 	SignalData    SignalDataMsm7
 }
 
-func (msg MessageMsm7) Number() uint16 {
-	return msg.Header.MessageNumber
-}
-
-func DeserializeMessageMsm7(payload []byte) MessageMsm7 {
-	r := iobit.NewReader(payload)
-	msmHeader := NewMsmHeader(&r)
-	return MessageMsm7{
-		Header:        msmHeader,
-		SatelliteData: DeserializeSatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-		SignalData:    DeserializeSignalDataMsm7(&r, bits.OnesCount(uint(msmHeader.CellMask))),
-	}
+func DeserializeMessageMsm7(r *iobit.Reader) (msg MessageMsm7) {
+	msg.MsmHeader = DeserializeMsmHeader(r)
+	msg.SatelliteData = DeserializeSatelliteDataMsm57(r, bits.OnesCount(uint(msg.MsmHeader.SatelliteMask)))
+	msg.SignalData = DeserializeSignalDataMsm7(r, bits.OnesCount(uint(msg.MsmHeader.CellMask)))
+	return msg
 }
 
 func (msg MessageMsm7) Serialize() (data []byte) {
-	satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
-	sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
-	cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+	satMaskBits := bits.OnesCount(uint(msg.SatelliteMask))
+	sigMaskBits := bits.OnesCount(uint(msg.SignalMask))
+	cellMaskBits := bits.OnesCount(uint(msg.CellMask))
 
 	msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (80 * cellMaskBits)
 	data = make([]byte, int(math.Ceil(float64(msgBits)/8)))
 	w := iobit.NewWriter(data)
 
-	SerializeMsmHeader(&w, msg.Header)
+	SerializeMsmHeader(&w, msg.MsmHeader)
 	SerializeSatelliteDataMsm57(&w, msg.SatelliteData)
 
 	for _, pseudorange := range msg.SignalData.Pseudoranges {
@@ -238,35 +235,28 @@ func DeserializeSignalDataMsm6(r *iobit.Reader, ncell int) (sigData SignalDataMs
 }
 
 type MessageMsm6 struct {
-	Header        MsmHeader
+	MsmHeader
 	SatelliteData SatelliteDataMsm46
 	SignalData    SignalDataMsm6
 }
 
-func (msg MessageMsm6) Number() uint16 {
-	return msg.Header.MessageNumber
-}
-
-func DeserializeMessageMsm6(payload []byte) MessageMsm6 {
-	r := iobit.NewReader(payload)
-	msmHeader := NewMsmHeader(&r)
-	return MessageMsm6{
-		Header:        msmHeader,
-		SatelliteData: DeserializeSatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-		SignalData:    DeserializeSignalDataMsm6(&r, bits.OnesCount(uint(msmHeader.CellMask))),
-	}
+func DeserializeMessageMsm6(r *iobit.Reader) (msg MessageMsm6) {
+	msg.MsmHeader = DeserializeMsmHeader(r)
+	msg.SatelliteData = DeserializeSatelliteDataMsm46(r, bits.OnesCount(uint(msg.MsmHeader.SatelliteMask)))
+	msg.SignalData = DeserializeSignalDataMsm6(r, bits.OnesCount(uint(msg.MsmHeader.CellMask)))
+	return msg
 }
 
 func (msg MessageMsm6) Serialize() (data []byte) {
-	satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
-	sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
-	cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+	satMaskBits := bits.OnesCount(uint(msg.MsmHeader.SatelliteMask))
+	sigMaskBits := bits.OnesCount(uint(msg.MsmHeader.SignalMask))
+	cellMaskBits := bits.OnesCount(uint(msg.MsmHeader.CellMask))
 
 	msgBits := (169 + (satMaskBits * sigMaskBits)) + (18 * satMaskBits) + (65 * cellMaskBits)
 	data = make([]byte, int(math.Ceil(float64(msgBits)/8)))
 	w := iobit.NewWriter(data)
 
-	SerializeMsmHeader(&w, msg.Header)
+	SerializeMsmHeader(&w, msg.MsmHeader)
 	SerializeSatelliteDataMsm46(&w, msg.SatelliteData)
 
 	for _, pseudorange := range msg.SignalData.Pseudoranges {
@@ -322,35 +312,28 @@ func DeserializeSignalDataMsm5(r *iobit.Reader, ncell int) (sigData SignalDataMs
 }
 
 type MessageMsm5 struct {
-	Header        MsmHeader
+	MsmHeader
 	SatelliteData SatelliteDataMsm57
 	SignalData    SignalDataMsm5
 }
 
-func (msg MessageMsm5) Number() uint16 {
-	return msg.Header.MessageNumber
-}
-
-func DeserializeMessageMsm5(data []byte) MessageMsm5 {
-	r := iobit.NewReader(data)
-	msmHeader := NewMsmHeader(&r)
-	return MessageMsm5{
-		Header:        msmHeader,
-		SatelliteData: DeserializeSatelliteDataMsm57(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-		SignalData:    DeserializeSignalDataMsm5(&r, bits.OnesCount(uint(msmHeader.CellMask))),
-	}
+func DeserializeMessageMsm5(r *iobit.Reader) (msg MessageMsm5) {
+	msg.MsmHeader = DeserializeMsmHeader(r)
+	msg.SatelliteData = DeserializeSatelliteDataMsm57(r, bits.OnesCount(uint(msg.MsmHeader.SatelliteMask)))
+	msg.SignalData = DeserializeSignalDataMsm5(r, bits.OnesCount(uint(msg.MsmHeader.CellMask)))
+	return msg
 }
 
 func (msg MessageMsm5) Serialize() (data []byte) {
-	satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
-	sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
-	cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+	satMaskBits := bits.OnesCount(uint(msg.MsmHeader.SatelliteMask))
+	sigMaskBits := bits.OnesCount(uint(msg.MsmHeader.SignalMask))
+	cellMaskBits := bits.OnesCount(uint(msg.MsmHeader.CellMask))
 
 	msgBits := (169 + (satMaskBits * sigMaskBits)) + (36 * satMaskBits) + (63 * cellMaskBits)
 	data = make([]byte, int(math.Ceil(float64(msgBits)/8)))
 	w := iobit.NewWriter(data)
 
-	SerializeMsmHeader(&w, msg.Header)
+	SerializeMsmHeader(&w, msg.MsmHeader)
 	SerializeSatelliteDataMsm57(&w, msg.SatelliteData)
 
 	for _, pseudorange := range msg.SignalData.Pseudoranges {
@@ -405,35 +388,28 @@ func DeserializeSignalDataMsm4(r *iobit.Reader, ncell int) (sigData SignalDataMs
 }
 
 type MessageMsm4 struct {
-	Header        MsmHeader
+	MsmHeader
 	SatelliteData SatelliteDataMsm46
 	SignalData    SignalDataMsm4
 }
 
-func (msg MessageMsm4) Number() uint16 {
-	return msg.Header.MessageNumber
-}
-
-func DeserializeMessageMsm4(data []byte) MessageMsm4 {
-	r := iobit.NewReader(data)
-	msmHeader := NewMsmHeader(&r)
-	return MessageMsm4{
-		Header:        msmHeader,
-		SatelliteData: DeserializeSatelliteDataMsm46(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-		SignalData:    DeserializeSignalDataMsm4(&r, bits.OnesCount(uint(msmHeader.CellMask))),
-	}
+func DeserializeMessageMsm4(r *iobit.Reader) (msg MessageMsm4) {
+	msg.MsmHeader = DeserializeMsmHeader(r)
+	msg.SatelliteData = DeserializeSatelliteDataMsm46(r, bits.OnesCount(uint(msg.MsmHeader.SatelliteMask)))
+	msg.SignalData = DeserializeSignalDataMsm4(r, bits.OnesCount(uint(msg.MsmHeader.CellMask)))
+	return msg
 }
 
 func (msg MessageMsm4) Serialize() (data []byte) {
-	satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
-	sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
-	cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+	satMaskBits := bits.OnesCount(uint(msg.MsmHeader.SatelliteMask))
+	sigMaskBits := bits.OnesCount(uint(msg.MsmHeader.SignalMask))
+	cellMaskBits := bits.OnesCount(uint(msg.MsmHeader.CellMask))
 
 	msgBits := (169 + (satMaskBits * sigMaskBits)) + (18 * satMaskBits) + (48 * cellMaskBits)
 	data = make([]byte, int(math.Ceil(float64(msgBits)/8)))
 	w := iobit.NewWriter(data)
 
-	SerializeMsmHeader(&w, msg.Header)
+	SerializeMsmHeader(&w, msg.MsmHeader)
 	SerializeSatelliteDataMsm46(&w, msg.SatelliteData)
 
 	for _, pseudorange := range msg.SignalData.Pseudoranges {
@@ -492,35 +468,28 @@ func DeserializeSignalDataMsm3(r *iobit.Reader, ncell int) (sigData SignalDataMs
 }
 
 type MessageMsm3 struct {
-	Header        MsmHeader
+	MsmHeader
 	SatelliteData SatelliteDataMsm123
 	SignalData    SignalDataMsm3
 }
 
-func (msg MessageMsm3) Number() uint16 {
-	return msg.Header.MessageNumber
-}
-
-func DeserializeMessageMsm3(data []byte) MessageMsm3 {
-	r := iobit.NewReader(data)
-	msmHeader := NewMsmHeader(&r)
-	return MessageMsm3{
-		Header:        msmHeader,
-		SatelliteData: DeserializeSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-		SignalData:    DeserializeSignalDataMsm3(&r, bits.OnesCount(uint(msmHeader.CellMask))),
-	}
+func DeserializeMessageMsm3(r *iobit.Reader) (msg MessageMsm3) {
+	msg.MsmHeader = DeserializeMsmHeader(r)
+	msg.SatelliteData = DeserializeSatelliteDataMsm123(r, bits.OnesCount(uint(msg.MsmHeader.SatelliteMask)))
+	msg.SignalData = DeserializeSignalDataMsm3(r, bits.OnesCount(uint(msg.MsmHeader.CellMask)))
+	return msg
 }
 
 func (msg MessageMsm3) Serialize() (data []byte) {
-	satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
-	sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
-	cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+	satMaskBits := bits.OnesCount(uint(msg.MsmHeader.SatelliteMask))
+	sigMaskBits := bits.OnesCount(uint(msg.MsmHeader.SignalMask))
+	cellMaskBits := bits.OnesCount(uint(msg.MsmHeader.CellMask))
 
 	msgBits := (169 + (satMaskBits * sigMaskBits)) + (10 * satMaskBits) + (42 * cellMaskBits)
 	data = make([]byte, int(math.Ceil(float64(msgBits)/8)))
 	w := iobit.NewWriter(data)
 
-	SerializeMsmHeader(&w, msg.Header)
+	SerializeMsmHeader(&w, msg.MsmHeader)
 
 	for _, ranges := range msg.SatelliteData.Ranges {
 		w.PutUint16(10, ranges)
@@ -563,35 +532,28 @@ func DeserializeSignalDataMsm2(r *iobit.Reader, ncell int) (sigData SignalDataMs
 }
 
 type MessageMsm2 struct {
-	Header        MsmHeader
+	MsmHeader
 	SatelliteData SatelliteDataMsm123
 	SignalData    SignalDataMsm2
 }
 
-func (msg MessageMsm2) Number() uint16 {
-	return msg.Header.MessageNumber
-}
-
-func DeserializeMessageMsm2(data []byte) MessageMsm2 {
-	r := iobit.NewReader(data)
-	msmHeader := NewMsmHeader(&r)
-	return MessageMsm2{
-		Header:        msmHeader,
-		SatelliteData: DeserializeSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-		SignalData:    DeserializeSignalDataMsm2(&r, bits.OnesCount(uint(msmHeader.CellMask))),
-	}
+func DeserializeMessageMsm2(r *iobit.Reader) (msg MessageMsm2) {
+	msg.MsmHeader = DeserializeMsmHeader(r)
+	msg.SatelliteData = DeserializeSatelliteDataMsm123(r, bits.OnesCount(uint(msg.MsmHeader.SatelliteMask)))
+	msg.SignalData = DeserializeSignalDataMsm2(r, bits.OnesCount(uint(msg.MsmHeader.CellMask)))
+	return msg
 }
 
 func (msg MessageMsm2) Serialize() (data []byte) {
-	satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
-	sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
-	cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+	satMaskBits := bits.OnesCount(uint(msg.MsmHeader.SatelliteMask))
+	sigMaskBits := bits.OnesCount(uint(msg.MsmHeader.SignalMask))
+	cellMaskBits := bits.OnesCount(uint(msg.MsmHeader.CellMask))
 
 	msgBits := (169 + (satMaskBits * sigMaskBits)) + (10 * satMaskBits) + (27 * cellMaskBits)
 	data = make([]byte, int(math.Ceil(float64(msgBits)/8)))
 	w := iobit.NewWriter(data)
 
-	SerializeMsmHeader(&w, msg.Header)
+	SerializeMsmHeader(&w, msg.MsmHeader)
 
 	for _, ranges := range msg.SatelliteData.Ranges {
 		w.PutUint16(10, ranges)
@@ -623,35 +585,28 @@ func DeserializeSignalDataMsm1(r *iobit.Reader, ncell int) (sigData SignalDataMs
 }
 
 type MessageMsm1 struct {
-	Header        MsmHeader
+	MsmHeader
 	SatelliteData SatelliteDataMsm123
 	SignalData    SignalDataMsm1
 }
 
-func (msg MessageMsm1) Number() uint16 {
-	return msg.Header.MessageNumber
-}
-
-func DeserializeMessageMsm1(data []byte) MessageMsm1 {
-	r := iobit.NewReader(data)
-	msmHeader := NewMsmHeader(&r)
-	return MessageMsm1{
-		Header:        msmHeader,
-		SatelliteData: DeserializeSatelliteDataMsm123(&r, bits.OnesCount(uint(msmHeader.SatelliteMask))),
-		SignalData:    DeserializeSignalDataMsm1(&r, bits.OnesCount(uint(msmHeader.CellMask))),
-	}
+func DeserializeMessageMsm1(r *iobit.Reader) (msg MessageMsm1) {
+	msg.MsmHeader = DeserializeMsmHeader(r)
+	msg.SatelliteData = DeserializeSatelliteDataMsm123(r, bits.OnesCount(uint(msg.MsmHeader.SatelliteMask)))
+	msg.SignalData = DeserializeSignalDataMsm1(r, bits.OnesCount(uint(msg.MsmHeader.CellMask)))
+	return msg
 }
 
 func (msg MessageMsm1) Serialize() (data []byte) {
-	satMaskBits := bits.OnesCount(uint(msg.Header.SatelliteMask))
-	sigMaskBits := bits.OnesCount(uint(msg.Header.SignalMask))
-	cellMaskBits := bits.OnesCount(uint(msg.Header.CellMask))
+	satMaskBits := bits.OnesCount(uint(msg.MsmHeader.SatelliteMask))
+	sigMaskBits := bits.OnesCount(uint(msg.MsmHeader.SignalMask))
+	cellMaskBits := bits.OnesCount(uint(msg.MsmHeader.CellMask))
 
 	msgBits := (169 + (satMaskBits * sigMaskBits)) + (10 * satMaskBits) + (15 * cellMaskBits)
 	data = make([]byte, int(math.Ceil(float64(msgBits)/8)))
 	w := iobit.NewWriter(data)
 
-	SerializeMsmHeader(&w, msg.Header)
+	SerializeMsmHeader(&w, msg.MsmHeader)
 
 	for _, ranges := range msg.SatelliteData.Ranges {
 		w.PutUint16(10, ranges)
