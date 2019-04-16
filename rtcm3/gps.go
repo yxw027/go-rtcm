@@ -443,8 +443,8 @@ type Message1014 struct {
 	AuxMasterDeltaHeight         int32  `23`
 }
 
-func (msg Message1014) Number() uint16 {
-	return msg.MessageNumber
+func (msg Message1014) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeMessage1014(data []byte) Message1014 {
@@ -490,8 +490,8 @@ type NetworkRTKHeader struct {
 	SatelliteCount              uint8  `4`
 }
 
-func (msg NetworkRTKHeader) Number() uint16 {
-	return msg.MessageNumber
+func (msg NetworkRTKHeader) Number() int {
+	return int(msg.MessageNumber)
 }
 
 func DeserializeNetworkRTKHeader(r *iobit.Reader) NetworkRTKHeader {
