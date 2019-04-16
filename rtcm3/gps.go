@@ -6,13 +6,6 @@ import (
 	"time"
 )
 
-func GpsTime(e uint32) time.Time {
-	now := time.Now().UTC()
-	sow := now.Truncate(time.Hour*24).AddDate(0, 0, -int(now.Weekday()))
-	tow := time.Duration(e) * time.Millisecond
-	return sow.Add(-(18 * time.Second)).Add(tow)
-}
-
 type GpsObservationHeader struct {
 	MessageNumber      uint16
 	ReferenceStationId uint16
