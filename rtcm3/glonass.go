@@ -87,6 +87,7 @@ func DeserializeSignalData1009(r *iobit.Reader, numSig int) (sigData []SignalDat
 	return sigData
 }
 
+// L1-Only GLONASS RTK Observables
 type Message1009 struct {
 	GlonassObservationHeader
 	SignalData []SignalData1009
@@ -145,6 +146,7 @@ func DeserializeSignalData1010(r *iobit.Reader, numSig int) (sigData []SignalDat
 	return sigData
 }
 
+// Extended L1-Only GLONASS RTK Observables
 type Message1010 struct {
 	GlonassObservationHeader
 	SignalData []SignalData1010
@@ -209,6 +211,7 @@ func DeserializeSignalData1011(r *iobit.Reader, numSig int) (sigData []SignalDat
 	return sigData
 }
 
+// L1&L2 GLONASS RTK Observables
 type Message1011 struct {
 	GlonassObservationHeader
 	SignalData []SignalData1011
@@ -281,6 +284,7 @@ func DeserializeSignalData1012(r *iobit.Reader, numSig int) (sigData []SignalDat
 	return sigData
 }
 
+// Extended L1&L2 GLONASS RTK Observables
 type Message1012 struct {
 	GlonassObservationHeader
 	SignalData []SignalData1012
@@ -319,6 +323,7 @@ func (msg Message1012) Serialize() []byte {
 	return data
 }
 
+// GLONASS Ephemerides
 type Message1020 struct {
 	MessageNumber             uint16
 	SatelliteId               uint8
@@ -450,6 +455,7 @@ func (msg Message1020) Serialize() []byte {
 	return data
 }
 
+// GLONASS L1 and L2 Code-Phase Biases
 type Message1230 struct {
 	MessageNumber      uint16
 	ReferenceStationId uint16

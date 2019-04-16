@@ -665,6 +665,7 @@ func (msg MessageMsm1) Serialize() (data []byte) {
 	return data
 }
 
+// GPS MSM1
 type Message1071 struct {
 	MessageMsm1
 }
@@ -679,6 +680,7 @@ func (msg Message1071) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// GPS MSM2
 type Message1072 struct {
 	MessageMsm2
 }
@@ -693,6 +695,7 @@ func (msg Message1072) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// GPS MSM3
 type Message1073 struct {
 	MessageMsm3
 }
@@ -707,6 +710,7 @@ func (msg Message1073) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// GPS MSM4
 type Message1074 struct {
 	MessageMsm4
 }
@@ -721,6 +725,7 @@ func (msg Message1074) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// GPS MSM5
 type Message1075 struct {
 	MessageMsm5
 }
@@ -735,6 +740,7 @@ func (msg Message1075) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// GPS MSM6
 type Message1076 struct {
 	MessageMsm6
 }
@@ -749,6 +755,7 @@ func (msg Message1076) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// GPS MSM7
 type Message1077 struct {
 	MessageMsm7
 }
@@ -763,6 +770,7 @@ func (msg Message1077) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// GLONASS MSM1
 type Message1081 struct {
 	MessageMsm1
 }
@@ -777,6 +785,7 @@ func (msg Message1081) Time() time.Time {
 	return GlonassTime(msg.Header.Epoch)
 }
 
+// GLONASS MSM2
 type Message1082 struct {
 	MessageMsm2
 }
@@ -791,6 +800,7 @@ func (msg Message1082) Time() time.Time {
 	return GlonassTime(msg.Header.Epoch)
 }
 
+// GLONASS MSM3
 type Message1083 struct {
 	MessageMsm3
 }
@@ -805,6 +815,7 @@ func (msg Message1083) Time() time.Time {
 	return GlonassTime(msg.Header.Epoch)
 }
 
+// GLONASS MSM4
 type Message1084 struct {
 	MessageMsm4
 }
@@ -819,6 +830,7 @@ func (msg Message1084) Time() time.Time {
 	return GlonassTime(msg.Header.Epoch)
 }
 
+// GLONASS MSM5
 type Message1085 struct {
 	MessageMsm5
 }
@@ -833,6 +845,7 @@ func (msg Message1085) Time() time.Time {
 	return GlonassTime(msg.Header.Epoch)
 }
 
+// GLONASS MSM6
 type Message1086 struct {
 	MessageMsm6
 }
@@ -847,6 +860,7 @@ func (msg Message1086) Time() time.Time {
 	return GlonassTime(msg.Header.Epoch)
 }
 
+// GLONASS MSM7
 type Message1087 struct {
 	MessageMsm7
 }
@@ -861,6 +875,7 @@ func (msg Message1087) Time() time.Time {
 	return GlonassTime(msg.Header.Epoch)
 }
 
+// Galileo MSM1
 type Message1091 struct {
 	MessageMsm1
 }
@@ -875,6 +890,7 @@ func (msg Message1091) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// Galileo MSM2
 type Message1092 struct {
 	MessageMsm2
 }
@@ -889,6 +905,7 @@ func (msg Message1092) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// Galileo MSM3
 type Message1093 struct {
 	MessageMsm3
 }
@@ -903,6 +920,7 @@ func (msg Message1093) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// Galileo MSM4
 type Message1094 struct {
 	MessageMsm4
 }
@@ -917,6 +935,7 @@ func (msg Message1094) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// Galileo MSM5
 type Message1095 struct {
 	MessageMsm5
 }
@@ -931,6 +950,7 @@ func (msg Message1095) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// Galileo MSM6
 type Message1096 struct {
 	MessageMsm6
 }
@@ -945,6 +965,7 @@ func (msg Message1096) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// Galileo MSM7
 type Message1097 struct {
 	MessageMsm7
 }
@@ -959,6 +980,7 @@ func (msg Message1097) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// SBAS MSM1
 type Message1101 struct {
 	MessageMsm1
 }
@@ -973,6 +995,7 @@ func (msg Message1101) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// SBAS MSM2
 type Message1102 struct {
 	MessageMsm2
 }
@@ -987,6 +1010,7 @@ func (msg Message1102) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// SBAS MSM3
 type Message1103 struct {
 	MessageMsm3
 }
@@ -1001,6 +1025,7 @@ func (msg Message1103) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// SBAS MSM4
 type Message1104 struct {
 	MessageMsm4
 }
@@ -1015,6 +1040,7 @@ func (msg Message1104) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// SBAS MSM5
 type Message1105 struct {
 	MessageMsm5
 }
@@ -1029,6 +1055,7 @@ func (msg Message1105) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// SBAS MSM6
 type Message1106 struct {
 	MessageMsm6
 }
@@ -1043,6 +1070,7 @@ func (msg Message1106) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// SBAS MSM7
 type Message1107 struct {
 	MessageMsm7
 }
@@ -1057,6 +1085,7 @@ func (msg Message1107) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// QZSS MSM1
 type Message1111 struct {
 	MessageMsm1
 }
@@ -1071,6 +1100,7 @@ func (msg Message1111) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// QZSS MSM2
 type Message1112 struct {
 	MessageMsm2
 }
@@ -1085,6 +1115,7 @@ func (msg Message1112) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// QZSS MSM3
 type Message1113 struct {
 	MessageMsm3
 }
@@ -1099,6 +1130,7 @@ func (msg Message1113) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// QZSS MSM4
 type Message1114 struct {
 	MessageMsm4
 }
@@ -1113,6 +1145,7 @@ func (msg Message1114) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// QZSS MSM5
 type Message1115 struct {
 	MessageMsm5
 }
@@ -1127,6 +1160,7 @@ func (msg Message1115) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// QZSS MSM6
 type Message1116 struct {
 	MessageMsm6
 }
@@ -1141,6 +1175,7 @@ func (msg Message1116) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// QZSS MSM7
 type Message1117 struct {
 	MessageMsm7
 }
@@ -1155,6 +1190,7 @@ func (msg Message1117) Time() time.Time {
 	return GpsTime(msg.Header.Epoch)
 }
 
+// BeiDou MSM1
 type Message1121 struct {
 	MessageMsm1
 }
@@ -1169,6 +1205,7 @@ func (msg Message1121) Time() time.Time {
 	return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
+// BeiDou MSM2
 type Message1122 struct {
 	MessageMsm2
 }
@@ -1183,6 +1220,7 @@ func (msg Message1122) Time() time.Time {
 	return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
+// BeiDou MSM3
 type Message1123 struct {
 	MessageMsm3
 }
@@ -1197,6 +1235,7 @@ func (msg Message1123) Time() time.Time {
 	return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
+// BeiDou MSM4
 type Message1124 struct {
 	MessageMsm4
 }
@@ -1211,6 +1250,7 @@ func (msg Message1124) Time() time.Time {
 	return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
+// BeiDou MSM5
 type Message1125 struct {
 	MessageMsm5
 }
@@ -1225,6 +1265,7 @@ func (msg Message1125) Time() time.Time {
 	return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
+// BeiDou MSM6
 type Message1126 struct {
 	MessageMsm6
 }
@@ -1239,6 +1280,7 @@ func (msg Message1126) Time() time.Time {
 	return GpsTime(msg.Header.Epoch).Add(14 * time.Second)
 }
 
+// BeiDou MSM7
 type Message1127 struct {
 	MessageMsm7
 }

@@ -74,6 +74,7 @@ func DeserializeSatelliteData1001(r *iobit.Reader, numSats int) (satData []Satel
 	return satData
 }
 
+// L1-Only GPS RTK Observables
 type Message1001 struct {
 	GpsObservationHeader
 	SatelliteData []SatelliteData1001
@@ -133,6 +134,7 @@ func DeserializeSatelliteData1002(r *iobit.Reader, numSats int) (satData []Satel
 	return satData
 }
 
+// Extended L1-Only GPS RTK Observables
 type Message1002 struct {
 	GpsObservationHeader
 	SatelliteData []SatelliteData1002
@@ -198,6 +200,7 @@ func DeserializeSatelliteData1003(r *iobit.Reader, numSats int) (satData []Satel
 	return satData
 }
 
+// L1&L2 GPS RTK Observables
 type Message1003 struct {
 	GpsObservationHeader
 	SatelliteData []SatelliteData1003
@@ -271,6 +274,7 @@ func DeserializeSatelliteData1004(r *iobit.Reader, numSats int) (satData []Satel
 	return satData
 }
 
+// Extended L1&L2 GPS RTK Observables
 type Message1004 struct {
 	GpsObservationHeader
 	SatelliteData []SatelliteData1004
@@ -312,6 +316,7 @@ func (msg Message1004) Time() time.Time {
 	return GpsTime(msg.Epoch)
 }
 
+// GPS Ephemerides
 type Message1019 struct {
 	MessageNumber uint16
 	SatelliteId   uint8

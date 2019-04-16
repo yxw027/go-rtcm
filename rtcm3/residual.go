@@ -27,6 +27,7 @@ func NewResidualSatelliteData(r *iobit.Reader, nsat int) (satData []ResidualSate
 	return satData
 }
 
+// GPS Network RTK Residual Message
 type Message1030 struct {
 	MessageNumber      uint16
 	Epoch              uint32
@@ -58,6 +59,7 @@ func (msg Message1030) Serialize() (data []byte) {
 }
 
 // Need to implement a Time method for GLONASS Residuals Epoch Time - DF225
+// GLONASS Network RTK Residual Message
 type Message1031 struct {
 	MessageNumber      uint16
 	Epoch              uint32
@@ -88,6 +90,7 @@ func (msg Message1031) Serialize() (data []byte) {
 	return data
 }
 
+// Physical Reference Station Position Message
 type Message1032 struct {
 	MessageNumber                 uint16
 	NonPhysicalReferenceStationId uint16

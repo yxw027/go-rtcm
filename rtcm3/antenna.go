@@ -64,6 +64,7 @@ func DeserializeAntennaReferencePoint(data []byte) AntennaReferencePoint {
 	}
 }
 
+// Stationary RTK Reference Station ARP
 type Message1005 struct {
 	AntennaReferencePoint
 }
@@ -78,6 +79,7 @@ func (msg Message1005) Serialize() (data []byte) {
 	return SerializeAntennaReferencePoint(msg.AntennaReferencePoint)
 }
 
+// Stationary RTK Reference Station ARP with Antenna Height
 type Message1006 struct {
 	AntennaReferencePoint
 	AntennaHeight uint16
@@ -130,6 +132,7 @@ func SerializeAntennaDescriptor(desc MessageAntennaDescriptor) []byte {
 	return append(data, desc.AntennaSetupId)
 }
 
+// Antenna Descriptor
 type Message1007 struct {
 	MessageAntennaDescriptor
 }
@@ -145,6 +148,7 @@ func (msg Message1007) Serialize() []byte {
 	return SerializeAntennaDescriptor(msg.MessageAntennaDescriptor)
 }
 
+// Antenna Descriptor & Serial Number
 type Message1008 struct {
 	MessageAntennaDescriptor
 	SerialNumber string
@@ -165,6 +169,7 @@ func (msg Message1008) Serialize() []byte {
 	return append(data, []byte(msg.SerialNumber)...)
 }
 
+// Receiver and Antenna Descriptors
 type Message1033 struct {
 	MessageAntennaDescriptor
 	AntennaSerialNumber     string

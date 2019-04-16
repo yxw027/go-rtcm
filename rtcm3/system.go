@@ -11,6 +11,7 @@ type MessageAnnouncement struct {
 	TransmissionInterval uint16
 }
 
+// System Parameters
 type Message1013 struct {
 	MessageNumber      uint16
 	ReferenceStationId uint16
@@ -64,6 +65,7 @@ func (msg Message1013) Serialize() []byte {
 	return data
 }
 
+// Unicode Text String
 type Message1029 struct {
 	MessageNumber      uint16
 	ReferenceStationId uint16
