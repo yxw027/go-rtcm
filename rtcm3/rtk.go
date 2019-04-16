@@ -48,3 +48,129 @@ func (msg Message1014) Serialize() (data []byte) {
 	w.Flush()
 	return data
 }
+
+type NetworkRTKHeader struct {
+	MessageNumber               uint16 `12`
+	NetworkID                   uint8  `8`
+	SubnetworkID                uint8  `4`
+	Epoch                       uint32 `23`
+	MultipleMessageIndicator    bool   `1`
+	MasterReferenceStationID    uint16 `12`
+	AuxiliaryReferenceStationID uint16 `12`
+	SatelliteCount              uint8  `4`
+}
+
+func DeserializeNetworkRTKHeader(r *iobit.Reader) NetworkRTKHeader {
+	return NetworkRTKHeader{
+		MessageNumber:               r.Uint16(12),
+		NetworkID:                   r.Uint8(8),
+		SubnetworkID:                r.Uint8(4),
+		Epoch:                       r.Uint32(23),
+		MultipleMessageIndicator:    r.Bit(),
+		MasterReferenceStationID:    r.Uint16(12),
+		AuxiliaryReferenceStationID: r.Uint16(12),
+		SatelliteCount:              r.Uint8(4),
+	}
+}
+
+type SatelliteData1015 struct {
+	SatelliteID                                 uint8 `6`
+	AmbiguityStatusFlag                         uint8 `2`
+	NonSyncCount                                uint8 `3`
+	IonosphericCarrierPhaseCorrectionDifference int32 `17`
+}
+
+func DeserializeSatelliteData1015(r *iobit.Reader, nsat int) (data []SatelliteData1015) {
+	for i := 0; i < nsat; i++ {
+		data = append(data, SatelliteData1015{
+			SatelliteID:         r.Uint8(6),
+			AmbiguityStatusFlag: r.Uint8(2),
+			NonSyncCount:        r.Uint8(3),
+			IonosphericCarrierPhaseCorrectionDifference: r.Int32(17),
+		})
+	}
+	return data
+}
+
+// GPS Ionospheric Correction Differences
+type Message1015 struct {
+	NetworkRTKHeader
+	SatelliteData []SatelliteData1015
+}
+
+func DeserializeMessage1015(data []byte) (msg Message1015) {
+	r := iobit.NewReader(data)
+	msg.NetworkRTKHeader = DeserializeNetworkRTKHeader(&r)
+	msg.SatelliteData = DeserializeSatelliteData1015(&r, int(msg.NetworkRTKHeader.SatelliteCount))
+	return msg
+}
+
+type SatelliteData1016 struct {
+	SatelliteID                               uint8 `6`
+	AmbiguityStatusFlag                       uint8 `2`
+	NonSyncCount                              uint8 `3`
+	GeometricCarrierPhaseCorrectionDifference int32 `17`
+	IODE                                      uint8 `8`
+}
+
+func DeserializeSatelliteData1016(r *iobit.Reader, nsat int) (data []SatelliteData1016) {
+	for i := 0; i < nsat; i++ {
+		data = append(data, SatelliteData1016{
+			SatelliteID:         r.Uint8(6),
+			AmbiguityStatusFlag: r.Uint8(2),
+			NonSyncCount:        r.Uint8(3),
+			GeometricCarrierPhaseCorrectionDifference: r.Int32(17),
+			IODE: r.Uint8(8),
+		})
+	}
+	return data
+}
+
+// GPS Geometric Correction Differences
+type Message1016 struct {
+	NetworkRTKHeader
+	SatelliteData []SatelliteData1016
+}
+
+func DeserializeMessage1016(data []byte) (msg Message1016) {
+	r := iobit.NewReader(data)
+	msg.NetworkRTKHeader = DeserializeNetworkRTKHeader(&r)
+	msg.SatelliteData = DeserializeSatelliteData1016(&r, int(msg.NetworkRTKHeader.SatelliteCount))
+	return msg
+}
+
+type SatelliteData1017 struct {
+	SatelliteID                                 uint8 `6`
+	AmbiguityStatusFlag                         uint8 `2`
+	NonSyncCount                                uint8 `3`
+	GeometricCarrierPhaseCorrectionDifference   int32 `17`
+	IODE                                        uint8 `8`
+	IonosphericCarrierPhaseCorrectionDifference int32 `17`
+}
+
+func DeserializeSatelliteData1017(r *iobit.Reader, nsat int) (data []SatelliteData1017) {
+	for i := 0; i < nsat; i++ {
+		data = append(data, SatelliteData1017{
+			SatelliteID:         r.Uint8(6),
+			AmbiguityStatusFlag: r.Uint8(2),
+			NonSyncCount:        r.Uint8(3),
+			GeometricCarrierPhaseCorrectionDifference: r.Int32(17),
+			IODE: r.Uint8(8),
+			IonosphericCarrierPhaseCorrectionDifference: r.Int32(17),
+		})
+	}
+	return data
+}
+
+// GPS Combined Geometric and Ionospheric Correction Differences
+type Message1017 struct {
+	NetworkRTKHeader
+	SatelliteData []SatelliteData1017
+}
+
+func DeserializeMessage1017(data []byte) (msg Message1017) {
+	r := iobit.NewReader(data)
+	msg.NetworkRTKHeader = DeserializeNetworkRTKHeader(&r)
+	msg.SatelliteData = DeserializeSatelliteData1017(&r, int(msg.NetworkRTKHeader.SatelliteCount))
+	return msg
+}
