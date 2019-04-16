@@ -443,6 +443,10 @@ type Message1014 struct {
 	AuxMasterDeltaHeight         int32  `23`
 }
 
+func (msg Message1014) Number() uint16 {
+	return msg.MessageNumber
+}
+
 func DeserializeMessage1014(data []byte) Message1014 {
 	r := iobit.NewReader(data)
 	return Message1014{
@@ -484,6 +488,10 @@ type NetworkRTKHeader struct {
 	MasterReferenceStationID    uint16 `12`
 	AuxiliaryReferenceStationID uint16 `12`
 	SatelliteCount              uint8  `4`
+}
+
+func (msg NetworkRTKHeader) Number() uint16 {
+	return msg.MessageNumber
 }
 
 func DeserializeNetworkRTKHeader(r *iobit.Reader) NetworkRTKHeader {
@@ -531,6 +539,10 @@ func DeserializeMessage1015(data []byte) (msg Message1015) {
 	return msg
 }
 
+func (msg Message1015) Serialize() (data []byte) {
+	return []byte{}
+}
+
 type SatelliteData1016 struct {
 	SatelliteID                               uint8 `6`
 	AmbiguityStatusFlag                       uint8 `2`
@@ -563,6 +575,10 @@ func DeserializeMessage1016(data []byte) (msg Message1016) {
 	msg.NetworkRTKHeader = DeserializeNetworkRTKHeader(&r)
 	msg.SatelliteData = DeserializeSatelliteData1016(&r, int(msg.NetworkRTKHeader.SatelliteCount))
 	return msg
+}
+
+func (msg Message1016) Serialize() (data []byte) {
+	return []byte{}
 }
 
 type SatelliteData1017 struct {
@@ -599,4 +615,8 @@ func DeserializeMessage1017(data []byte) (msg Message1017) {
 	msg.NetworkRTKHeader = DeserializeNetworkRTKHeader(&r)
 	msg.SatelliteData = DeserializeSatelliteData1017(&r, int(msg.NetworkRTKHeader.SatelliteCount))
 	return msg
+}
+
+func (msg Message1017) Serialize() (data []byte) {
+	return []byte{}
 }
