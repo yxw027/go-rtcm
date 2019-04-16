@@ -14,6 +14,7 @@ github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310/go.mod h1:ufUuZ+zHj
 github.com/aws/aws-sdk-go v1.15.27/go.mod h1:mFuSZ37Z9YOHbQEwBWztmVzqXrEkub65tZoCYDt7FT0=
 github.com/aws/aws-sdk-go v1.15.57/go.mod h1:mFuSZ37Z9YOHbQEwBWztmVzqXrEkub65tZoCYDt7FT0=
 github.com/aws/aws-sdk-go v1.17.1/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
+github.com/aws/aws-sdk-go v1.17.9/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/bamiaux/iobit v0.0.0-20170418073505-498159a04883 h1:XNtOMwxmV2PI/vuTHDZnFzGIFNUh8MK73q7+Kna7AXs=
 github.com/bamiaux/iobit v0.0.0-20170418073505-498159a04883/go.mod h1:9IjZnSQGh45J46HHS45pxuMJ6WFTtSXbaX0FoHDvxh8=
 github.com/benburkert/http v0.0.0-20140610191404-7b1c7d0a482c h1:YuvoJany/EHKyXIEMIjXhUk0SmixfzrShM6SQ7iXrLE=
@@ -38,6 +39,8 @@ github.com/eclipse/paho.mqtt.golang v1.1.1/go.mod h1:H9keYFcgq3Qr5OUJm/JZI/i6U7j
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/geoscienceaustralia/go-rtcm v0.0.0-20190220051918-c57311901c51/go.mod h1:EdFqBCopmMR+tRUfqXmEMYcIxUjSwbnueaQguhRpRrI=
+github.com/geoscienceaustralia/go-rtcm v0.0.0-20190416075447-1d5a2122a3c6 h1:Uw6z9sano+sWsOda8SzLT3NbEMZ7rCspzLekWbXeYII=
+github.com/geoscienceaustralia/go-rtcm v0.0.0-20190416075447-1d5a2122a3c6/go.mod h1:FsRFXpddEvOyd3veR2t9CfWo0jZJhps4JFR9zWJUEUM=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-ini/ini v1.25.4/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
 github.com/go-ini/ini v1.39.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
@@ -53,7 +56,6 @@ github.com/golang/mock v1.1.1/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfb
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/google/btree v0.0.0-20180124185431-e89373fe6b4a/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
 github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
-github.com/google/go-cmp v0.2.0 h1:+dTQ8DZQJz0Mb/HjFlkptS1FeQ4cWSnN941F8aEG4SQ=
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 github.com/google/gofuzz v0.0.0-20170612174753-24818f796faf/go.mod h1:HP5RmnzzSNb993RKQDq4+1A4ia9nllfqcQFTQJedwGI=
 github.com/google/martian v2.1.0+incompatible/go.mod h1:9I4somxYTbIHy5NJKHRl3wXiIaQGbYVAs8BPL6v8lEs=
@@ -177,10 +179,10 @@ github.com/tmc/grpc-websocket-proxy v0.0.0-20170815181823-89b8d40f7ca8/go.mod h1
 github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/ugorji/go v1.1.1/go.mod h1:hnLbHMwcvSihnDhEfx2/BzKp2xb0Y+ErdfYcrs9tkJQ=
 github.com/ugorji/go/codec v0.0.0-20181012064053-8333dd449516/go.mod h1:VFNgLljTbGfSG7qAOspJ7OScBnGdDN/yBr0sguwnwf0=
-github.com/umeat/go-ntrip v0.0.0-20190218042343-e07f06f966af h1:iWwnvnWvzh3eK1kZ7Ml2ltpymSXyU4vPW3RjVGkjIjE=
 github.com/umeat/go-ntrip v0.0.0-20190218042343-e07f06f966af/go.mod h1:7BDbFLDmcEBvB1A9rpLps/QVXz2MSHYaDv0BMrQwIG8=
-github.com/umeat/go-ntrip v0.0.0-20190228093706-fa7f05471fcc h1:r+VR9jXhHgXP/rHobSi4VE8FgMGEZVAYAGH9D2MAS1g=
 github.com/umeat/go-ntrip v0.0.0-20190228093706-fa7f05471fcc/go.mod h1:LJZrU6MbowRpXb3f2hEZsJ9QnJdIxUHG1NWbUN7nPDk=
+github.com/umeat/go-ntrip v0.0.0-20190320005416-8d7fd45c829d h1:XMUHyP+JQohJMhAMmUN6+Yp+81DdJHEiszL1uXJsIG4=
+github.com/umeat/go-ntrip v0.0.0-20190320005416-8d7fd45c829d/go.mod h1:v0IFmDYu07qn8JwzV40JlNEYZjYrRVaZPHWc1GD/3Xo=
 github.com/urfave/cli v1.18.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
 github.com/xiang90/probing v0.0.0-20160813154853-07dd2e8dfe18/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
