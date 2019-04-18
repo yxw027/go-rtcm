@@ -6,7 +6,7 @@ import (
 
 var Message1001 = rtcm3.Message1001{
 	GpsObservationHeader: rtcm3.GpsObservationHeader{
-		MessageNumber:      0x3e9,
+		AbstractMessage: rtcm3.AbstractMessage{0x3e9},
 		ReferenceStationId: 0x0,
 		Epoch:              0xb74ffa8,
 		SynchronousGnss:    true,

@@ -14,9 +14,16 @@ type Message interface {
 	Number() int
 }
 
+type AbstractMessage struct {
+	MessageNumber uint16
+}
+
+func (msg AbstractMessage) Number() int {
+	return int(msg.MessageNumber)
+}
+
 func DeserializeMessage(payload []byte) (msg Message) {
 	messageNumber := binary.BigEndian.Uint16(payload[0:2]) >> 4
-
 	switch int(messageNumber) {
 	case 1001:
 		return DeserializeMessage1001(payload)

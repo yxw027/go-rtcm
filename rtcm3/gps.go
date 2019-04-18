@@ -7,7 +7,8 @@ import (
 )
 
 type GpsObservationHeader struct {
-	MessageNumber      uint16
+	AbstractMessage
+//	MessageNumber      uint16
 	ReferenceStationId uint16
 	Epoch              uint32
 	SynchronousGnss    bool
@@ -16,13 +17,13 @@ type GpsObservationHeader struct {
 	SmoothingInterval  uint8
 }
 
-func (obsHeader GpsObservationHeader) Number() int {
-	return int(obsHeader.MessageNumber)
-}
+//func (obsHeader GpsObservationHeader) Number() int {
+//	return int(obsHeader.MessageNumber)
+//}
 
 func NewGpsObservationHeader(r *iobit.Reader) (header GpsObservationHeader) {
 	return GpsObservationHeader{
-		MessageNumber:      r.Uint16(12),
+		AbstractMessage:    AbstractMessage{r.Uint16(12)},
 		ReferenceStationId: r.Uint16(12),
 		Epoch:              r.Uint32(30),
 		SynchronousGnss:    r.Bit(),
