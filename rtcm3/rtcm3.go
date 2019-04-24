@@ -7,6 +7,9 @@ import (
 	"github.com/bamiaux/iobit"
 	"io"
 	"time"
+	//	"reflect"
+	//	"strings"
+	//	"strconv"
 )
 
 type Message interface {
@@ -14,9 +17,18 @@ type Message interface {
 	Number() int
 }
 
+type AbstractMessage struct {
+	MessageNumber uint16 `struct:"uint16:12"`
+}
+
+func (msg AbstractMessage) Number() int {
+	return int(msg.MessageNumber)
+	//	number, _ := strconv.Atoi(strings.Split(reflect.TypeOf(msg).String(), "Message")[1])
+	//	return number
+}
+
 func DeserializeMessage(payload []byte) (msg Message) {
 	messageNumber := binary.BigEndian.Uint16(payload[0:2]) >> 4
-
 	switch int(messageNumber) {
 	case 1001:
 		return DeserializeMessage1001(payload)

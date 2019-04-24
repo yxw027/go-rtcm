@@ -27,4 +27,3 @@ func GlonassTimeShort(e uint32, now time.Time) time.Time {
 	dow := now.Truncate(time.Hour * 24)
 	return dow.Add(tod)
 }
-
