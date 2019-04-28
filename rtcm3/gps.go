@@ -2,7 +2,6 @@ package rtcm3
 
 import (
 	"encoding/binary"
-	"github.com/bamiaux/iobit"
 	"github.com/go-restruct/restruct"
 	"time"
 )
@@ -215,144 +214,89 @@ func (msg Message1014) Serialize() []byte {
 	return data
 }
 
-type NetworkRTKHeader struct {
-	MessageNumber               uint16
-	NetworkID                   uint8
-	SubnetworkID                uint8
-	Epoch                       uint32
-	MultipleMessageIndicator    bool
-	MasterReferenceStationID    uint16
-	AuxiliaryReferenceStationID uint16
-	SatelliteCount              uint8
-}
-
-func (msg NetworkRTKHeader) Number() int {
-	return int(msg.MessageNumber)
-}
-
-func DeserializeNetworkRTKHeader(r *iobit.Reader) NetworkRTKHeader {
-	return NetworkRTKHeader{
-		MessageNumber:               r.Uint16(12),
-		NetworkID:                   r.Uint8(8),
-		SubnetworkID:                r.Uint8(4),
-		Epoch:                       r.Uint32(23),
-		MultipleMessageIndicator:    r.Bit(),
-		MasterReferenceStationID:    r.Uint16(12),
-		AuxiliaryReferenceStationID: r.Uint16(12),
-		SatelliteCount:              r.Uint8(4),
-	}
-}
-
-type SatelliteData1015 struct {
-	SatelliteID                                 uint8
-	AmbiguityStatusFlag                         uint8
-	NonSyncCount                                uint8
-	IonosphericCarrierPhaseCorrectionDifference int32
-}
-
-func DeserializeSatelliteData1015(r *iobit.Reader, nsat int) (data []SatelliteData1015) {
-	for i := 0; i < nsat; i++ {
-		data = append(data, SatelliteData1015{
-			SatelliteID:         r.Uint8(6),
-			AmbiguityStatusFlag: r.Uint8(2),
-			NonSyncCount:        r.Uint8(3),
-			IonosphericCarrierPhaseCorrectionDifference: r.Int32(17),
-		})
-	}
-	return data
-}
-
 // GPS Ionospheric Correction Differences
 type Message1015 struct {
-	NetworkRTKHeader
-	SatelliteData []SatelliteData1015
+	AbstractMessage
+	NetworkID                   uint8  `struct:"uint8"`
+	SubnetworkID                uint8  `struct:"uint8:4"`
+	Epoch                       uint32 `struct:"uint32:23"`
+	MultipleMessageIndicator    bool   `struct:"uint8:1,variantbool"`
+	MasterReferenceStationID    uint16 `struct:"uint16:12"`
+	AuxiliaryReferenceStationID uint16 `struct:"uint16:12"`
+	SatelliteCount              uint8  `struct:"uint8:4"`
+	SatelliteData []struct{
+		SatelliteID                                 uint8 `struct:"uint8:6"`
+		AmbiguityStatusFlag                         uint8 `struct:"uint8:2"`
+		NonSyncCount                                uint8 `struct:"uint8:3"`
+		IonosphericCarrierPhaseCorrectionDifference int32 `struct:"int32:17"`
+	}
 }
 
 func DeserializeMessage1015(data []byte) (msg Message1015) {
-	r := iobit.NewReader(data)
-	msg.NetworkRTKHeader = DeserializeNetworkRTKHeader(&r)
-	msg.SatelliteData = DeserializeSatelliteData1015(&r, int(msg.NetworkRTKHeader.SatelliteCount))
+	restruct.Unpack(data, binary.BigEndian, &msg)
 	return msg
 }
 
-func (msg Message1015) Serialize() (data []byte) {
-	return []byte{}
-}
-
-type SatelliteData1016 struct {
-	SatelliteID                               uint8
-	AmbiguityStatusFlag                       uint8
-	NonSyncCount                              uint8
-	GeometricCarrierPhaseCorrectionDifference int32
-	IODE                                      uint8
-}
-
-func DeserializeSatelliteData1016(r *iobit.Reader, nsat int) (data []SatelliteData1016) {
-	for i := 0; i < nsat; i++ {
-		data = append(data, SatelliteData1016{
-			SatelliteID:         r.Uint8(6),
-			AmbiguityStatusFlag: r.Uint8(2),
-			NonSyncCount:        r.Uint8(3),
-			GeometricCarrierPhaseCorrectionDifference: r.Int32(17),
-			IODE: r.Uint8(8),
-		})
-	}
+func (msg Message1015) Serialize() []byte {
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
 	return data
 }
 
 // GPS Geometric Correction Differences
 type Message1016 struct {
-	NetworkRTKHeader
-	SatelliteData []SatelliteData1016
+	AbstractMessage
+	NetworkID                   uint8  `struct:"uint8"`
+	SubnetworkID                uint8  `struct:"uint8:4"`
+	Epoch                       uint32 `struct:"uint32:23"`
+	MultipleMessageIndicator    bool   `struct:"uint8:1,variantbool"`
+	MasterReferenceStationID    uint16 `struct:"uint16:12"`
+	AuxiliaryReferenceStationID uint16 `struct:"uint16:12"`
+	SatelliteCount              uint8  `struct:"uint8:4"`
+	SatelliteData []struct{
+		SatelliteID                               uint8 `struct:"uint8:6"`
+		AmbiguityStatusFlag                       uint8 `struct:"uint8:2"`
+		NonSyncCount                              uint8 `struct:"uint8:3"`
+		GeometricCarrierPhaseCorrectionDifference int32 `struct:"int32:17"`
+		IODE                                      uint8 `struct:"uint8"`
+	}
 }
 
 func DeserializeMessage1016(data []byte) (msg Message1016) {
-	r := iobit.NewReader(data)
-	msg.NetworkRTKHeader = DeserializeNetworkRTKHeader(&r)
-	msg.SatelliteData = DeserializeSatelliteData1016(&r, int(msg.NetworkRTKHeader.SatelliteCount))
+	restruct.Unpack(data, binary.BigEndian, &msg)
 	return msg
 }
 
-func (msg Message1016) Serialize() (data []byte) {
-	return []byte{}
-}
-
-type SatelliteData1017 struct {
-	SatelliteID                                 uint8
-	AmbiguityStatusFlag                         uint8
-	NonSyncCount                                uint8
-	GeometricCarrierPhaseCorrectionDifference   int32
-	IODE                                        uint8
-	IonosphericCarrierPhaseCorrectionDifference int32
-}
-
-func DeserializeSatelliteData1017(r *iobit.Reader, nsat int) (data []SatelliteData1017) {
-	for i := 0; i < nsat; i++ {
-		data = append(data, SatelliteData1017{
-			SatelliteID:         r.Uint8(6),
-			AmbiguityStatusFlag: r.Uint8(2),
-			NonSyncCount:        r.Uint8(3),
-			GeometricCarrierPhaseCorrectionDifference: r.Int32(17),
-			IODE: r.Uint8(8),
-			IonosphericCarrierPhaseCorrectionDifference: r.Int32(17),
-		})
-	}
+func (msg Message1016) Serialize() []byte {
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
 	return data
 }
 
 // GPS Combined Geometric and Ionospheric Correction Differences
 type Message1017 struct {
-	NetworkRTKHeader
-	SatelliteData []SatelliteData1017
+	AbstractMessage
+	NetworkID                   uint8  `struct:"uint8"`
+	SubnetworkID                uint8  `struct:"uint8:4"`
+	Epoch                       uint32 `struct:"uint32:23"`
+	MultipleMessageIndicator    bool   `struct:"uint8:1,variantbool"`
+	MasterReferenceStationID    uint16 `struct:"uint16:12"`
+	AuxiliaryReferenceStationID uint16 `struct:"uint16:12"`
+	SatelliteCount              uint8  `struct:"uint8:4"`
+	SatelliteData []struct{
+		SatelliteID                                 uint8 `struct:"uint8:6"`
+		AmbiguityStatusFlag                         uint8 `struct:"uint8:2"`
+		NonSyncCount                                uint8 `struct:"uint8:3"`
+		GeometricCarrierPhaseCorrectionDifference   int32 `struct:"int32:17"`
+		IODE                                        uint8 `struct:"uint8"`
+		IonosphericCarrierPhaseCorrectionDifference int32 `struct:"uint32:17"`
+	}
 }
 
 func DeserializeMessage1017(data []byte) (msg Message1017) {
-	r := iobit.NewReader(data)
-	msg.NetworkRTKHeader = DeserializeNetworkRTKHeader(&r)
-	msg.SatelliteData = DeserializeSatelliteData1017(&r, int(msg.NetworkRTKHeader.SatelliteCount))
+	restruct.Unpack(data, binary.BigEndian, &msg)
 	return msg
 }
 
-func (msg Message1017) Serialize() (data []byte) {
-	return []byte{}
+func (msg Message1017) Serialize() []byte {
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
+	return data
 }
