@@ -7,14 +7,16 @@ import (
 	"github.com/bamiaux/iobit"
 	"io"
 	"time"
-	//	"reflect"
-	//	"strings"
-	//	"strconv"
 )
 
 type Message interface {
 	Serialize() []byte
 	Number() int
+}
+
+type Observable interface {
+	Message
+	Time() time.Time
 }
 
 type AbstractMessage struct {
@@ -23,8 +25,6 @@ type AbstractMessage struct {
 
 func (msg AbstractMessage) Number() int {
 	return int(msg.MessageNumber)
-	//	number, _ := strconv.Atoi(strings.Split(reflect.TypeOf(msg).String(), "Message")[1])
-	//	return number
 }
 
 func DeserializeMessage(payload []byte) (msg Message) {
@@ -181,11 +181,6 @@ func (msg MessageUnknown) Number() (msgNumber int) {
 	return int(binary.BigEndian.Uint16(msg.Payload[0:4]) >> 4)
 }
 
-type Observable interface {
-	Message
-	Time() time.Time
-}
-
 var FramePreamble byte = 0xD3
 
 type Frame struct {
@@ -271,10 +266,12 @@ type Scanner struct {
 	Reader *bufio.Reader
 }
 
+// NewScanner returns a Scanner for the given io.Reader
 func NewScanner(r io.Reader) Scanner {
 	return Scanner{bufio.NewReader(r)}
 }
 
+// Next reads from IO until a Message is found
 func (scanner Scanner) Next() (message Message, err error) {
 	frame, err := scanner.NextFrame()
 	if err != nil {
