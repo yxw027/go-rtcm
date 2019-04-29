@@ -8,14 +8,14 @@ import (
 
 type Message1001 struct {
 	AbstractMessage
-	ReferenceStationId uint16 `struct:"uint16:12"`
+	ReferenceStationID uint16 `struct:"uint16:12"`
 	Epoch              uint32 `struct:"uint32:30"`
-	SynchronousGnss    bool   `struct:"uint8:1,variantbool"`
+	SynchronousGNSS    bool   `struct:"uint8:1,variantbool"`
 	SignalsProcessed   uint8  `struct:"uint8:5,sizeof=SatelliteData"`
 	SmoothingIndicator bool   `struct:"uint8:1,variantbool"`
 	SmoothingInterval  uint8  `struct:"uint8:3"`
 	SatelliteData      []struct {
-		SatelliteId         uint8  `struct:"uint8:6"`
+		SatelliteID         uint8  `struct:"uint8:6"`
 		L1CodeIndicator     bool   `struct:"uint8:1,variantbool"`
 		L1Pseudorange       uint32 `struct:"uint32:24"`
 		L1PhaseRange        int32  `struct:"int32:20"`
@@ -40,20 +40,20 @@ func (msg Message1001) Time() time.Time {
 // Extended L1-Only GPS RTK Observables
 type Message1002 struct {
 	AbstractMessage
-	ReferenceStationId uint16 `struct:"uint16:12"`
+	ReferenceStationID uint16 `struct:"uint16:12"`
 	Epoch              uint32 `struct:"uint32:30"`
-	SynchronousGnss    bool   `struct:"uint8:1,variantbool"`
+	SynchronousGNSS    bool   `struct:"uint8:1,variantbool"`
 	SignalsProcessed   uint8  `struct:"uint8:5,sizeof=SatelliteData"`
 	SmoothingIndicator bool   `struct:"uint8:1,variantbool"`
 	SmoothingInterval  uint8  `struct:"uint8:3"`
 	SatelliteData      []struct {
-		SatelliteId            uint8  `struct:"uint8:6"`
+		SatelliteID            uint8  `struct:"uint8:6"`
 		L1CodeIndicator        bool   `struct:"uint8:1,variantbool"`
 		L1Pseudorange          uint32 `struct:"uint32:24"`
 		L1PhaseRange           int32  `struct:"int32:20"`
 		L1LockTimeIndicator    uint8  `struct:"uint8:7"`
 		L1PseudorangeAmbiguity uint8  `struct:"uint8"`
-		L1Cnr                  uint8  `struct:"uint8"`
+		L1CNR                  uint8  `struct:"uint8"`
 	}
 }
 
@@ -74,14 +74,14 @@ func (msg Message1002) Time() time.Time {
 // L1&L2 GPS RTK Observables
 type Message1003 struct {
 	AbstractMessage
-	ReferenceStationId uint16 `struct:"uint16:12"`
+	ReferenceStationID uint16 `struct:"uint16:12"`
 	Epoch              uint32 `struct:"uint32:30"`
-	SynchronousGnss    bool   `struct:"uint8:1,variantbool"`
+	SynchronousGNSS    bool   `struct:"uint8:1,variantbool"`
 	SignalsProcessed   uint8  `struct:"uint8:5,sizeof=SatelliteData"`
 	SmoothingIndicator bool   `struct:"uint8:1,variantbool"`
 	SmoothingInterval  uint8  `struct:"uint8:3"`
 	SatelliteData      []struct {
-		SatelliteId             uint8  `struct:"uint8:6"`
+		SatelliteID             uint8  `struct:"uint8:6"`
 		L1CodeIndicator         bool   `struct:"uint8:1,variantbool"`
 		L1Pseudorange           uint32 `struct:"uint32:24"`
 		L1PhaseRange            int32  `struct:"int32:20"`
@@ -110,25 +110,25 @@ func (msg Message1003) Time() time.Time {
 // Extended L1&L2 GPS RTK Observables
 type Message1004 struct {
 	AbstractMessage
-	ReferenceStationId uint16 `struct:"uint16:12"`
+	ReferenceStationID uint16 `struct:"uint16:12"`
 	Epoch              uint32 `struct:"uint32:30"`
-	SynchronousGnss    bool   `struct:"uint8:1,variantbool"`
+	SynchronousGNSS    bool   `struct:"uint8:1,variantbool"`
 	SignalsProcessed   uint8  `struct:"uint8:5,sizeof=SatelliteData"`
 	SmoothingIndicator bool   `struct:"uint8:1,variantbool"`
 	SmoothingInterval  uint8  `struct:"uint8:3"`
 	SatelliteData      []struct {
-		SatelliteId             uint8  `struct:"uint8:6"`
+		SatelliteID             uint8  `struct:"uint8:6"`
 		L1CodeIndicator         bool   `struct:"uint8:1,variantbool"`
 		L1Pseudorange           uint32 `struct:"uint32:24"`
 		L1PhaseRange            int32  `struct:"int32:20"`
 		L1LockTimeIndicator     uint8  `struct:"uint8:7"`
 		L1PseudorangeAmbiguity  uint8  `struct:"uint8"`
-		L1Cnr                   uint8  `struct:"uint8"`
+		L1CNR                   uint8  `struct:"uint8"`
 		L2CodeIndicator         uint8  `struct:"uint8:2"`
 		L2PseudorangeDifference int16  `struct:"int16:14"`
 		L2PhaseRange            int32  `struct:"int32:20"`
 		L2LockTimeIndicator     uint8  `struct:"uint8:7"`
-		L2Cnr                   uint8  `struct:"uint8"`
+		L2CNR                   uint8  `struct:"uint8"`
 	}
 }
 
@@ -149,36 +149,36 @@ func (msg Message1004) Time() time.Time {
 // GPS Ephemerides
 type Message1019 struct {
 	AbstractMessage
-	SatelliteId   uint8  `struct:"uint8:6"`
-	GpsWeekNumber uint16 `struct:"uint16:10"`
-	SvAccuracy    uint8  `struct:"uint8:4"`
-	L2Code        uint8  `struct:"uint8:2"`
-	Idot          int16  `struct:"int16:14"`
-	Iode          uint8  `struct:"uint8"`
-	Toc           uint16 `struct:"uint16"`
-	Af2           int8   `struct:"int8"`
-	Af1           int16  `struct:"int16"`
-	Af0           int32  `struct:"int32:22"`
-	Iodc          uint16 `struct:"uint16:10"`
-	Crs           int16  `struct:"int16"`
-	DeltaN        int16  `struct:"int16"`
-	M0            int32  `struct:"int32"`
-	Cuc           int16  `struct:"int16"`
-	Eccentricity  uint32 `struct:"uint32"`
-	Cus           int16  `struct:"int16"`
-	SrA           uint32 `struct:"uint32"`
-	Toe           uint16 `struct:"uint16"`
-	Cic           int16  `struct:"int16"`
-	Omega0        int32  `struct:"int32"`
-	Cis           int16  `struct:"int16"`
-	I0            int32  `struct:"int32"`
-	C_rc          int16  `struct:"int16"`
-	Perigee       int32  `struct:"int32"`
-	OmegaDot      int32  `struct:"int32:24"`
-	Tgd           int8   `struct:"int8"`
-	SvHealth      uint8  `struct:"uint8:6"`
-	L2PDataFlag   bool   `struct:"uint8:1,variantbool"`
-	FitInterval   bool   `struct:"uint8:1,variantbool"`
+	SatelliteID  uint8  `struct:"uint8:6"`
+	WeekNumber   uint16 `struct:"uint16:10"`
+	SVAccuracy   uint8  `struct:"uint8:4"`
+	CodeOnL2     uint8  `struct:"uint8:2"`
+	IDOT         int16  `struct:"int16:14"`
+	IODE         uint8  `struct:"uint8"`
+	Toc          uint16 `struct:"uint16"`
+	Af2          int8   `struct:"int8"`
+	Af1          int16  `struct:"int16"`
+	Af0          int32  `struct:"int32:22"`
+	IODC         uint16 `struct:"uint16:10"`
+	Crs          int16  `struct:"int16"`
+	DeltaN       int16  `struct:"int16"`
+	M0           int32  `struct:"int32"`
+	Cuc          int16  `struct:"int16"`
+	Eccentricity uint32 `struct:"uint32"`
+	Cus          int16  `struct:"int16"`
+	SrA          uint32 `struct:"uint32"`
+	Toe          uint16 `struct:"uint16"`
+	Cic          int16  `struct:"int16"`
+	Omega0       int32  `struct:"int32"`
+	Cis          int16  `struct:"int16"`
+	I0           int32  `struct:"int32"`
+	Crc          int16  `struct:"int16"`
+	Perigee      int32  `struct:"int32"`
+	OmegaDot     int32  `struct:"int32:24"`
+	Tgd          int8   `struct:"int8"`
+	SVHealth     uint8  `struct:"uint8:6"`
+	L2PDataFlag  bool   `struct:"uint8:1,variantbool"`
+	FitInterval  bool   `struct:"uint8:1,variantbool"`
 }
 
 func DeserializeMessage1019(data []byte) (msg Message1019) {
@@ -223,7 +223,7 @@ type Message1015 struct {
 	MultipleMessageIndicator    bool   `struct:"uint8:1,variantbool"`
 	MasterReferenceStationID    uint16 `struct:"uint16:12"`
 	AuxiliaryReferenceStationID uint16 `struct:"uint16:12"`
-	SatelliteCount              uint8  `struct:"uint8:4"`
+	SatelliteCount              uint8  `struct:"uint8:4,sizeof=SatelliteData"`
 	SatelliteData []struct{
 		SatelliteID                                 uint8 `struct:"uint8:6"`
 		AmbiguityStatusFlag                         uint8 `struct:"uint8:2"`
@@ -251,7 +251,7 @@ type Message1016 struct {
 	MultipleMessageIndicator    bool   `struct:"uint8:1,variantbool"`
 	MasterReferenceStationID    uint16 `struct:"uint16:12"`
 	AuxiliaryReferenceStationID uint16 `struct:"uint16:12"`
-	SatelliteCount              uint8  `struct:"uint8:4"`
+	SatelliteCount              uint8  `struct:"uint8:4,sizeof=SatelliteData"`
 	SatelliteData []struct{
 		SatelliteID                               uint8 `struct:"uint8:6"`
 		AmbiguityStatusFlag                       uint8 `struct:"uint8:2"`
@@ -280,7 +280,7 @@ type Message1017 struct {
 	MultipleMessageIndicator    bool   `struct:"uint8:1,variantbool"`
 	MasterReferenceStationID    uint16 `struct:"uint16:12"`
 	AuxiliaryReferenceStationID uint16 `struct:"uint16:12"`
-	SatelliteCount              uint8  `struct:"uint8:4"`
+	SatelliteCount              uint8  `struct:"uint8:4,sizeof=SatelliteData"`
 	SatelliteData []struct{
 		SatelliteID                                 uint8 `struct:"uint8:6"`
 		AmbiguityStatusFlag                         uint8 `struct:"uint8:2"`
