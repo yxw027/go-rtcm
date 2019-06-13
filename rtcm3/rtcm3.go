@@ -194,6 +194,10 @@ func EncapsulateMessage(msg Message) (frame Frame) {
 	return frame
 }
 
+func (frame Frame) MessageNumber() uint16 {
+	return binary.BigEndian.Uint16(frame.Payload[0:2]) >> 4
+}
+
 func (frame Frame) Serialize() []byte {
 	data := make([]byte, frame.Length+6)
 	w := iobit.NewWriter(data)
