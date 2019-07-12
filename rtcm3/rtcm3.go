@@ -168,6 +168,7 @@ func (msg MessageUnknown) Number() (msgNumber int) {
 }
 
 type Observable interface {
+	Message
 	Time() time.Time
 }
 
