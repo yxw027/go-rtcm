@@ -2,8 +2,8 @@ package rtcm3
 
 import (
 	"encoding/binary"
-	"github.com/go-restruct/restruct"
 	"github.com/bamiaux/iobit"
+	"github.com/go-restruct/restruct"
 	"time"
 )
 
@@ -12,17 +12,17 @@ type Message1009 struct {
 	AbstractMessage
 	ReferenceStationId uint16 `struct:"uint16:12"`
 	Epoch              uint32 `struct:"uint32:27"`
-	SynchronousGnss    bool `struct:"uint8:1,variantbool"`
-	SignalCount        uint8 `struct:"uint8:5,sizeof=SignalData"`
-	SmoothingIndicator bool `struct:"uint8:1,variantbool"`
-	SmoothingInterval  uint8 `struct:"uint8:3"`
-	SignalData []struct{
-		SatelliteId         uint8 `struct:"uint8:6"`
-		L1CodeIndicator     bool `struct:"uint8:1,variantbool"`
-		FrequencyChannel    uint8 `struct:"uint8:5"`
+	SynchronousGnss    bool   `struct:"uint8:1,variantbool"`
+	SignalCount        uint8  `struct:"uint8:5,sizeof=SignalData"`
+	SmoothingIndicator bool   `struct:"uint8:1,variantbool"`
+	SmoothingInterval  uint8  `struct:"uint8:3"`
+	SignalData         []struct {
+		SatelliteId         uint8  `struct:"uint8:6"`
+		L1CodeIndicator     bool   `struct:"uint8:1,variantbool"`
+		FrequencyChannel    uint8  `struct:"uint8:5"`
 		L1Pseudorange       uint32 `struct:"uint32:25"`
-		L1PhaseRange        int32 `struct:"int32:20"`
-		L1LockTimeIndicator uint8 `struct:"uint8:7"`
+		L1PhaseRange        int32  `struct:"int32:20"`
+		L1LockTimeIndicator uint8  `struct:"uint8:7"`
 	}
 }
 
@@ -40,25 +40,24 @@ func (msg Message1009) Time() time.Time {
 	return GlonassTimeShort(msg.Epoch, time.Now().UTC())
 }
 
-
 // Extended L1-Only GLONASS RTK Observables
 type Message1010 struct {
 	AbstractMessage
 	ReferenceStationId uint16 `struct:"uint16:12"`
 	Epoch              uint32 `struct:"uint32:27"`
-	SynchronousGnss    bool `struct:"uint8:1,variantbool"`
-	SignalCount        uint8 `struct:"uint8:5,sizeof=SignalData"`
-	SmoothingIndicator bool `struct:"uint8:1,variantbool"`
-	SmoothingInterval  uint8 `struct:"uint8:3"`
-	SignalData []struct {
-		SatelliteId            uint8 `struct:"uint8:6"`
-		L1CodeIndicator        bool `struct:"uint8:1,variantbool"`
-		FrequencyChannel       uint8 `struct:"uint8:5"`
+	SynchronousGnss    bool   `struct:"uint8:1,variantbool"`
+	SignalCount        uint8  `struct:"uint8:5,sizeof=SignalData"`
+	SmoothingIndicator bool   `struct:"uint8:1,variantbool"`
+	SmoothingInterval  uint8  `struct:"uint8:3"`
+	SignalData         []struct {
+		SatelliteId            uint8  `struct:"uint8:6"`
+		L1CodeIndicator        bool   `struct:"uint8:1,variantbool"`
+		FrequencyChannel       uint8  `struct:"uint8:5"`
 		L1Pseudorange          uint32 `struct:"uint32:25"`
-		L1PhaseRange           int32 `struct:"int32:20"`
-		L1LockTimeIndicator    uint8 `struct:"uint8:7"`
-		L1PseudorangeAmbiguity uint8 `struct:"uint8:7"`
-		L1Cnr                  uint8 `struct:"uint8"`
+		L1PhaseRange           int32  `struct:"int32:20"`
+		L1LockTimeIndicator    uint8  `struct:"uint8:7"`
+		L1PseudorangeAmbiguity uint8  `struct:"uint8:7"`
+		L1Cnr                  uint8  `struct:"uint8"`
 	}
 }
 
@@ -76,27 +75,26 @@ func (msg Message1010) Time() time.Time {
 	return GlonassTimeShort(msg.Epoch, time.Now().UTC())
 }
 
-
 // L1&L2 GLONASS RTK Observables
 type Message1011 struct {
 	AbstractMessage
 	ReferenceStationId uint16 `struct:"uint16:12"`
 	Epoch              uint32 `struct:"uint32:27"`
-	SynchronousGnss    bool `struct:"uint8:1,variantbool"`
-	SignalCount        uint8 `struct:"uint8:5,sizeof=SignalData"`
-	SmoothingIndicator bool `struct:"uint8:1,variantbool"`
-	SmoothingInterval  uint8 `struct:"uint8:3"`
-	SignalData []struct {
-		SatelliteId         uint8 `struct:"uint8:6"`
-		L1CodeIndicator     bool `struct:"uint8:1,variantbool"`
-		FrequencyChannel    uint8 `struct:"uint8:5"`
+	SynchronousGnss    bool   `struct:"uint8:1,variantbool"`
+	SignalCount        uint8  `struct:"uint8:5,sizeof=SignalData"`
+	SmoothingIndicator bool   `struct:"uint8:1,variantbool"`
+	SmoothingInterval  uint8  `struct:"uint8:3"`
+	SignalData         []struct {
+		SatelliteId         uint8  `struct:"uint8:6"`
+		L1CodeIndicator     bool   `struct:"uint8:1,variantbool"`
+		FrequencyChannel    uint8  `struct:"uint8:5"`
 		L1Pseudorange       uint32 `struct:"uint32:25"`
-		L1PhaseRange        int32 `struct:"int32:20"`
-		L1LockTimeIndicator uint8 `struct:"uint8:7"`
-		L2CodeIndicator     uint8 `struct:"uint8:2"`
+		L1PhaseRange        int32  `struct:"int32:20"`
+		L1LockTimeIndicator uint8  `struct:"uint8:7"`
+		L2CodeIndicator     uint8  `struct:"uint8:2"`
 		L2Pseudorange       uint16 `struct:"uint16:14"`
-		L2PhaseRange        int32 `struct:"int32:20"`
-		L2LockTimeIndicator uint8 `struct:"uint8:7"`
+		L2PhaseRange        int32  `struct:"int32:20"`
+		L2LockTimeIndicator uint8  `struct:"uint8:7"`
 	}
 }
 
@@ -114,30 +112,29 @@ func (msg Message1011) Time() time.Time {
 	return GlonassTimeShort(msg.Epoch, time.Now().UTC())
 }
 
-
 // Extended L1&L2 GLONASS RTK Observables
 type Message1012 struct {
 	AbstractMessage
 	ReferenceStationId uint16 `struct:"uint16:12"`
 	Epoch              uint32 `struct:"uint32:27"`
-	SynchronousGnss    bool `struct:"uint8:1,variantbool"`
-	SignalCount        uint8 `struct:"uint8:5,sizeof=SignalData"`
-	SmoothingIndicator bool `struct:"uint8:1,variantbool"`
-	SmoothingInterval  uint8 `struct:"uint8:3"`
-	SignalData []struct {
-		SatelliteId            uint8 `struct:"uint8:6"`
-		L1CodeIndicator        bool `struct:"uint8:1,variantbool"`
-		FrequencyChannel       uint8 `struct:"uint8:5"`
+	SynchronousGnss    bool   `struct:"uint8:1,variantbool"`
+	SignalCount        uint8  `struct:"uint8:5,sizeof=SignalData"`
+	SmoothingIndicator bool   `struct:"uint8:1,variantbool"`
+	SmoothingInterval  uint8  `struct:"uint8:3"`
+	SignalData         []struct {
+		SatelliteId            uint8  `struct:"uint8:6"`
+		L1CodeIndicator        bool   `struct:"uint8:1,variantbool"`
+		FrequencyChannel       uint8  `struct:"uint8:5"`
 		L1Pseudorange          uint32 `struct:"uint32:25"`
-		L1PhaseRange           int32 `struct:"int32:20"`
-		L1LockTimeIndicator    uint8 `struct:"uint8:7"`
-		L1PseudorangeAmbiguity uint8 `struct:"uint8:7"`
-		L1Cnr                  uint8 `struct:"uint8"`
-		L2CodeIndicator        uint8 `struct:"uint8:2"`
+		L1PhaseRange           int32  `struct:"int32:20"`
+		L1LockTimeIndicator    uint8  `struct:"uint8:7"`
+		L1PseudorangeAmbiguity uint8  `struct:"uint8:7"`
+		L1Cnr                  uint8  `struct:"uint8"`
+		L2CodeIndicator        uint8  `struct:"uint8:2"`
 		L2Pseudorange          uint16 `struct:"uint16:14"`
-		L2PhaseRange           int32 `struct:"int32:20"`
-		L2LockTimeIndicator    uint8 `struct:"uint8:7"`
-		L2Cnr                  uint8 `struct:"uint8"`
+		L2PhaseRange           int32  `struct:"int32:20"`
+		L2LockTimeIndicator    uint8  `struct:"uint8:7"`
+		L2Cnr                  uint8  `struct:"uint8"`
 	}
 }
 
@@ -158,42 +155,42 @@ func (msg Message1012) Time() time.Time {
 // GLONASS Ephemerides
 type Message1020 struct {
 	AbstractMessage
-	SatelliteId               uint8 `struct:"uint8:6"`
-	FrequencyChannel          uint8 `struct:"uint8:5"`
-	AlmanacHealth             bool `struct:"uint8:1,variantbool"`
-	AlmanacHealthAvailability bool `struct:"uint8:1,variantbool"`
-	P1                        uint8 `struct:"uint8:2"`
+	SatelliteId               uint8  `struct:"uint8:6"`
+	FrequencyChannel          uint8  `struct:"uint8:5"`
+	AlmanacHealth             bool   `struct:"uint8:1,variantbool"`
+	AlmanacHealthAvailability bool   `struct:"uint8:1,variantbool"`
+	P1                        uint8  `struct:"uint8:2"`
 	Tk                        uint16 `struct:"uint16:12"`
-	Msb                       bool `struct:"uint8:1,variantbool"`
-	P2                        bool `struct:"uint8:1,variantbool"`
-	Tb                        uint8 `struct:"uint8:7"`
-	XnTb1                     int32 `struct:"int32:24"`
-	XnTb                      int32 `struct:"int32:27"`
-	XnTb2                     int8 `struct:"int8:5"`
-	YnTb1                     int32 `struct:"int32:24"`
-	YnTb                      int32 `struct:"int32:27"`
-	YnTb2                     int8 `struct:"int8:5"`
-	ZnTb1                     int32 `struct:"int32:24"`
-	ZnTb                      int32 `struct:"int32:27"`
-	ZnTb2                     int8 `struct:"int8:5"`
-	P3                        bool `struct:"uint8:1,variantbool"`
-	GammaN                    int16 `struct:"int16:11"`
-	Mp                        uint8 `struct:"uint8:2"`
-	M1n3                      bool `struct:"uint8:1,variantbool"`
-	TauN                      int32 `struct:"int32:22"`
-	MDeltaTauN                int8 `struct:"int8:5"`
-	En                        uint8 `struct:"uint8:5"`
-	MP4                       bool `struct:"uint8:1,variantbool"`
-	MFt                       uint8 `struct:"uint8:4"`
+	Msb                       bool   `struct:"uint8:1,variantbool"`
+	P2                        bool   `struct:"uint8:1,variantbool"`
+	Tb                        uint8  `struct:"uint8:7"`
+	XnTb1                     int32  `struct:"int32:24"`
+	XnTb                      int32  `struct:"int32:27"`
+	XnTb2                     int8   `struct:"int8:5"`
+	YnTb1                     int32  `struct:"int32:24"`
+	YnTb                      int32  `struct:"int32:27"`
+	YnTb2                     int8   `struct:"int8:5"`
+	ZnTb1                     int32  `struct:"int32:24"`
+	ZnTb                      int32  `struct:"int32:27"`
+	ZnTb2                     int8   `struct:"int8:5"`
+	P3                        bool   `struct:"uint8:1,variantbool"`
+	GammaN                    int16  `struct:"int16:11"`
+	Mp                        uint8  `struct:"uint8:2"`
+	M1n3                      bool   `struct:"uint8:1,variantbool"`
+	TauN                      int32  `struct:"int32:22"`
+	MDeltaTauN                int8   `struct:"int8:5"`
+	En                        uint8  `struct:"uint8:5"`
+	MP4                       bool   `struct:"uint8:1,variantbool"`
+	MFt                       uint8  `struct:"uint8:4"`
 	MNt                       uint16 `struct:"uint16:11"`
-	MM                        uint8 `struct:"uint8:2"`
-	AdditionalData            bool `struct:"uint8:1,variantbool"`
+	MM                        uint8  `struct:"uint8:2"`
+	AdditionalData            bool   `struct:"uint8:1,variantbool"`
 	Na                        uint16 `struct:"uint16:11"`
-	TauC                      int32 `struct:"int32"`
-	MN4                       uint8 `struct:"uint8:5"`
-	MTauGps                   int32 `struct:"int32:22"`
-	M1n5                      bool `struct:"uint8:1,variantbool"`
-	Reserved                  uint8 `struct:"uint8:7"`
+	TauC                      int32  `struct:"int32"`
+	MN4                       uint8  `struct:"uint8:5"`
+	MTauGps                   int32  `struct:"int32:22"`
+	M1n5                      bool   `struct:"uint8:1,variantbool"`
+	Reserved                  uint8  `struct:"uint8:7"`
 }
 
 func DeserializeMessage1020(data []byte) (msg Message1020) {

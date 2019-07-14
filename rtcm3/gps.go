@@ -224,7 +224,7 @@ type Message1015 struct {
 	MasterReferenceStationID    uint16 `struct:"uint16:12"`
 	AuxiliaryReferenceStationID uint16 `struct:"uint16:12"`
 	SatelliteCount              uint8  `struct:"uint8:4,sizeof=SatelliteData"`
-	SatelliteData []struct{
+	SatelliteData               []struct {
 		SatelliteID                                 uint8 `struct:"uint8:6"`
 		AmbiguityStatusFlag                         uint8 `struct:"uint8:2"`
 		NonSyncCount                                uint8 `struct:"uint8:3"`
@@ -252,7 +252,7 @@ type Message1016 struct {
 	MasterReferenceStationID    uint16 `struct:"uint16:12"`
 	AuxiliaryReferenceStationID uint16 `struct:"uint16:12"`
 	SatelliteCount              uint8  `struct:"uint8:4,sizeof=SatelliteData"`
-	SatelliteData []struct{
+	SatelliteData               []struct {
 		SatelliteID                               uint8 `struct:"uint8:6"`
 		AmbiguityStatusFlag                       uint8 `struct:"uint8:2"`
 		NonSyncCount                              uint8 `struct:"uint8:3"`
@@ -281,7 +281,7 @@ type Message1017 struct {
 	MasterReferenceStationID    uint16 `struct:"uint16:12"`
 	AuxiliaryReferenceStationID uint16 `struct:"uint16:12"`
 	SatelliteCount              uint8  `struct:"uint8:4,sizeof=SatelliteData"`
-	SatelliteData []struct{
+	SatelliteData               []struct {
 		SatelliteID                                 uint8 `struct:"uint8:6"`
 		AmbiguityStatusFlag                         uint8 `struct:"uint8:2"`
 		NonSyncCount                                uint8 `struct:"uint8:3"`
