@@ -4,11 +4,14 @@ import (
 	"time"
 )
 
+// TODO: Calculate leapseconds
+var LEAPSECONDS time.Duration = 18 * time.Second
+
 func GpsTime(e uint32) time.Time {
 	now := time.Now().UTC()
 	sow := now.Truncate(time.Hour*24).AddDate(0, 0, -int(now.Weekday()))
 	tow := time.Duration(e) * time.Millisecond
-	return sow.Add(-(18 * time.Second)).Add(tow)
+	return sow.Add(-(LEAPSECONDS)).Add(tow)
 }
 
 func GlonassTime(e uint32) time.Time {
