@@ -164,21 +164,21 @@ type Message1020 struct {
 	Msb                       bool   `struct:"uint8:1,variantbool"`
 	P2                        bool   `struct:"uint8:1,variantbool"`
 	Tb                        uint8  `struct:"uint8:7"`
-	XnTb1                     int32  `struct:"int32:24"`
-	XnTb                      int32  `struct:"int32:27"`
-	XnTb2                     int8   `struct:"int8:5"`
-	YnTb1                     int32  `struct:"int32:24"`
-	YnTb                      int32  `struct:"int32:27"`
-	YnTb2                     int8   `struct:"int8:5"`
-	ZnTb1                     int32  `struct:"int32:24"`
-	ZnTb                      int32  `struct:"int32:27"`
-	ZnTb2                     int8   `struct:"int8:5"`
+	XnTb1                     int32  `struct:"int32:24"` // Sint
+	XnTb                      int32  `struct:"int32:27"` // Sint
+	XnTb2                     int8   `struct:"int8:5"`   // Sint
+	YnTb1                     int32  `struct:"int32:24"` // Sint
+	YnTb                      int32  `struct:"int32:27"` // Sint
+	YnTb2                     int8   `struct:"int8:5"`   // Sint
+	ZnTb1                     int32  `struct:"int32:24"` // Sint
+	ZnTb                      int32  `struct:"int32:27"` // Sint
+	ZnTb2                     int8   `struct:"int8:5"`   // Sint
 	P3                        bool   `struct:"uint8:1,variantbool"`
-	GammaN                    int16  `struct:"int16:11"`
+	GammaN                    int16  `struct:"int16:11"` // Sint
 	Mp                        uint8  `struct:"uint8:2"`
 	M1n3                      bool   `struct:"uint8:1,variantbool"`
-	TauN                      int32  `struct:"int32:22"`
-	MDeltaTauN                int8   `struct:"int8:5"`
+	TauN                      int32  `struct:"int32:22"` // Sint
+	MDeltaTauN                int8   `struct:"int8:5"`   // Sint
 	En                        uint8  `struct:"uint8:5"`
 	MP4                       bool   `struct:"uint8:1,variantbool"`
 	MFt                       uint8  `struct:"uint8:4"`
@@ -186,9 +186,9 @@ type Message1020 struct {
 	MM                        uint8  `struct:"uint8:2"`
 	AdditionalData            bool   `struct:"uint8:1,variantbool"`
 	Na                        uint16 `struct:"uint16:11"`
-	TauC                      int32  `struct:"int32"`
+	TauC                      int32  `struct:"int32"` // Sint
 	MN4                       uint8  `struct:"uint8:5"`
-	MTauGps                   int32  `struct:"int32:22"`
+	MTauGps                   int32  `struct:"int32:22"` // Sint
 	M1n5                      bool   `struct:"uint8:1,variantbool"`
 	Reserved                  uint8  `struct:"uint8:7"`
 }
