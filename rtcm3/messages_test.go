@@ -30,7 +30,7 @@ func TestSerializeDeserialize(t *testing.T) {
 	for _, number := range messages {
 		binary := readPayload(uint(number))
 		if !cmp.Equal(rtcm3.DeserializeMessage(binary).Serialize(), binary) {
-			t.Errorf("Deserialization not equal to binary")
+			t.Errorf("%v Deserialization not equal to binary", number)
 		}
 	}
 }
