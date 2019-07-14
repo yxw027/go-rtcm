@@ -425,15 +425,15 @@ func (msg Message1019) Serialize() []byte {
 
 // Network Auxiliary Station Data Message
 type Message1014 struct {
-	MessageNumber                uint16 `12`
-	NetworkID                    uint8  `8`
-	SubnetworkID                 uint8  `4`
-	AuxiliaryStationsTransmitted uint8  `5`
-	MasterReferenceStationID     uint16 `12`
-	AuxiliaryReferenceStationID  uint16 `12`
-	AuxMasterDeltaLatitude       int32  `20`
-	AuxMasterDeltaLongitude      int32  `21`
-	AuxMasterDeltaHeight         int32  `23`
+	MessageNumber                uint16
+	NetworkID                    uint8
+	SubnetworkID                 uint8
+	AuxiliaryStationsTransmitted uint8
+	MasterReferenceStationID     uint16
+	AuxiliaryReferenceStationID  uint16
+	AuxMasterDeltaLatitude       int32
+	AuxMasterDeltaLongitude      int32
+	AuxMasterDeltaHeight         int32
 }
 
 func (msg Message1014) Number() int {
@@ -473,14 +473,14 @@ func (msg Message1014) Serialize() (data []byte) {
 }
 
 type NetworkRTKHeader struct {
-	MessageNumber               uint16 `12`
-	NetworkID                   uint8  `8`
-	SubnetworkID                uint8  `4`
-	Epoch                       uint32 `23`
-	MultipleMessageIndicator    bool   `1`
-	MasterReferenceStationID    uint16 `12`
-	AuxiliaryReferenceStationID uint16 `12`
-	SatelliteCount              uint8  `4`
+	MessageNumber               uint16
+	NetworkID                   uint8
+	SubnetworkID                uint8
+	Epoch                       uint32
+	MultipleMessageIndicator    bool
+	MasterReferenceStationID    uint16
+	AuxiliaryReferenceStationID uint16
+	SatelliteCount              uint8
 }
 
 func (msg NetworkRTKHeader) Number() int {
@@ -501,10 +501,10 @@ func DeserializeNetworkRTKHeader(r *iobit.Reader) NetworkRTKHeader {
 }
 
 type SatelliteData1015 struct {
-	SatelliteID                                 uint8 `6`
-	AmbiguityStatusFlag                         uint8 `2`
-	NonSyncCount                                uint8 `3`
-	IonosphericCarrierPhaseCorrectionDifference int32 `17`
+	SatelliteID                                 uint8
+	AmbiguityStatusFlag                         uint8
+	NonSyncCount                                uint8
+	IonosphericCarrierPhaseCorrectionDifference int32
 }
 
 func DeserializeSatelliteData1015(r *iobit.Reader, nsat int) (data []SatelliteData1015) {
@@ -537,11 +537,11 @@ func (msg Message1015) Serialize() (data []byte) {
 }
 
 type SatelliteData1016 struct {
-	SatelliteID                               uint8 `6`
-	AmbiguityStatusFlag                       uint8 `2`
-	NonSyncCount                              uint8 `3`
-	GeometricCarrierPhaseCorrectionDifference int32 `17`
-	IODE                                      uint8 `8`
+	SatelliteID                               uint8
+	AmbiguityStatusFlag                       uint8
+	NonSyncCount                              uint8
+	GeometricCarrierPhaseCorrectionDifference int32
+	IODE                                      uint8
 }
 
 func DeserializeSatelliteData1016(r *iobit.Reader, nsat int) (data []SatelliteData1016) {
@@ -575,12 +575,12 @@ func (msg Message1016) Serialize() (data []byte) {
 }
 
 type SatelliteData1017 struct {
-	SatelliteID                                 uint8 `6`
-	AmbiguityStatusFlag                         uint8 `2`
-	NonSyncCount                                uint8 `3`
-	GeometricCarrierPhaseCorrectionDifference   int32 `17`
-	IODE                                        uint8 `8`
-	IonosphericCarrierPhaseCorrectionDifference int32 `17`
+	SatelliteID                                 uint8
+	AmbiguityStatusFlag                         uint8
+	NonSyncCount                                uint8
+	GeometricCarrierPhaseCorrectionDifference   int32
+	IODE                                        uint8
+	IonosphericCarrierPhaseCorrectionDifference int32
 }
 
 func DeserializeSatelliteData1017(r *iobit.Reader, nsat int) (data []SatelliteData1017) {
