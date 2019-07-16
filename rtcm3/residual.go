@@ -9,7 +9,7 @@ import (
 type Message1030 struct {
 	AbstractMessage
 	Epoch              uint32 `struct:"uint32:20"`
-	ReferenceStationId uint16 `struct:"uint16:7"`
+	ReferenceStationId uint16 `struct:"uint16:12"`
 	NRefs              uint8  `struct:"uint8:7"`
 	Satellites         uint8  `struct:"uint8:5,sizeof=SatelliteData"`
 	SatelliteData      []struct {
@@ -39,7 +39,7 @@ type Message1031 struct {
 	Epoch              uint32 `struct:"uint32:17"`
 	ReferenceStationId uint16 `struct:"uint16:12"`
 	NRefs              uint8  `struct:"uint8:7"`
-	Satellites         uint8  `struct:"uint8:5"`
+	Satellites         uint8  `struct:"uint8:5,sizeof=SatelliteData"`
 	SatelliteData      []struct {
 		SatelliteId uint8  `struct:"uint8:6"`
 		Soc         uint8  `struct:"uint8"`
