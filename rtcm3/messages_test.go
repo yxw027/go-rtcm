@@ -34,6 +34,9 @@ func TestSerializeDeserialize(t *testing.T) {
 		if !cmp.Equal(rtcm3.DeserializeMessage(binary).Serialize(), binary) {
 			t.Errorf("%v Deserialization not equal to binary", number)
 		}
+		if _, unknown := rtcm3.DeserializeMessage(binary).(rtcm3.MessageUnknown); unknown {
+			t.Errorf("%v No Deserializer for Message", number)
+		}
 	}
 }
 
