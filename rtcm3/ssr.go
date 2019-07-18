@@ -19,7 +19,7 @@ type Message1057 struct {
 	Satellites               uint8  `struct:"uint8:6,sizeof=SatelliteData"`
 	SatelliteData            []struct {
 		SatelliteID        uint8 `struct:"uint8:6"`
-		IOD                uint8 `struct:"uint8"`
+		IODE               uint8 `struct:"uint8"`
 		DeltaRadial        int32 `struct:"int32:22"`
 		DeltaAlongTrack    int32 `struct:"int32:20"`
 		DeltaCrossTrack    int32 `struct:"int32:20"`
