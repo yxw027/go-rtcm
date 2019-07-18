@@ -152,12 +152,12 @@ func (msg Message1024) Serialize() []byte {
 
 type Message1025 struct {
 	AbstractMessage
-	SystemIdentificationNumber uint8  `struct:"uint8"`
-	LaNO int64 `struct:"int64:34"`
-	LoNO int64 `struct:"int64:35"`
-	AddSN0 int32 `struct:"int32:30"`
-	FE int64 `struct:"int64:36"`
-	FN int64 `struct:"int64:35"`
+	SystemIdentificationNumber uint8 `struct:"uint8"`
+	LaNO                       int64 `struct:"int64:34"`
+	LoNO                       int64 `struct:"int64:35"`
+	AddSN0                     int32 `struct:"int32:30"`
+	FE                         int64 `struct:"int64:36"`
+	FN                         int64 `struct:"int64:35"`
 }
 
 func DeserializeMessage1025(data []byte) (msg Message1025) {
@@ -172,14 +172,14 @@ func (msg Message1025) Serialize() []byte {
 
 type Message1026 struct {
 	AbstractMessage
-	SystemIdentificationNumber uint8  `struct:"uint8"`
-	ProjectionType uint8 `struct:"uint8:6"`
-	LaNO int64 `struct:"int64:34"`
-	LoNO int64 `struct:"int64:35"`
-	LaSP1 int64 `struct:"int64:34"`
-	LaSP2 int64 `struct:"int64:34"`
-	EFO int64 `struct:"int64:36"`
-	NFO int64 `struct:"int64:35"`
+	SystemIdentificationNumber uint8 `struct:"uint8"`
+	ProjectionType             uint8 `struct:"uint8:6"`
+	LaNO                       int64 `struct:"int64:34"`
+	LoNO                       int64 `struct:"int64:35"`
+	LaSP1                      int64 `struct:"int64:34"`
+	LaSP2                      int64 `struct:"int64:34"`
+	EFO                        int64 `struct:"int64:36"`
+	NFO                        int64 `struct:"int64:35"`
 }
 
 func DeserializeMessage1026(data []byte) (msg Message1026) {
@@ -195,15 +195,15 @@ func (msg Message1026) Serialize() []byte {
 type Message1027 struct {
 	AbstractMessage
 	SystemIdentificationNumber uint8  `struct:"uint8"`
-	ProjectionType uint8 `struct:"uint8:6"`
-	RectificationFlag bool `struct:"uint8:1,variantbool"`
-	LaPC int64 `struct:"int64:34"`
-	LoPC int64 `struct:"int64:35"`
-	AzIL uint64 `struct:"uint64:35"`
-	DiffARSG int32 `struct:"int32:26"`
-	AddSIL uint32 `struct:"uint32:30"`
-	EPC uint64 `struct:"uint64:36"`
-	NPC int64 `struct:"int64:35"`
+	ProjectionType             uint8  `struct:"uint8:6"`
+	RectificationFlag          bool   `struct:"uint8:1,variantbool"`
+	LaPC                       int64  `struct:"int64:34"`
+	LoPC                       int64  `struct:"int64:35"`
+	AzIL                       uint64 `struct:"uint64:35"`
+	DiffARSG                   int32  `struct:"int32:26"`
+	AddSIL                     uint32 `struct:"uint32:30"`
+	EPC                        uint64 `struct:"uint64:36"`
+	NPC                        int64  `struct:"int64:35"`
 }
 
 func DeserializeMessage1027(data []byte) (msg Message1027) {
