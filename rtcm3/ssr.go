@@ -3,6 +3,7 @@ package rtcm3
 import (
 	"encoding/binary"
 	"github.com/go-restruct/restruct"
+	"time"
 )
 
 // SSR GPS Orbit Correction
@@ -38,6 +39,10 @@ func (msg Message1057) Serialize() []byte {
 	return data
 }
 
+func (msg Message1057) Time() time.Time {
+	return DF385(msg.Epoch)
+}
+
 // SSR GPS Clock Correction
 type Message1058 struct {
 	AbstractMessage
@@ -64,6 +69,10 @@ func DeserializeMessage1058(data []byte) (msg Message1058) {
 func (msg Message1058) Serialize() []byte {
 	data, _ := restruct.Pack(binary.BigEndian, &msg)
 	return data
+}
+
+func (msg Message1058) Time() time.Time {
+	return DF385(msg.Epoch)
 }
 
 // SSR GPS Code Bias
@@ -94,6 +103,10 @@ func DeserializeMessage1059(data []byte) (msg Message1059) {
 func (msg Message1059) Serialize() []byte {
 	data, _ := restruct.Pack(binary.BigEndian, &msg)
 	return data
+}
+
+func (msg Message1059) Time() time.Time {
+	return DF385(msg.Epoch)
 }
 
 // SSR GPS Combined Orbit and Clock Corrections
@@ -132,6 +145,10 @@ func (msg Message1060) Serialize() []byte {
 	return data
 }
 
+func (msg Message1060) Time() time.Time {
+	return DF385(msg.Epoch)
+}
+
 // SSR GPS URA
 type Message1061 struct {
 	AbstractMessage
@@ -158,6 +175,10 @@ func (msg Message1061) Serialize() []byte {
 	return data
 }
 
+func (msg Message1061) Time() time.Time {
+	return DF385(msg.Epoch)
+}
+
 // SSR GPS High Rate Clock Correction
 type Message1062 struct {
 	AbstractMessage
@@ -182,6 +203,10 @@ func DeserializeMessage1062(data []byte) (msg Message1062) {
 func (msg Message1062) Serialize() []byte {
 	data, _ := restruct.Pack(binary.BigEndian, &msg)
 	return data
+}
+
+func (msg Message1062) Time() time.Time {
+	return DF385(msg.Epoch)
 }
 
 // SSR GLONASS Orbit Correction
@@ -217,6 +242,10 @@ func (msg Message1063) Serialize() []byte {
 	return data
 }
 
+func (msg Message1063) Time() time.Time {
+	return DF386(msg.Epoch, time.Now())
+}
+
 // SSR GLONASS Clock Correction
 type Message1064 struct {
 	AbstractMessage
@@ -243,6 +272,10 @@ func DeserializeMessage1064(data []byte) (msg Message1064) {
 func (msg Message1064) Serialize() []byte {
 	data, _ := restruct.Pack(binary.BigEndian, &msg)
 	return data
+}
+
+func (msg Message1064) Time() time.Time {
+	return DF386(msg.Epoch, time.Now())
 }
 
 // SSR GLONASS Code Bias
@@ -273,6 +306,10 @@ func DeserializeMessage1065(data []byte) (msg Message1065) {
 func (msg Message1065) Serialize() []byte {
 	data, _ := restruct.Pack(binary.BigEndian, &msg)
 	return data
+}
+
+func (msg Message1065) Time() time.Time {
+	return DF386(msg.Epoch, time.Now())
 }
 
 // SSR GLONASS Combined Orbit and Clock Corrections
@@ -311,6 +348,10 @@ func (msg Message1066) Serialize() []byte {
 	return data
 }
 
+func (msg Message1066) Time() time.Time {
+	return DF386(msg.Epoch, time.Now())
+}
+
 // SSR GLONASS URA
 type Message1067 struct {
 	AbstractMessage
@@ -337,6 +378,10 @@ func (msg Message1067) Serialize() []byte {
 	return data
 }
 
+func (msg Message1067) Time() time.Time {
+	return DF386(msg.Epoch, time.Now())
+}
+
 // SSR GLONASS High Rate Clock Correction
 type Message1068 struct {
 	AbstractMessage
@@ -361,4 +406,8 @@ func DeserializeMessage1068(data []byte) (msg Message1068) {
 func (msg Message1068) Serialize() []byte {
 	data, _ := restruct.Pack(binary.BigEndian, &msg)
 	return data
+}
+
+func (msg Message1068) Time() time.Time {
+	return DF386(msg.Epoch, time.Now())
 }

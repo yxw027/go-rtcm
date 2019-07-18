@@ -35,7 +35,7 @@ func (msg Message1001) Serialize() []byte {
 }
 
 func (msg Message1001) Time() time.Time {
-	return GpsTime(msg.Epoch)
+	return DF004(msg.Epoch)
 }
 
 // Extended L1-Only GPS RTK Observables
@@ -69,7 +69,7 @@ func (msg Message1002) Serialize() []byte {
 }
 
 func (msg Message1002) Time() time.Time {
-	return GpsTime(msg.Epoch)
+	return DF004(msg.Epoch)
 }
 
 // L1&L2 GPS RTK Observables
@@ -105,7 +105,7 @@ func (msg Message1003) Serialize() []byte {
 }
 
 func (msg Message1003) Time() time.Time {
-	return GpsTime(msg.Epoch)
+	return DF004(msg.Epoch)
 }
 
 // Extended L1&L2 GPS RTK Observables
@@ -144,7 +144,7 @@ func (msg Message1004) Serialize() []byte {
 }
 
 func (msg Message1004) Time() time.Time {
-	return GpsTime(msg.Epoch)
+	return DF004(msg.Epoch)
 }
 
 // GPS Ephemerides
