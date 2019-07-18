@@ -152,57 +152,6 @@ func (msg Message1012) Time() time.Time {
 	return DF034(msg.Epoch, time.Now().UTC())
 }
 
-// GLONASS Ephemerides
-type Message1020 struct {
-	AbstractMessage
-	SatelliteId               uint8  `struct:"uint8:6"`
-	FrequencyChannel          uint8  `struct:"uint8:5"`
-	AlmanacHealth             bool   `struct:"uint8:1,variantbool"`
-	AlmanacHealthAvailability bool   `struct:"uint8:1,variantbool"`
-	P1                        uint8  `struct:"uint8:2"`
-	Tk                        uint16 `struct:"uint16:12"`
-	Msb                       bool   `struct:"uint8:1,variantbool"`
-	P2                        bool   `struct:"uint8:1,variantbool"`
-	Tb                        uint8  `struct:"uint8:7"`
-	XnTb1                     int32  `struct:"int32:24"` // Sint
-	XnTb                      int32  `struct:"int32:27"` // Sint
-	XnTb2                     int8   `struct:"int8:5"`   // Sint
-	YnTb1                     int32  `struct:"int32:24"` // Sint
-	YnTb                      int32  `struct:"int32:27"` // Sint
-	YnTb2                     int8   `struct:"int8:5"`   // Sint
-	ZnTb1                     int32  `struct:"int32:24"` // Sint
-	ZnTb                      int32  `struct:"int32:27"` // Sint
-	ZnTb2                     int8   `struct:"int8:5"`   // Sint
-	P3                        bool   `struct:"uint8:1,variantbool"`
-	GammaN                    int16  `struct:"int16:11"` // Sint
-	Mp                        uint8  `struct:"uint8:2"`
-	M1n3                      bool   `struct:"uint8:1,variantbool"`
-	TauN                      int32  `struct:"int32:22"` // Sint
-	MDeltaTauN                int8   `struct:"int8:5"`   // Sint
-	En                        uint8  `struct:"uint8:5"`
-	MP4                       bool   `struct:"uint8:1,variantbool"`
-	MFt                       uint8  `struct:"uint8:4"`
-	MNt                       uint16 `struct:"uint16:11"`
-	MM                        uint8  `struct:"uint8:2"`
-	AdditionalData            bool   `struct:"uint8:1,variantbool"`
-	Na                        uint16 `struct:"uint16:11"`
-	TauC                      int32  `struct:"int32"` // Sint
-	MN4                       uint8  `struct:"uint8:5"`
-	MTauGps                   int32  `struct:"int32:22"` // Sint
-	M1n5                      bool   `struct:"uint8:1,variantbool"`
-	Reserved                  uint8  `struct:"uint8:7"`
-}
-
-func DeserializeMessage1020(data []byte) (msg Message1020) {
-	restruct.Unpack(data, binary.BigEndian, &msg)
-	return msg
-}
-
-func (msg Message1020) Serialize() []byte {
-	data, _ := restruct.Pack(binary.BigEndian, &msg)
-	return data
-}
-
 // GLONASS Ionospheric Correction Differences
 type Message1037 struct {
 	AbstractMessage
