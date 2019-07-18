@@ -203,6 +203,93 @@ func (msg Message1020) Serialize() []byte {
 	return data
 }
 
+// GLONASS Ionospheric Correction Differences
+type Message1037 struct {
+	AbstractMessage
+	NetworkID                       uint8  `struct:"uint8"`
+	SubnetworkID                    uint8  `struct:"uint8:4"`
+	Epoch                           uint32 `struct:"uint32:20"`
+	MultipleMessageIndicator        bool   `struct:"uint8:1,variantbool"`
+	MasterReferenceStationID        uint16 `struct:"uint16:12"`
+	AuxiliaryReferenceStationID     uint16 `struct:"uint16:12"`
+	DataEntriesCount                uint8  `struct:"uint8:4,sizeof=IonosphericCorrectionDifference"`
+	IonosphericCorrectionDifference []struct {
+		SatelliteID                                 uint8 `struct:"uint8:6"`
+		AmbiguityStatusFlag                         uint8 `struct:"uint8:2"`
+		NonSyncCount                                uint8 `struct:"uint8:3"`
+		IonosphericCarrierPhaseCorrectionDifference int32 `struct:"int32:17"`
+	}
+}
+
+func DeserializeMessage1037(data []byte) (msg Message1037) {
+	restruct.Unpack(data, binary.BigEndian, &msg)
+	return msg
+}
+
+func (msg Message1037) Serialize() []byte {
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
+	return data
+}
+
+// GLONASS Geometric Correction Differences
+type Message1038 struct {
+	AbstractMessage
+	NetworkID                       uint8  `struct:"uint8"`
+	SubnetworkID                    uint8  `struct:"uint8:4"`
+	Epoch                           uint32 `struct:"uint32:20"`
+	MultipleMessageIndicator        bool   `struct:"uint8:1,variantbool"`
+	MasterReferenceStationID        uint16 `struct:"uint16:12"`
+	AuxiliaryReferenceStationID     uint16 `struct:"uint16:12"`
+	DataEntriesCount                uint8  `struct:"uint8:4,sizeof=IonosphericCorrectionDifference"`
+	IonosphericCorrectionDifference []struct {
+		SatelliteID                               uint8 `struct:"uint8:6"`
+		AmbiguityStatusFlag                       uint8 `struct:"uint8:2"`
+		NonSyncCount                              uint8 `struct:"uint8:3"`
+		GeometricCarrierPhaseCorrectionDifference int32 `struct:"int32:17"`
+		IOD                                       uint8 `struct:"uint8"`
+	}
+}
+
+func DeserializeMessage1038(data []byte) (msg Message1038) {
+	restruct.Unpack(data, binary.BigEndian, &msg)
+	return msg
+}
+
+func (msg Message1038) Serialize() []byte {
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
+	return data
+}
+
+// GLONASS Combined Geometric and Ionospheric Correction Differences
+type Message1039 struct {
+	AbstractMessage
+	NetworkID                       uint8  `struct:"uint8"`
+	SubnetworkID                    uint8  `struct:"uint8:4"`
+	Epoch                           uint32 `struct:"uint32:20"`
+	MultipleMessageIndicator        bool   `struct:"uint8:1,variantbool"`
+	MasterReferenceStationID        uint16 `struct:"uint16:12"`
+	AuxiliaryReferenceStationID     uint16 `struct:"uint16:12"`
+	DataEntriesCount                uint8  `struct:"uint8:4,sizeof=IonosphericCorrectionDifference"`
+	IonosphericCorrectionDifference []struct {
+		SatelliteID                                 uint8 `struct:"uint8:6"`
+		AmbiguityStatusFlag                         uint8 `struct:"uint8:2"`
+		NonSyncCount                                uint8 `struct:"uint8:3"`
+		GeometricCarrierPhaseCorrectionDifference   int32 `struct:"int32:17"`
+		IOD                                         uint8 `struct:"uint8"`
+		IonosphericCarrierPhaseCorrectionDifference int32 `struct:"int32:17"`
+	}
+}
+
+func DeserializeMessage1039(data []byte) (msg Message1039) {
+	restruct.Unpack(data, binary.BigEndian, &msg)
+	return msg
+}
+
+func (msg Message1039) Serialize() []byte {
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
+	return data
+}
+
 // GLONASS L1 and L2 Code-Phase Biases
 type Message1230 struct {
 	AbstractMessage
