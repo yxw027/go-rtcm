@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// L1-Only GPS RTK Observables
 type Message1001 struct {
 	AbstractMessage
 	ReferenceStationID uint16 `struct:"uint16:12"`
