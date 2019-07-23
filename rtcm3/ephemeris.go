@@ -50,6 +50,8 @@ func (msg Message1019) Serialize() []byte {
 	return data
 }
 
+type Sint uint
+
 // GLONASS Ephemerides
 type Message1020 struct {
 	AbstractMessage
@@ -62,21 +64,21 @@ type Message1020 struct {
 	Msb                       bool   `struct:"uint8:1,variantbool"`
 	P2                        bool   `struct:"uint8:1,variantbool"`
 	Tb                        uint8  `struct:"uint8:7"`
-	XnTb1                     int32  `struct:"int32:24"` // Sint
-	XnTb                      int32  `struct:"int32:27"` // Sint
-	XnTb2                     int8   `struct:"int8:5"`   // Sint
-	YnTb1                     int32  `struct:"int32:24"` // Sint
-	YnTb                      int32  `struct:"int32:27"` // Sint
-	YnTb2                     int8   `struct:"int8:5"`   // Sint
-	ZnTb1                     int32  `struct:"int32:24"` // Sint
-	ZnTb                      int32  `struct:"int32:27"` // Sint
-	ZnTb2                     int8   `struct:"int8:5"`   // Sint
+	XnTb1                     Sint   `struct:"uint32:24"`
+	XnTb                      Sint   `struct:"uint32:27"`
+	XnTb2                     Sint   `struct:"uint8:5"`
+	YnTb1                     Sint   `struct:"uint32:24"`
+	YnTb                      Sint   `struct:"uint32:27"`
+	YnTb2                     Sint   `struct:"uint8:5"`
+	ZnTb1                     Sint   `struct:"uint32:24"`
+	ZnTb                      Sint   `struct:"uint32:27"`
+	ZnTb2                     Sint   `struct:"uint8:5"`
 	P3                        bool   `struct:"uint8:1,variantbool"`
-	GammaN                    int16  `struct:"int16:11"` // Sint
+	GammaN                    Sint   `struct:"uint16:11"`
 	Mp                        uint8  `struct:"uint8:2"`
 	M1n3                      bool   `struct:"uint8:1,variantbool"`
-	TauN                      int32  `struct:"int32:22"` // Sint
-	MDeltaTauN                int8   `struct:"int8:5"`   // Sint
+	TauN                      Sint   `struct:"uint32:22"`
+	MDeltaTauN                Sint   `struct:"uint8:5"`
 	En                        uint8  `struct:"uint8:5"`
 	MP4                       bool   `struct:"uint8:1,variantbool"`
 	MFt                       uint8  `struct:"uint8:4"`
@@ -84,9 +86,9 @@ type Message1020 struct {
 	MM                        uint8  `struct:"uint8:2"`
 	AdditionalData            bool   `struct:"uint8:1,variantbool"`
 	Na                        uint16 `struct:"uint16:11"`
-	TauC                      int32  `struct:"int32"` // Sint
+	TauC                      Sint   `struct:"uint32"`
 	MN4                       uint8  `struct:"uint8:5"`
-	MTauGps                   int32  `struct:"int32:22"` // Sint
+	MTauGps                   Sint   `struct:"uint32:22"`
 	M1n5                      bool   `struct:"uint8:1,variantbool"`
 	Reserved                  uint8  `struct:"uint8:7"`
 }
