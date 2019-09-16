@@ -189,9 +189,9 @@ func EncapsulateByteArray(data []byte) (frame Frame) {
 	frame = Frame{
 		Preamble: FramePreamble,
 		Reserved: 0,
-		Length: uint16(len(data)),
-		Payload: data,
-		Crc: uint32(0),
+		Length:   uint16(len(data)),
+		Payload:  data,
+		Crc:      uint32(0),
 	}
 	frame.Crc = Crc24q(frame.Serialize()[:len(data)+3])
 	return frame
