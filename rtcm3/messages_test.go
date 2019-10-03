@@ -1,8 +1,9 @@
-package rtcm3
+package rtcm3_test
 
 import (
 	"bufio"
 	"fmt"
+	"github.com/geoscienceaustralia/go-rtcm/rtcm3"
 	"github.com/google/go-cmp/cmp"
 	"os"
 	"testing"
@@ -23,17 +24,17 @@ var (
 func readPayload(msgNumber uint) (payload []byte) {
 	r, _ := os.Open("data/" + fmt.Sprint(msgNumber) + "_frame.bin")
 	br := bufio.NewReader(r)
-	frame, _ := DeserializeFrame(br)
+	frame, _ := rtcm3.DeserializeFrame(br)
 	return frame.Payload
 }
 
 func TestSerializeDeserialize(t *testing.T) {
 	for _, number := range messages {
 		binary := readPayload(uint(number))
-		if !cmp.Equal(DeserializeMessage(binary).Serialize(), binary) {
+		if !cmp.Equal(rtcm3.DeserializeMessage(binary).Serialize(), binary) {
 			t.Errorf("%v Deserialization not equal to binary", number)
 		}
-		if _, unknown := DeserializeMessage(binary).(MessageUnknown); unknown {
+		if _, unknown := rtcm3.DeserializeMessage(binary).(rtcm3.MessageUnknown); unknown {
 			t.Errorf("%v No Deserializer for Message", number)
 		}
 	}
@@ -44,9 +45,9 @@ func TestFrame(t *testing.T) {
 	br := bufio.NewReader(r)
 
 	binary, _ := br.Peek(227)
-	deserializedBinary, _ := DeserializeFrame(br)
+	deserializedBinary, _ := rtcm3.DeserializeFrame(br)
 
-	frame := Frame{
+	frame := rtcm3.Frame{
 		Preamble: 211,
 		Reserved: 0,
 		Length:   121,
