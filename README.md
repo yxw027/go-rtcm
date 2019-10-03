@@ -5,5 +5,6 @@ RTCM parser library implementation in Go.
 Example usage in `cmd/ntriplatency`
 
 ```
-ntriplatency http://caster:port/mount username password
+ntriplatency -caster http://caster:port/mount -username username -password password
+
 ```

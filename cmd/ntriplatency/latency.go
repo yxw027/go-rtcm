@@ -28,5 +28,6 @@ func main() {
 		} else {
 			fmt.Println(msg.Number())
 		}
+		fmt.Printf("%+v\n\n", msg)
 	}
 }
