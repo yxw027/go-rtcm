@@ -133,7 +133,7 @@ type Message1042 struct {
 	OmegaDot    int32  `struct:"int32:24"`
 	TGD1        int16  `struct:"int16:10"`
 	TGD2        int16  `struct:"int16:10"`
-	SVHealth    bool   `struct:"uint8:1:variantbool"`
+	SVHealth    bool   `struct:"uint8:1,variantbool"`
 }
 
 func DeserializeMessage1042(data []byte) (msg Message1042) {
