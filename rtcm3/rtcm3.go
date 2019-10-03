@@ -231,8 +231,8 @@ type Frame struct {
 	Crc      uint32
 }
 
-func EncapsulateMessage(msg Message) (frame Frame) {
-	data := msg.Serialize()
+// EncapsulateByteArray lazily wraps any byte array in an RTCM3 Frame
+func EncapsulateByteArray(data []byte) (frame Frame) {
 	frame = Frame{
 		Preamble: FramePreamble,
 		Reserved: 0,
@@ -242,6 +242,10 @@ func EncapsulateMessage(msg Message) (frame Frame) {
 	}
 	frame.Crc = Crc24q(frame.Serialize()[:len(data)+3])
 	return frame
+}
+
+func EncapsulateMessage(msg Message) (frame Frame) {
+	return EncapsulateByteArray(msg.Serialize())
 }
 
 func (frame Frame) MessageNumber() uint16 {
