@@ -1,4 +1,4 @@
-module github.com/GeoscienceAustralia/go-rtcm
+module github.com/geoscienceaustralia/go-rtcm
 
 go 1.12
 
