@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// TODO: Can't parse using restruct until https://github.com/go-restruct/restruct/pull/32
 type MsmHeader struct {
 	MessageNumber          uint16
 	ReferenceStationId     uint16

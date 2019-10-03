@@ -102,6 +102,12 @@ func DeserializeMessage(payload []byte) (msg Message) {
 		return DeserializeMessage1038(payload)
 	case 1039:
 		return DeserializeMessage1039(payload)
+	case 1042:
+		return DeserializeMessage1042(payload)
+	case 1044:
+		return DeserializeMessage1044(payload)
+	case 1045:
+		return DeserializeMessage1045(payload)
 	case 1057:
 		return DeserializeMessage1057(payload)
 	case 1058:
