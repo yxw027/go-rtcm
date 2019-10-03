@@ -103,6 +103,26 @@ func (msg Message1020) Serialize() []byte {
 	return data
 }
 
+type Message1042 struct {
+	AbstractMessage
+	SatelliteId               uint8  `struct:"uint8:6"`
+	WeekNumber                uint16 `struct:"uint16:13"`
+	SVURAI                    uint8  `struct:"uint8:4"`
+	IDOT                      int16  `struct:"int16:14"`
+	AODE                      uint8  `struct:"uint8:5"`
+	Toc                       uint32 `struct:"uint32:17"`
+	A2                        int16  `struct:"int16:11"`
+	A1                        int32  `struct:"int32:22"`
+	A0                        int32  `struct:"int32:24"`
+	AODC                      uint8  `struct:"uint8:5"`
+	Crs                       int32  `struct:"int32:18"`
+	DeltaN                    int16  `struct:"int16"`
+	M0                        int32  `struct:"int32"`
+	Cuc                       int32  `struct:"int32:18"`
+	E                         uint32 `struct:"uint32"`
+	Cus                       int32  `struct:"int32:18"`
+}
+
 // TODO: Add 1042, 1044, 1045, 1046 (last messages)
 
 // BDS Satellite Ephemeris Data
