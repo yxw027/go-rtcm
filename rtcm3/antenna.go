@@ -2,207 +2,118 @@ package rtcm3
 
 import (
 	"encoding/binary"
-	"github.com/bamiaux/iobit"
+	"github.com/go-restruct/restruct"
 )
 
 type AntennaReferencePoint struct {
-	MessageNumber             uint16
-	ReferenceStationId        uint16
-	ItrfRealizationYear       uint8
-	GpsIndicator              bool
-	GlonassIndicator          bool
-	GalileoIndicator          bool
-	ReferenceStationIndicator bool
-	ReferencePointX           int64
-	SingleReceiverOscilator   bool
-	Reserved                  bool
-	ReferencePointY           int64
-	QuarterCycleIndicator     uint8
-	ReferencePointZ           int64
-}
-
-func (arp AntennaReferencePoint) Number() int {
-	return int(arp.MessageNumber)
-}
-
-func SerializeAntennaReferencePoint(arp AntennaReferencePoint) []byte {
-	data := make([]byte, 19)
-	w := iobit.NewWriter(data)
-	w.PutUint16(12, arp.MessageNumber)
-	w.PutUint16(12, arp.ReferenceStationId)
-	w.PutUint8(6, arp.ItrfRealizationYear)
-	w.PutBit(arp.GpsIndicator)
-	w.PutBit(arp.GlonassIndicator)
-	w.PutBit(arp.GalileoIndicator)
-	w.PutBit(arp.ReferenceStationIndicator)
-	w.PutInt64(38, arp.ReferencePointX)
-	w.PutBit(arp.SingleReceiverOscilator)
-	w.PutBit(arp.Reserved)
-	w.PutInt64(38, arp.ReferencePointY)
-	w.PutUint8(2, arp.QuarterCycleIndicator)
-	w.PutInt64(38, arp.ReferencePointZ)
-	w.Flush()
-	return data
-}
-
-func DeserializeAntennaReferencePoint(data []byte) AntennaReferencePoint {
-	r := iobit.NewReader(data)
-	return AntennaReferencePoint{
-		MessageNumber:             r.Uint16(12),
-		ReferenceStationId:        r.Uint16(12),
-		ItrfRealizationYear:       r.Uint8(6),
-		GpsIndicator:              r.Bit(),
-		GlonassIndicator:          r.Bit(),
-		GalileoIndicator:          r.Bit(),
-		ReferenceStationIndicator: r.Bit(),
-		ReferencePointX:           r.Int64(38),
-		SingleReceiverOscilator:   r.Bit(),
-		Reserved:                  r.Bit(),
-		ReferencePointY:           r.Int64(38),
-		QuarterCycleIndicator:     r.Uint8(2),
-		ReferencePointZ:           r.Int64(38),
-	}
+	ReferenceStationId        uint16 `struct:"uint16:12"`
+	ItrfRealizationYear       uint8  `struct:"uint8:6"`
+	GpsIndicator              bool   `struct:"uint8:1,variantbool"`
+	GlonassIndicator          bool   `struct:"uint8:1,variantbool"`
+	GalileoIndicator          bool   `struct:"uint8:1,variantbool"`
+	ReferenceStationIndicator bool   `struct:"uint8:1,variantbool"`
+	ReferencePointX           int64  `struct:"int64:38"`
+	SingleReceiverOscilator   bool   `struct:"uint8:1,variantbool"`
+	Reserved                  bool   `struct:"uint8:1,variantbool"`
+	ReferencePointY           int64  `struct:"int64:38"`
+	QuarterCycleIndicator     uint8  `struct:"uint8:2"`
+	ReferencePointZ           int64  `struct:"int64:38"`
 }
 
 // Stationary RTK Reference Station ARP
 type Message1005 struct {
+	AbstractMessage
 	AntennaReferencePoint
 }
 
-func DeserializeMessage1005(data []byte) Message1005 {
-	return Message1005{
-		AntennaReferencePoint: DeserializeAntennaReferencePoint(data),
-	}
+func DeserializeMessage1005(data []byte) (msg Message1005) {
+	restruct.Unpack(data, binary.BigEndian, &msg)
+	return msg
 }
 
-func (msg Message1005) Serialize() (data []byte) {
-	return SerializeAntennaReferencePoint(msg.AntennaReferencePoint)
+func (msg Message1005) Serialize() []byte {
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
+	return data
 }
 
 // Stationary RTK Reference Station ARP with Antenna Height
 type Message1006 struct {
+	AbstractMessage
 	AntennaReferencePoint
-	AntennaHeight uint16
+	AntennaHeight uint16 `struct:"uint16"`
 }
 
 func DeserializeMessage1006(data []byte) (msg Message1006) {
-	msg = Message1006{
-		AntennaReferencePoint: DeserializeAntennaReferencePoint(data),
-	}
-	msg.AntennaHeight = binary.BigEndian.Uint16(data[len(data)-2:])
+	restruct.Unpack(data, binary.BigEndian, &msg)
 	return msg
 }
 
-func (msg Message1006) Serialize() (data []byte) {
-	data = SerializeAntennaReferencePoint(msg.AntennaReferencePoint)
-	height := make([]byte, 2)
-	binary.BigEndian.PutUint16(height, msg.AntennaHeight)
-	return append(data, height...)
+func (msg Message1006) Serialize() []byte {
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
+	return data
 }
 
 type MessageAntennaDescriptor struct {
-	MessageNumber      uint16
-	ReferenceStationId uint16
-	AntennaDescriptor  string
-	AntennaSetupId     uint8
-}
-
-func (ad MessageAntennaDescriptor) Number() int {
-	return int(ad.MessageNumber)
-}
-
-func DeserializeAntennaDescriptor(r *iobit.Reader) (desc MessageAntennaDescriptor) {
-	desc = MessageAntennaDescriptor{
-		MessageNumber:      r.Uint16(12),
-		ReferenceStationId: r.Uint16(12),
-	}
-	desc.AntennaDescriptor = r.String(int(r.Uint8(8)))
-	desc.AntennaSetupId = r.Uint8(8)
-	return desc
-}
-
-func SerializeAntennaDescriptor(desc MessageAntennaDescriptor) []byte {
-	data := make([]byte, 4)
-	w := iobit.NewWriter(data)
-	w.PutUint16(12, desc.MessageNumber)
-	w.PutUint16(12, desc.ReferenceStationId)
-	w.PutUint8(8, uint8(len(desc.AntennaDescriptor)))
-	w.Flush()
-	data = append(data, []byte(desc.AntennaDescriptor)...)
-	return append(data, desc.AntennaSetupId)
+	ReferenceStationId      uint16 `struct:"uint16:12"`
+	AntennaDescriptorLength uint8  `struct:"uint8"`
+	AntennaDescriptor       string `struct:"[]byte,sizefrom=AntennaDescriptorLength"`
+	AntennaSetupId          uint8  `struct:"uint8"`
 }
 
 // Antenna Descriptor
 type Message1007 struct {
+	AbstractMessage
 	MessageAntennaDescriptor
 }
 
-func DeserializeMessage1007(data []byte) Message1007 {
-	r := iobit.NewReader(data)
-	return Message1007{
-		MessageAntennaDescriptor: DeserializeAntennaDescriptor(&r),
-	}
+func DeserializeMessage1007(data []byte) (msg Message1007) {
+	restruct.Unpack(data, binary.BigEndian, &msg)
+	return msg
 }
 
 func (msg Message1007) Serialize() []byte {
-	return SerializeAntennaDescriptor(msg.MessageAntennaDescriptor)
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
+	return data
 }
 
 // Antenna Descriptor & Serial Number
 type Message1008 struct {
+	AbstractMessage
 	MessageAntennaDescriptor
-	SerialNumber string
+	SerialNumberLength uint8  `struct:"uint8"`
+	SerialNumber       string `struct:"[]byte,sizefrom=SerialNumberLength"`
 }
 
 func DeserializeMessage1008(data []byte) (msg Message1008) {
-	r := iobit.NewReader(data)
-	msg = Message1008{
-		MessageAntennaDescriptor: DeserializeAntennaDescriptor(&r),
-	}
-	msg.SerialNumber = r.String(int(r.Uint8(8)))
+	restruct.Unpack(data, binary.BigEndian, &msg)
 	return msg
 }
 
 func (msg Message1008) Serialize() []byte {
-	data := SerializeAntennaDescriptor(msg.MessageAntennaDescriptor)
-	data = append(data, uint8(len(msg.SerialNumber)))
-	return append(data, []byte(msg.SerialNumber)...)
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
+	return data
 }
 
 // Receiver and Antenna Descriptors
 type Message1033 struct {
+	AbstractMessage
 	MessageAntennaDescriptor
-	AntennaSerialNumber     string
-	ReceiverTypeDescriptor  string
-	ReceiverFirmwareVersion string
-	ReceiverSerialNumber    string
-}
-
-func (msg Message1033) Number() int {
-	return int(msg.MessageNumber)
+	AntennaSerialNumberLength     uint8  `struct:"uint8"`
+	AntennaSerialNumber           string `struct:"[]byte,sizefrom=AntennaSerialNumberLength"`
+	ReceiverTypeDescriptorLength  uint8  `struct:"uint8"`
+	ReceiverTypeDescriptor        string `struct:"[]byte,sizefrom=ReceiverTypeDescriptorLength"`
+	ReceiverFirmwareVersionLength uint8  `struct:"uint8"`
+	ReceiverFirmwareVersion       string `struct:"[]byte,sizefrom=ReceiverFirmwareVersionLength"`
+	ReceiverSerialNumberLength    uint8  `struct:"uint8"`
+	ReceiverSerialNumber          string `struct:"[]byte,sizefrom=ReceiverSerialNumberLength"`
 }
 
 func DeserializeMessage1033(data []byte) (msg Message1033) {
-	r := iobit.NewReader(data)
-	msg = Message1033{
-		MessageAntennaDescriptor: DeserializeAntennaDescriptor(&r),
-	}
-	msg.AntennaSerialNumber = r.String(int(r.Uint8(8)))
-	msg.ReceiverTypeDescriptor = r.String(int(r.Uint8(8)))
-	msg.ReceiverFirmwareVersion = r.String(int(r.Uint8(8)))
-	msg.ReceiverSerialNumber = r.String(int(r.Uint8(8)))
+	restruct.Unpack(data, binary.BigEndian, &msg)
 	return msg
 }
 
 func (msg Message1033) Serialize() []byte {
-	data := SerializeAntennaDescriptor(msg.MessageAntennaDescriptor)
-	data = append(data, uint8(len(msg.AntennaSerialNumber)))
-	data = append(data, []byte(msg.AntennaSerialNumber)...)
-	data = append(data, uint8(len(msg.ReceiverTypeDescriptor)))
-	data = append(data, []byte(msg.ReceiverTypeDescriptor)...)
-	data = append(data, uint8(len(msg.ReceiverFirmwareVersion)))
-	data = append(data, []byte(msg.ReceiverFirmwareVersion)...)
-	data = append(data, uint8(len(msg.ReceiverSerialNumber)))
-	data = append(data, []byte(msg.ReceiverSerialNumber)...)
+	data, _ := restruct.Pack(binary.BigEndian, &msg)
 	return data
 }

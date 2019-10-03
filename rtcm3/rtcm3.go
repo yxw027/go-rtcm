@@ -14,9 +14,21 @@ type Message interface {
 	Number() int
 }
 
+type Observable interface {
+	Message
+	Time() time.Time
+}
+
+type AbstractMessage struct {
+	MessageNumber uint16 `struct:"uint16:12"`
+}
+
+func (msg AbstractMessage) Number() int {
+	return int(msg.MessageNumber)
+}
+
 func DeserializeMessage(payload []byte) (msg Message) {
 	messageNumber := binary.BigEndian.Uint16(payload[0:2]) >> 4
-
 	switch int(messageNumber) {
 	case 1001:
 		return DeserializeMessage1001(payload)
@@ -56,6 +68,20 @@ func DeserializeMessage(payload []byte) (msg Message) {
 		return DeserializeMessage1019(payload)
 	case 1020:
 		return DeserializeMessage1020(payload)
+	case 1021:
+		return DeserializeMessage1021(payload)
+	case 1022:
+		return DeserializeMessage1022(payload)
+	case 1023:
+		return DeserializeMessage1023(payload)
+	case 1024:
+		return DeserializeMessage1024(payload)
+	case 1025:
+		return DeserializeMessage1025(payload)
+	case 1026:
+		return DeserializeMessage1026(payload)
+	case 1027:
+		return DeserializeMessage1027(payload)
 	case 1029:
 		return DeserializeMessage1029(payload)
 	case 1030:
@@ -66,6 +92,32 @@ func DeserializeMessage(payload []byte) (msg Message) {
 		return DeserializeMessage1032(payload)
 	case 1033:
 		return DeserializeMessage1033(payload)
+	case 1034:
+		return DeserializeMessage1034(payload)
+	case 1035:
+		return DeserializeMessage1035(payload)
+	case 1037:
+		return DeserializeMessage1037(payload)
+	case 1038:
+		return DeserializeMessage1038(payload)
+	case 1039:
+		return DeserializeMessage1039(payload)
+	case 1057:
+		return DeserializeMessage1057(payload)
+	case 1058:
+		return DeserializeMessage1058(payload)
+	case 1059:
+		return DeserializeMessage1059(payload)
+	case 1060:
+		return DeserializeMessage1060(payload)
+	case 1063:
+		return DeserializeMessage1063(payload)
+	case 1064:
+		return DeserializeMessage1064(payload)
+	case 1065:
+		return DeserializeMessage1065(payload)
+	case 1066:
+		return DeserializeMessage1066(payload)
 	case 1071:
 		return DeserializeMessage1071(payload)
 	case 1072:
@@ -169,11 +221,6 @@ func (msg MessageUnknown) Number() (msgNumber int) {
 	return int(binary.BigEndian.Uint16(msg.Payload[0:4]) >> 4)
 }
 
-type Observable interface {
-	Message
-	Time() time.Time
-}
-
 var FramePreamble byte = 0xD3
 
 type Frame struct {
@@ -263,10 +310,12 @@ type Scanner struct {
 	Reader *bufio.Reader
 }
 
+// NewScanner returns a Scanner for the given io.Reader
 func NewScanner(r io.Reader) Scanner {
 	return Scanner{bufio.NewReader(r)}
 }
 
+// Next reads from IO until a Message is found
 func (scanner Scanner) Next() (message Message, err error) {
 	frame, err := scanner.NextFrame()
 	if err != nil {
