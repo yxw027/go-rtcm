@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/geoscienceaustralia/go-rtcm/orm"
 	"bufio"
 	"fmt"
 	"github.com/geoscienceaustralia/go-rtcm/rtcm3"
@@ -8,46 +9,6 @@ import (
 	"github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/postgres"
 )
-
-type Observation struct {
-	gorm.Model
-	// MessageNumber encodes constellation atm, could put this into SatelliteData
-	// and have each constellation nested under the same "Observation" which is
-	// be unique for (Epoch and ReferenceStationId) - that could be the PK
-	MessageNumber          uint16
-	ReferenceStationId     uint16
-	Epoch                  uint32
-	Iods                   uint8 // Probably don't need this
-	Reserved               uint8
-	ClockSteeringIndicator uint8
-	ExternalClockIndicator uint8
-	SmoothingIndicator     bool
-	SmoothingInterval      uint8
-	SatelliteData []SatelliteData `gorm:"foreignkey:ObservationID"`
-}
-
-type SatelliteData struct {
-	gorm.Model
-	ObservationID     uint
-	SatelliteID       int
-	RangeMilliseconds uint8
-	Extended          uint8
-	Ranges            uint16
-	PhaseRangeRates   int16
-	SignalData []SignalData `gorm:"foreignkey:SatelliteDataID"`
-}
-
-type SignalData struct {
-	gorm.Model
-	SatelliteDataID uint
-	SignalID        int
-	Pseudoranges    int32
-	PhaseRanges     int32
-	PhaseRangeLocks uint16
-	HalfCycles      bool
-	Cnrs            uint16
-	PhaseRangeRates int16
-}
 
 func GetSatIDs(satMask uint64) (ids []int) {
 	for i := 64; i > 0; i-- {
@@ -87,7 +48,7 @@ func main() {
 	frame, _ := rtcm3.DeserializeFrame(br)
 	d := rtcm3.DeserializeMessage1077(frame.Payload)
 
-	obs := Observation{
+	obs := orm.Observation{
 		MessageNumber: d.MessageNumber,
 		ReferenceStationId: d.ReferenceStationId,
 		Epoch: d.Epoch,
@@ -97,7 +58,7 @@ func main() {
 		ExternalClockIndicator: d.ExternalClockIndicator,
 		SmoothingIndicator: d.SmoothingIndicator,
 		SmoothingInterval: d.SmoothingInterval,
-		SatelliteData: []SatelliteData{},
+		SatelliteData: []orm.SatelliteData{},
 	}
 
 	satIDs := GetSatIDs(d.SatelliteMask)
@@ -107,17 +68,17 @@ func main() {
 	sigPos := 0
 
 	for x, satId := range satIDs {
-		satData := SatelliteData{
+		satData := orm.SatelliteData{
 			SatelliteID: satId,
 			RangeMilliseconds: d.SatelliteData.RangeMilliseconds[x],
 			Extended: d.SatelliteData.Extended[x],
 			Ranges: d.SatelliteData.Ranges[x],
 			PhaseRangeRates: d.SatelliteData.PhaseRangeRates[x],
-			SignalData: []SignalData{},
+			SignalData: []orm.SignalData{},
 		}
 		for _, sigID := range sigIDs {
 			if cellIDs[cellPos] {
-				satData.SignalData = append(satData.SignalData, SignalData{
+				satData.SignalData = append(satData.SignalData, orm.SignalData{
 					SignalID: sigID,
 					Pseudoranges: d.SignalData.Pseudoranges[sigPos],
 					PhaseRanges: d.SignalData.PhaseRanges[sigPos],
@@ -135,16 +96,16 @@ func main() {
 
 	fmt.Printf("%+v\n\n%+v\n", d, obs)
 
-	db, err := gorm.Open("postgres", "host=rtcmdb.c76tte2hbd9p.ap-southeast-2.rds.amazonaws.com port=5432 user=postgres dbname=rtcmdb password=")
+	db, err := gorm.Open("postgres", "host=rtcmdb.c76tte2hbd9p.ap-southeast-2.rds.amazonaws.com port=5432 user=postgres dbname=rtcmdb password=w0wjonathanisCOOL")
 	if err != nil {
 		panic("failed to connect database")
 	}
 	defer db.Close()
 
 	// Migrate the schema
-	db.AutoMigrate(&Observation{})
-	db.AutoMigrate(&SatelliteData{})
-	db.AutoMigrate(&SignalData{})
+	db.AutoMigrate(&orm.Observation{})
+	db.AutoMigrate(&orm.SatelliteData{})
+	db.AutoMigrate(&orm.SignalData{})
 
 	db.Create(&obs)
 	//https://mindbowser.com/golang-go-with-gorm-2/
