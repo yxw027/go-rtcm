@@ -50,6 +50,7 @@ func (msg Message1019) Serialize() []byte {
 	return data
 }
 
+// TODO: Properly implement Sint
 type Sint uint
 
 // GLONASS Ephemerides
