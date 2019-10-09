@@ -96,7 +96,7 @@ func main() {
 
 	fmt.Printf("%+v\n\n%+v\n", d, obs)
 
-	db, err := gorm.Open("postgres", "host=rtcmdb.c76tte2hbd9p.ap-southeast-2.rds.amazonaws.com port=5432 user=postgres dbname=rtcmdb password=w0wjonathanisCOOL")
+	db, err := gorm.Open("postgres", "host=rtcmdb.c76tte2hbd9p.ap-southeast-2.rds.amazonaws.com port=5432 user=postgres dbname=rtcmdb password=brand0nisBAD")
 	if err != nil {
 		panic("failed to connect database")
 	}
