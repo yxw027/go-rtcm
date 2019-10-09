@@ -9,9 +9,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-type MSM7 struct { // Just MSM?
-	//gorm.Model
-	ObservationID int `gorm:"primary_key"`
+type Observation struct { // Just MSM?
+	gorm.Model
 	MessageNumber          uint16
 	ReferenceStationId     uint16
 	Epoch                  uint32 // Timestamp instead?
@@ -26,18 +25,18 @@ type MSM7 struct { // Just MSM?
 
 type SatelliteData struct {
 	gorm.Model
-	ObservationID     int
+	ObservationID     uint
 	SatelliteID       int // ???
 	RangeMilliseconds uint8
 	Extended          uint8
 	Ranges            uint16
 	PhaseRangeRates   int16
-	//SignalData []SignalDataMsm7
+	SignalData []SignalData `gorm:"foreignkey:SatelliteDataID"`
 }
 
-type SignalDataMsm7 struct {
-	SatDataID       int `gorm:"foreign_key"`
-	SatelliteID     int // ???
+type SignalData struct {
+	gorm.Model
+	SatelliteDataID uint
 	SignalID        int // ???
 	Pseudoranges    int32
 	PhaseRanges     int32
@@ -47,13 +46,45 @@ type SignalDataMsm7 struct {
 	PhaseRangeRates int16
 }
 
+func GetSatIDs(satMask uint64) (ids []int) {
+	for i := 64; i > 0; i-- {
+		if (satMask >> uint64(i-1)) & 0x1 == 1 {
+			ids = append(ids, i)
+		}
+	}
+	return ids
+}
+
+func GetSigIDs(sigMask uint32) (ids []int) {
+	for i := 32; i > 0; i-- {
+		if (sigMask >> uint32(i-1)) & 0x1 == 1 {
+			ids = append(ids, i)
+		}
+	}
+	return ids
+}
+
+func Itob(v uint64) bool {
+	if v == 0 {
+		return false
+	}
+	return true
+}
+
+func GetCells(cellMask uint64, length int) (cells []bool) {
+	for i := 0; i < length; i++ {
+		cells = append([]bool{Itob((cellMask >> uint(i)) & 0x1)}, cells...)
+	}
+	return cells
+}
+
 func main() {
 	r, _ := os.Open("../rtcm3/data/1077_frame.bin")
 	br := bufio.NewReader(r)
 	frame, _ := rtcm3.DeserializeFrame(br)
 	d := rtcm3.DeserializeMessage1077(frame.Payload)
 
-	msg := MSM7{
+	obs := Observation{
 		MessageNumber: d.MessageNumber,
 		ReferenceStationId: d.ReferenceStationId,
 		Epoch: d.Epoch,
@@ -66,31 +97,41 @@ func main() {
 		SatelliteData: []SatelliteData{},
 	}
 
-	for i := 0; i < len(d.SatelliteData.RangeMilliseconds); i++ {
-		msg.SatelliteData = append(msg.SatelliteData, SatelliteData{
-			SatelliteID: 1,
-			RangeMilliseconds: d.SatelliteData.RangeMilliseconds[i],
-			Extended: d.SatelliteData.Extended[i],
-			Ranges: d.SatelliteData.Ranges[i],
-			PhaseRangeRates: d.SatelliteData.PhaseRangeRates[i],
-		})
+	satIDs := GetSatIDs(d.SatelliteMask)
+	sigIDs := GetSigIDs(d.SignalMask)
+	cellIDs := GetCells(d.CellMask, len(satIDs) * len(sigIDs))
+	cellPos := 0
+	sigPos := 0
+
+	for x, satId := range satIDs {
+		satData := SatelliteData{
+			SatelliteID: satId,
+			RangeMilliseconds: d.SatelliteData.RangeMilliseconds[x],
+			Extended: d.SatelliteData.Extended[x],
+			Ranges: d.SatelliteData.Ranges[x],
+			PhaseRangeRates: d.SatelliteData.PhaseRangeRates[x],
+			SignalData: []SignalData{},
+		}
+		for _, sigID := range sigIDs {
+			if cellIDs[cellPos] {
+				satData.SignalData = append(satData.SignalData, SignalData{
+					SignalID: sigID,
+					Pseudoranges: d.SignalData.Pseudoranges[sigPos],
+					PhaseRanges: d.SignalData.PhaseRanges[sigPos],
+					PhaseRangeLocks: d.SignalData.PhaseRangeLocks[sigPos],
+					HalfCycles: d.SignalData.HalfCycles[sigPos],
+					Cnrs: d.SignalData.Cnrs[sigPos],
+					PhaseRangeRates: d.SignalData.PhaseRangeRates[sigPos],
+				})
+				sigPos ++
+			}
+			cellPos ++
+		}
+		obs.SatelliteData = append(obs.SatelliteData, satData)
 	}
 
-	//for i := 0; i < len(d.SignalData.Pseudoranges); i++ {
-	//	msg.SatelliteData[0].SignalData = append(msg.SatelliteData[0].SignalData, SignalDataMsm7{
-	//		SatelliteID: 1,
-	//		SignalID: 1,
-	//		Pseudoranges: d.SignalData.Pseudoranges[i],
-	//		PhaseRanges: d.SignalData.PhaseRanges[i],
-	//		PhaseRangeLocks: d.SignalData.PhaseRangeLocks[i],
-	//		HalfCycles: d.SignalData.HalfCycles[i],
-	//		Cnrs: d.SignalData.Cnrs[i],
-	//		PhaseRangeRates: d.SignalData.PhaseRangeRates[i],
-	//	})
-	//}
+	fmt.Printf("%+v\n\n%+v\n", d, obs)
 
-	fmt.Printf("%+v\n", d)
-	fmt.Printf("%+v\n", msg)
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
 		panic("failed to connect database")
@@ -98,7 +139,10 @@ func main() {
 	defer db.Close()
 
 	// Migrate the schema
-	db.AutoMigrate(&MSM7{})
-	db.Create(&msg)
+	db.AutoMigrate(&Observation{})
+	db.AutoMigrate(&SatelliteData{})
+	db.AutoMigrate(&SignalData{})
+
+	db.Create(&obs)
 	//https://mindbowser.com/golang-go-with-gorm-2/
 }
