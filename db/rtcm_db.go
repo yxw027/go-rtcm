@@ -11,6 +11,9 @@ import (
 
 type Observation struct {
 	gorm.Model
+	// MessageNumber encodes constellation atm, could put this into SatelliteData
+	// and have each constellation nested under the same "Observation" which is
+	// be unique for (Epoch and ReferenceStationId) - that could be the PK
 	MessageNumber          uint16
 	ReferenceStationId     uint16
 	Epoch                  uint32
