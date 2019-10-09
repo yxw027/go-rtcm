@@ -6,7 +6,7 @@ import (
 	"github.com/geoscienceaustralia/go-rtcm/rtcm3"
 	"os"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+    _ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 type Observation struct { // Just MSM?
@@ -132,7 +132,7 @@ func main() {
 
 	fmt.Printf("%+v\n\n%+v\n", d, obs)
 
-	db, err := gorm.Open("sqlite3", "test.db")
+	db, err := gorm.Open("postgres", "host=rtcmdb.c76tte2hbd9p.ap-southeast-2.rds.amazonaws.com port=5432 user=postgres dbname=rtcmdb password=")
 	if err != nil {
 		panic("failed to connect database")
 	}
