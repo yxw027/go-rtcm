@@ -9,13 +9,13 @@ import (
     _ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-type Observation struct { // Just MSM?
+type Observation struct {
 	gorm.Model
 	MessageNumber          uint16
 	ReferenceStationId     uint16
-	Epoch                  uint32 // Timestamp instead?
+	Epoch                  uint32
 	Iods                   uint8 // Probably don't need this
-	Reserved               uint8 // This might be needed later
+	Reserved               uint8
 	ClockSteeringIndicator uint8
 	ExternalClockIndicator uint8
 	SmoothingIndicator     bool
@@ -26,7 +26,7 @@ type Observation struct { // Just MSM?
 type SatelliteData struct {
 	gorm.Model
 	ObservationID     uint
-	SatelliteID       int // ???
+	SatelliteID       int
 	RangeMilliseconds uint8
 	Extended          uint8
 	Ranges            uint16
@@ -37,7 +37,7 @@ type SatelliteData struct {
 type SignalData struct {
 	gorm.Model
 	SatelliteDataID uint
-	SignalID        int // ???
+	SignalID        int
 	Pseudoranges    int32
 	PhaseRanges     int32
 	PhaseRangeLocks uint16
