@@ -2,17 +2,15 @@ package rtcm3
 
 import (
 	"time"
+	"github.com/geoscienceaustralia/go-rtcm"
 )
-
-// TODO: Calculate leapseconds
-var LEAPSECONDS time.Duration = 18 * time.Second
 
 // GPS Epoch Time (TOW)
 func DF004(e uint32) time.Time {
 	now := time.Now().UTC()
 	sow := now.Truncate(time.Hour*24).AddDate(0, 0, -int(now.Weekday()))
 	tow := time.Duration(e) * time.Millisecond
-	return sow.Add(-(LEAPSECONDS)).Add(tow)
+	return sow.Add(-(gnss.GpsLeapSeconds())).Add(tow)
 }
 
 // GPS Epoch Time 1s
@@ -20,7 +18,7 @@ func DF385(e uint32) time.Time {
 	now := time.Now().UTC()
 	sow := now.Truncate(time.Hour*24).AddDate(0, 0, -int(now.Weekday()))
 	tow := time.Duration(e) * time.Second
-	return sow.Add(-(LEAPSECONDS)).Add(tow)
+	return sow.Add(-(gnss.GpsLeapSeconds())).Add(tow)
 }
 
 // GLONASS Epoch Time (tk)

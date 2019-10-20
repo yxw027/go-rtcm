@@ -1,12 +1,14 @@
 package main
 
 import (
-	"github.com/geoscienceaustralia/go-rtcm/orm"
-	"bufio"
+//	"bufio"
 	"fmt"
 	"github.com/geoscienceaustralia/go-rtcm/rtcm3"
-	"os"
+	"github.com/geoscienceaustralia/go-rtcm/orm"
+	"github.com/umeat/go-ntrip/ntrip"
 	"github.com/jinzhu/gorm"
+//	"os"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
     _ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
@@ -42,17 +44,12 @@ func GetCells(cellMask uint64, length int) (cells []bool) {
 	return cells
 }
 
-func main() {
-	r, _ := os.Open("../rtcm3/data/1077_frame.bin")
-	br := bufio.NewReader(r)
-	frame, _ := rtcm3.DeserializeFrame(br)
-	d := rtcm3.DeserializeMessage1077(frame.Payload)
-
+func Store(d rtcm3.MessageMsm7) {
 	obs := orm.Observation{
 		MessageNumber: d.MessageNumber,
 		ReferenceStationId: d.ReferenceStationId,
 		Epoch: d.Epoch,
-		Iods: d.Iods,
+		IODS: d.Iods,
 		Reserved: d.Reserved,
 		ClockSteeringIndicator: d.ClockSteeringIndicator,
 		ExternalClockIndicator: d.ExternalClockIndicator,
@@ -84,7 +81,7 @@ func main() {
 					PhaseRanges: d.SignalData.PhaseRanges[sigPos],
 					PhaseRangeLocks: d.SignalData.PhaseRangeLocks[sigPos],
 					HalfCycles: d.SignalData.HalfCycles[sigPos],
-					Cnrs: d.SignalData.Cnrs[sigPos],
+					CNRs: d.SignalData.Cnrs[sigPos],
 					PhaseRangeRates: d.SignalData.PhaseRangeRates[sigPos],
 				})
 				sigPos ++
@@ -96,8 +93,9 @@ func main() {
 
 	fmt.Printf("%+v\n\n%+v\n", d, obs)
 
-	password := os.Getenv("DB_PASSWORD")
-	db, err := gorm.Open("postgres", "host=rtcmdb.c76tte2hbd9p.ap-southeast-2.rds.amazonaws.com port=5432 user=postgres dbname=rtcmdb password=" + password)
+	//password := os.Getenv("DB_PASSWORD")
+	//db, err := gorm.Open("postgres", "host=rtcmdb.c76tte2hbd9p.ap-southeast-2.rds.amazonaws.com port=5432 user=postgres dbname=rtcmdb password=" + password)
+	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
 		panic("failed to connect database")
 	}
@@ -109,5 +107,27 @@ func main() {
 	db.AutoMigrate(&orm.SignalData{})
 
 	db.Create(&obs)
-	//https://mindbowser.com/golang-go-with-gorm-2/
+}
+
+func main() {
+//	r, _ := os.Open("../rtcm3/data/1077_frame.bin")
+//	br := bufio.NewReader(r)
+//	frame, _ := rtcm3.DeserializeFrame(br)
+//	d := rtcm3.DeserializeMessage1077(frame.Payload)
+
+	client, err := ntrip.NewClient("https://streams.auscors.geops.team/GAT000AUS0")
+	resp, err := client.Connect()
+	if err != nil || resp.StatusCode != 200 {
+		fmt.Println(resp.StatusCode, err)
+	}
+
+	scanner := rtcm3.NewScanner(resp.Body)
+	for frame, err := scanner.NextFrame(); err == nil; frame, err = scanner.NextFrame() {
+		switch frame.MessageNumber() {
+			case 1077, 1087, 1097, 1107, 1117, 1127:
+			//fmt.Printf("%+v\n\n", msg)
+			Store(rtcm3.DeserializeMessageMsm7(frame.Payload))
+		}
+	}
+	panic(err)
 }

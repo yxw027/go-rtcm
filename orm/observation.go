@@ -9,10 +9,12 @@ type Observation struct {
 	// MessageNumber encodes constellation atm, could put this into SatelliteData
 	// and have each constellation nested under the same "Observation" which is
 	// be unique for (Epoch and ReferenceStationId) - that could be the PK
+	// This would be more RINEX-like
 	MessageNumber          uint16
 	ReferenceStationId     uint16
+	// TODO: normalize constellation epochs with timestamp
 	Epoch                  uint32
-	Iods                   uint8 // Probably don't need this
+	IODS                   uint8
 	Reserved               uint8
 	ClockSteeringIndicator uint8
 	ExternalClockIndicator uint8
@@ -40,6 +42,6 @@ type SignalData struct {
 	PhaseRanges     int32
 	PhaseRangeLocks uint16
 	HalfCycles      bool
-	Cnrs            uint16
+	CNRs            uint16
 	PhaseRangeRates int16
 }
