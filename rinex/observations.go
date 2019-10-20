@@ -8,6 +8,7 @@ import (
 type EpochRecord struct {
 	Epoch time.Time
 	Flag int
+	// Can probably leave Satellites out of the struct since it's just len(ObservationRecords)
 	Satellites int
 	ClockOffset float64
 	ObservationRecords []ObservationRecord

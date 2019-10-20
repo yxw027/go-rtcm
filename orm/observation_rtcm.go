@@ -37,7 +37,7 @@ func ParseCellMask(cellMask uint64, length int) (cells []bool) {
 	return cells
 }
 
-func MSMObservation(msg rtcm3.MessageMsm7) (obs Observation, err error) {
+func ObservationMsm7(msg rtcm3.MessageMsm7) (obs Observation, err error) {
 	obs = Observation{
 		MessageNumber: msg.MessageNumber,
 		ReferenceStationId: msg.ReferenceStationId,
@@ -56,10 +56,6 @@ func MSMObservation(msg rtcm3.MessageMsm7) (obs Observation, err error) {
 	cellIDs := ParseCellMask(msg.CellMask, len(satIDs) * len(sigIDs))
 	cellPos := 0
 	sigPos := 0
-
-	if len(satIDs) != len(msg.SatelliteData.RangeMilliseconds) {
-
-	}
 
 	for i, satID := range satIDs {
 		satData := SatelliteData{
