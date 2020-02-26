@@ -224,7 +224,10 @@ func (msg MessageUnknown) Serialize() []byte {
 }
 
 func (msg MessageUnknown) Number() (msgNumber int) {
-	return int(binary.BigEndian.Uint16(msg.Payload[0:4]) >> 4)
+	if len(msg.Payload) >= 4 {
+		msgNumber = int(binary.BigEndian.Uint16(msg.Payload[0:4]) >> 4)
+	}
+	return msgNumber
 }
 
 var FramePreamble byte = 0xD3
